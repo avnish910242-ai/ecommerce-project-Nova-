@@ -1,0 +1,1452 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Seller Dashboard</title>
+
+    <style>
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+        }
+
+        .header {
+            background: white;
+            color: blue;
+            padding: 20px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .container {
+            padding: 30px;
+            max-width: 1100px;
+            margin: auto;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .card h3 {
+            margin-top: 0;
+        }
+
+        .add-product {
+            display: none;
+            background: white;
+            padding: 25px;
+            margin-top: 30px;
+            border-radius: 12px;
+        }
+
+        .add-product label {
+            display: block;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .add-product input,
+        .add-product textarea,
+        .add-product select {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px;
+            margin: 8px 0 15px;
+            border: 1px solid #ccc;
+            border-radius: 7px;
+            font-size: 15px;
+        }
+
+        .add-product textarea {
+            height: 100px;
+            resize: vertical;
+        }
+
+        .save-btn {
+            background: #111;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .save-btn:hover {
+            background: #333;
+        }
+
+        .image-preview {
+            display: none;
+            margin-top: 10px;
+            margin-bottom: 15px;
+        }
+
+        .image-preview img {
+            width: 180px;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+        }
+
+        #message {
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        .back {
+          display: inline-block;
+            margin-top: 25px;
+            text-decoration: none;
+             
+            color: #222;
+            background-color: whitesmoke;
+        }
+
+        @media (max-width: 700px) {
+
+            .cards {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 15px;
+            }
+
+        }
+
+        /* ==========================================
+   MY PRODUCTS
+========================================== */
+
+.my-products {
+    background: white;
+    padding: 25px;
+    margin-top: 30px;
+    border-radius: 12px;
+}
+
+.products-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.products-header h2 {
+    margin: 0 0 5px;
+}
+
+.products-header p {
+    margin: 0;
+    color: #777;
+}
+
+.refresh-btn {
+    border: none;
+    background: #5c116e;
+    color: white;
+    padding: 10px 18px;
+    border-radius: 7px;
+    cursor: pointer;
+}
+
+.refresh-btn:hover {
+    background: #333;
+}
+
+
+/* PRODUCT LIST */
+
+.seller-products {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+
+/* PRODUCT CARD */
+
+.seller-product-card {
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    overflow: hidden;
+    background: white;
+}
+
+.seller-product-image {
+    width: 100%;
+    height: 220px;
+    background: #f5f5f5;
+}
+
+.seller-product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.seller-product-info {
+    padding: 15px;
+}
+
+.seller-product-info h3 {
+    margin: 0 0 8px;
+}
+
+.product-category-text {
+    color: #777;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.product-price {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.product-stock {
+    margin-top: 8px;
+    color: #555;
+}
+
+.product-description {
+    color: #666;
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+
+/* ACTION BUTTONS */
+
+.product-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.edit-btn,
+.delete-btn {
+    flex: 1;
+    border: none;
+    padding: 10px;
+    border-radius: 7px;
+    cursor: pointer;
+}
+
+.edit-btn {
+    background: #eee;
+    color: #111;
+}
+
+.delete-btn {
+    background: #e53935;
+    color: white;
+}
+
+
+/* NO PRODUCTS */
+
+.no-products {
+    text-align: center;
+    color: #777;
+    padding: 30px;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 800px) {
+
+    .seller-products {
+        grid-template-columns: 1fr 1fr;
+    }
+
+}
+
+@media (max-width: 550px) {
+
+    .seller-products {
+        grid-template-columns: 1fr;
+    }
+
+    .products-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+}
+
+        .no-image {
+            font-size: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+        }
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- HEADER -->
+
+    <header class="header">
+        NOVA Seller
+        
+        <!-- BACK -->
+
+        <a
+            class="back"
+            href="index.html"
+        >
+            ← go home
+        </a>
+    </header>
+
+
+    <div class="container">
+        <!-- DASHBOARD CARDS -->
+         <!-- ==========================================
+     SELLER NOTIFICATIONS
+========================================== -->
+
+<div class="seller-notification">
+    <button
+        class="notification-btn"
+        onclick="loadSellerNotifications()"
+    >
+        🔔 Notifications
+        <span id="notificationCount">0</span>
+    </button>
+</div>
+
+<div
+    id="notificationList"
+    class="notification-list"
+    style="display:none;"
+></div>
+
+        <div class="cards">
+
+
+            <div class="card" onclick="showAddProduct()">
+
+                <h3>➕ Products</h3>
+
+                <p>
+                    Add and manage products
+                </p>
+
+            </div>
+<div class="card" onclick="window.location.href='seller-orders.html'" style="cursor:pointer;">
+
+    <h3>🛒 Orders</h3>
+
+    <p>
+        Manage received orders
+    </p>
+
+</div>
+           <div class="card">
+
+                <h3>💰 Payments</h3>
+
+                <p>
+                    View your earnings
+                </p>
+
+            </div>
+
+        </div>
+
+<div class="my-products" id="myProducts">
+
+    <div class="products-header">
+
+        <div>
+            <h2>📦 My Products</h2>
+
+            <p>
+                Products added by you
+            </p>
+        </div>
+
+        <button
+            class="refresh-btn"
+            onclick="loadSellerProducts()"
+        >
+            🔄 Refresh
+        </button>
+
+    </div>
+
+
+    <div
+        id="sellerProducts"
+        class="seller-products"
+    >
+    </div>
+
+
+    <p
+        id="noProducts"
+        class="no-products"
+        style="display:none;"
+    >
+        No products added yet.
+    </p>
+
+</div>
+
+        <div
+            class="add-product"
+            id="addProduct"
+        >
+
+
+            <h2>
+                ➕ Add Product
+            </h2>
+
+
+            <!-- PRODUCT NAME -->
+
+            <label>
+                Product Name
+            </label>
+
+            <input
+                type="text"
+                id="productName"
+                placeholder="Enter product name"
+            >
+
+
+            <!-- CATEGORY -->
+
+            <label>
+                Category
+            </label>
+
+            <select id="productCategory">
+
+                <option value="">
+                    Select Category
+                </option>
+
+                <option value="Fashion">
+                    Fashion
+                </option>
+
+                <option value="Electronics">
+                    Electronics
+                </option>
+
+                <option value="Foods">
+                    Foods
+                </option>
+                <option value="Books">
+                   Books
+                </option>
+
+
+                <option value="Others">
+                    Others
+                </option>
+
+            </select>
+
+
+            <!-- PRICE -->
+
+            <label>
+                Price
+            </label>
+
+            <input
+                type="number"
+                id="productPrice"
+                placeholder="Enter price"
+                min="0"
+            >
+
+
+            <!-- STOCK -->
+
+            <label>
+                Stock
+            </label>
+
+            <input
+                type="number"
+                id="productStock"
+                placeholder="Enter stock quantity"
+                min="0"
+            >
+
+
+            <!-- DESCRIPTION -->
+
+            <label>
+                Description
+            </label>
+
+            <textarea
+                id="productDescription"
+                placeholder="Enter product description"
+            ></textarea>
+
+
+            <!-- PRODUCT IMAGE -->
+
+            <label>
+                Product Image
+            </label>
+
+            <input
+                type="file"
+                id="productImage"
+                accept="image/*"
+                onchange="previewImage(event)"
+            >
+
+
+            <!-- IMAGE PREVIEW -->
+
+            <div
+                class="image-preview"
+                id="imagePreview"
+            >
+
+                <img
+                    id="preview"
+                    src=""
+                    alt="Product Preview"
+                >
+
+            </div>
+
+
+            <!-- SAVE BUTTON -->
+
+            <button
+                class="save-btn"
+                onclick="saveProduct()"
+            >
+                Add Product
+            </button>
+
+
+            <!-- MESSAGE -->
+
+            <p id="message"></p>
+
+
+        </div>
+
+
+        <!-- BACK -->
+
+        <a
+            class="back"
+            href="settings.html"
+        >
+            ← Back to Settings
+        </a>
+
+
+    </div>
+        <script>
+
+
+        // ==========================================
+        // SHOW ADD PRODUCT
+        // ==========================================
+
+        function showAddProduct() {
+
+            const box =
+                document.getElementById("addProduct");
+
+            box.style.display = "block";
+
+            box.scrollIntoView({
+                behavior: "smooth"
+            });
+
+        }
+
+
+
+        // ==========================================
+        // IMAGE PREVIEW
+        // ==========================================
+
+        function previewImage(event) {
+
+            const file =
+                event.target.files[0];
+
+            const preview =
+                document.getElementById("preview");
+
+            const imagePreview =
+                document.getElementById("imagePreview");
+
+
+            if (!file) {
+
+                imagePreview.style.display = "none";
+
+                preview.src = "";
+
+                return;
+            }
+
+
+            const imageURL =
+                URL.createObjectURL(file);
+
+            preview.src = imageURL;
+
+            imagePreview.style.display = "block";
+
+        }
+
+
+
+        // ==========================================
+        // SAVE PRODUCT
+        // ==========================================
+
+      async function saveProduct() {
+
+    const name =
+        document
+            .getElementById("productName")
+            .value
+            .trim();
+
+    const category =
+        document
+            .getElementById("productCategory")
+            .value;
+
+    const price =
+        document
+            .getElementById("productPrice")
+            .value;
+
+    const stock =
+        document
+            .getElementById("productStock")
+            .value;
+
+    const description =
+        document
+            .getElementById("productDescription")
+            .value
+            .trim();
+
+    const imageInput =
+        document.getElementById("productImage");
+
+    const image =
+        imageInput.files[0];
+
+    const message =
+        document.getElementById("message");
+
+    const addProductBox =
+        document.getElementById("addProduct");
+
+
+    // ==========================================
+    // EDIT ID
+    // ==========================================
+
+    const editId =
+        addProductBox.dataset.editId || "";
+
+
+    // ==========================================
+    // VALIDATION
+    // ==========================================
+
+    if (!name) {
+
+        message.innerText =
+            "❌ Please enter Product Name.";
+
+        return;
+    }
+
+
+    if (!category) {
+
+        message.innerText =
+            "❌ Please select Category.";
+
+        return;
+    }
+
+
+    if (!price) {
+
+        message.innerText =
+            "❌ Please enter Price.";
+
+        return;
+    }
+
+
+    if (!stock) {
+
+        message.innerText =
+            "❌ Please enter Stock.";
+
+        return;
+    }
+
+
+    // ==========================================
+    // IMAGE VALIDATION
+    // ==========================================
+
+    // ADD MODE mein image required
+    // EDIT MODE mein image optional
+
+    if (!editId && !image) {
+
+        message.innerText =
+            "❌ Please select Product Image.";
+
+        return;
+    }
+
+
+    // ==========================================
+    // LOGIN USER
+    // ==========================================
+
+    const user = JSON.parse(
+        localStorage.getItem("novaUser") || "null"
+    );
+
+
+    if (!user || !user.email) {
+
+        alert("Please login first.");
+
+        return;
+    }
+
+
+    // ==========================================
+    // FORM DATA
+    // ==========================================
+
+    const fd =
+        new FormData();
+
+
+    fd.append(
+        "name",
+        name
+    );
+
+
+    fd.append(
+        "category",
+        category
+    );
+
+
+    fd.append(
+        "price",
+        Number(price)
+    );
+
+
+    fd.append(
+        "stock",
+        Number(stock)
+    );
+
+
+    fd.append(
+        "description",
+        description
+    );
+
+
+    fd.append(
+        "sellerEmail",
+        user.email
+    );
+
+
+    // Image sirf tab bhejenge
+    // jab new image select hui ho
+
+    if (image) {
+
+        fd.append(
+            "image",
+            image
+        );
+
+    }
+
+
+    // ==========================================
+    // ADD OR UPDATE URL
+    // ==========================================
+
+    let url =
+        "http://localhost:3000/api/products";
+
+    let method =
+        "POST";
+
+
+    // EDIT MODE
+
+    if (editId) {
+
+        url =
+            "http://localhost:3000/api/products/" +
+            editId;
+
+        method =
+            "PUT";
+
+    }
+
+
+    // ==========================================
+    // MESSAGE
+    // ==========================================
+
+    if (editId) {
+
+        message.innerText =
+            "⏳ Updating product...";
+
+    } else {
+
+        message.innerText =
+            "⏳ Saving product...";
+
+    }
+
+
+    // ==========================================
+    // SEND TO BACKEND
+    // ==========================================
+
+    try {
+
+        const response =
+            await fetch(
+                url,
+                {
+                    method: method,
+                    body: fd
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        // ==========================================
+        // SUCCESS
+        // ==========================================
+
+        if (response.ok) {
+
+            if (editId) {
+
+                message.innerText =
+                    "✅ Product updated successfully!";
+
+            } else {
+
+                message.innerText =
+                    "✅ Product added successfully!";
+
+            }
+
+
+            // ==========================================
+            // CLEAR FIELDS
+            // ==========================================
+
+            document
+                .getElementById("productName")
+                .value = "";
+
+
+            document
+                .getElementById("productCategory")
+                .value = "";
+
+
+            document
+                .getElementById("productPrice")
+                .value = "";
+
+
+            document
+                .getElementById("productStock")
+                .value = "";
+
+
+            document
+                .getElementById("productDescription")
+                .value = "";
+
+
+            document
+                .getElementById("productImage")
+                .value = "";
+
+
+            // ==========================================
+            // IMAGE PREVIEW CLEAR
+            // ==========================================
+
+            document
+                .getElementById("imagePreview")
+                .style.display = "none";
+
+
+            document
+                .getElementById("preview")
+                .src = "";
+
+
+            // ==========================================
+            // REMOVE EDIT MODE
+            // ==========================================
+
+            delete addProductBox.dataset.editId;
+
+
+            const heading =
+                addProductBox.querySelector("h2");
+
+            if (heading) {
+
+                heading.innerText =
+                    "➕ Add Product";
+
+            }
+
+
+            const button =
+                addProductBox.querySelector(".save-btn");
+
+            if (button) {
+
+                button.innerText =
+                    "Add Product";
+
+            }
+
+
+            // ==========================================
+            // RELOAD PRODUCTS
+            // ==========================================
+
+            loadSellerProducts();
+
+        }
+
+
+        // ==========================================
+        // ERROR
+        // ==========================================
+
+        else {
+
+            message.innerText =
+                "❌ " +
+                (
+                    data.message ||
+                    "Failed to save product."
+                );
+
+        }
+
+    }
+
+
+    // ==========================================
+    // BACKEND ERROR
+    // ==========================================
+
+    catch (error) {
+
+        console.error(error);
+
+        message.innerText =
+            "❌ Backend server is not connected.";
+
+    }
+
+}
+     
+     // ==========================================
+// LOAD SELLER PRODUCTS
+// ==========================================
+async function loadSellerProducts() {
+
+    const container = document.getElementById("sellerProducts");
+    const noProducts = document.getElementById("noProducts");
+
+    if (!container || !noProducts) {
+        return;
+    }
+
+    container.innerHTML = "<p>⏳ Loading products...</p>";
+    noProducts.style.display = "none";
+
+    try {
+
+        // Current logged-in user
+        const user = JSON.parse(
+            localStorage.getItem("novaUser") || "null"
+        );
+
+        if (!user || !user.email) {
+            container.innerHTML = "<p>❌ Please login first.</p>";
+            return;
+        }
+
+        const response = await fetch(
+            "http://localhost:3000/api/products"
+        );
+
+        const products = await response.json();
+
+        if (!response.ok) {
+            container.innerHTML =
+                "<p>❌ Failed to load products.</p>";
+            return;
+        }
+
+        // ONLY current user's products
+        const myProducts = products.filter(function(product) {
+            return product.sellerEmail === user.email;
+        });
+
+        container.innerHTML = "";
+
+        // No products for this user
+        if (myProducts.length === 0) {
+            noProducts.style.display = "block";
+            return;
+        }
+
+        // Show only current user's products
+        myProducts.forEach(function(product) {
+
+            const card = document.createElement("div");
+            card.className = "seller-product-card";
+
+            const imageHTML = product.image
+                ? `<img src="http://localhost:3000${product.image}" alt="${escapeHTML(product.name || "Product")}">`
+                : `<span class="no-image">📦</span>`;
+
+            card.innerHTML = `
+                <div class="seller-product-image">
+                    ${imageHTML}
+                </div>
+
+                <div class="seller-product-info">
+
+                    <h3>
+                        ${escapeHTML(product.name || "Unnamed Product")}
+                    </h3>
+
+                    <div class="product-category-text">
+                        🏷️ ${escapeHTML(product.category || "Other")}
+                    </div>
+
+                    <div class="product-price">
+                        ₹${Number(product.price || 0).toLocaleString("en-IN")}
+                    </div>
+
+                    <div class="product-stock">
+                        📦 Stock:
+                        <strong>${Number(product.stock || 0)}</strong>
+                    </div>
+
+                    <div class="product-description">
+                        ${escapeHTML(
+                            product.description || "No description"
+                        )}
+                    </div>
+
+                    <div class="product-actions">
+
+                        <button
+                            class="edit-btn"
+                            onclick="editProduct('${product._id}')">
+                            ✏️ Edit
+                        </button>
+
+                        <button
+                            class="delete-btn"
+                            onclick="deleteProduct('${product._id}')">
+                            🗑️ Delete
+                        </button>
+
+                    </div>
+
+                </div>
+            `;
+
+            container.appendChild(card);
+        });
+
+    } catch (error) {
+
+        console.error(error);
+
+        container.innerHTML =
+            "<p>❌ Backend server is not connected.</p>";
+    }
+}
+     
+     
+     
+
+        // Prevent product text from breaking the HTML
+        function escapeHTML(value) {
+            return String(value)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        // ==========================================
+        // DELETE PRODUCT
+        // ==========================================
+        async function deleteProduct(id) {
+
+            const confirmDelete = confirm(
+                "Are you sure you want to delete this product?"
+            );
+
+            if (!confirmDelete) {
+                return;
+            }
+
+            try {
+                const response = await fetch(
+                    "http://localhost:3000/api/products/" + id,
+                    {
+                        method: "DELETE"
+                    }
+                );
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert("✅ Product deleted successfully!");
+                    loadSellerProducts();
+                } else {
+                    alert("❌ " + (data.message || "Delete failed."));
+                }
+
+            } catch (error) {
+                console.error(error);
+                alert("❌ Backend server is not connected.");
+            }
+        }
+
+        // ==========================================
+        // EDIT PRODUCT
+        // ==========================================
+     // ==========================================
+// EDIT PRODUCT
+// ==========================================
+
+async function editProduct(id) {
+
+    try {
+
+        const response =
+            await fetch(
+                "http://localhost:3000/api/products/" + id
+            );
+
+        const product =
+            await response.json();
+
+        if (!response.ok) {
+
+            alert(
+                "❌ Product load nahi hua."
+            );
+
+            return;
+        }
+
+
+        // ==========================================
+        // OPEN ADD PRODUCT FORM
+        // ==========================================
+
+        const box =
+            document.getElementById("addProduct");
+
+        box.style.display = "block";
+
+
+        // ==========================================
+        // FILL OLD DATA
+        // ==========================================
+
+        document.getElementById("productName").value =
+            product.name || "";
+
+        document.getElementById("productCategory").value =
+            product.category || "";
+
+        document.getElementById("productPrice").value =
+            product.price ?? "";
+
+        document.getElementById("productStock").value =
+            product.stock ?? "";
+
+        document.getElementById("productDescription").value =
+            product.description || "";
+
+
+        // ==========================================
+        // SAVE EDITING PRODUCT ID
+        // ==========================================
+
+        box.dataset.editId =
+            product._id;
+
+
+        // ==========================================
+        // CHANGE HEADING
+        // ==========================================
+
+        const heading =
+            box.querySelector("h2");
+
+        if (heading) {
+
+            heading.innerText =
+                "✏️ Edit Product";
+
+        }
+
+
+        // ==========================================
+        // CHANGE BUTTON
+        // ==========================================
+
+        const button =
+            box.querySelector(".save-btn");
+
+        if (button) {
+
+            button.innerText =
+                "Update Product";
+
+        }
+
+
+        // ==========================================
+        // SCROLL TO FORM
+        // ==========================================
+
+        box.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert(
+            "❌ Backend server se product load nahi hua."
+        );
+
+    }
+
+}
+
+        // ==========================================
+        // PAGE LOAD
+        // ==========================================
+        document.addEventListener("DOMContentLoaded", function() {
+            loadSellerProducts();
+        });
+            // ==========================================
+    // LOAD SELLER NOTIFICATIONS
+    // ==========================================
+
+    async function loadSellerNotifications() {
+
+        const user =
+            JSON.parse(
+                localStorage.getItem("novaUser") || "null"
+            );
+
+        const list =
+            document.getElementById(
+                "notificationList"
+            );
+
+        const count =
+            document.getElementById(
+                "notificationCount"
+            );
+
+        if (
+            !user ||
+            !user.email ||
+            !list ||
+            !count
+        ) {
+            return;
+        }
+
+        try {
+
+            const response =
+                await fetch(
+                    "http://localhost:3000/api/notifications/" +
+                    encodeURIComponent(user.email)
+                );
+
+            const notifications =
+                await response.json();
+
+            if (!response.ok) {
+                console.error(
+                    notifications.message
+                );
+                return;
+            }
+
+            list.style.display = "block";
+
+            if (notifications.length === 0) {
+
+                count.textContent = "0";
+
+                list.innerHTML =
+                    "<p>No notifications yet.</p>";
+
+                return;
+            }
+
+            const unreadCount =
+                notifications.filter(
+                    function(notification) {
+                        return !notification.isRead;
+                    }
+                ).length;
+
+            count.textContent =
+                unreadCount;
+
+            list.innerHTML = "";
+
+            notifications.forEach(
+                function(notification) {
+
+                    const item =
+                        document.createElement("div");
+
+                    item.className =
+                        "notification-item";
+
+                    item.innerHTML = `
+
+                        <h4>
+                            ${escapeHTML(
+                                notification.title
+                            )}
+                        </h4>
+
+                        <p>
+                            ${escapeHTML(
+                                notification.message
+                            )}
+                        </p>
+
+                        <div class="notification-time">
+
+                            ${new Date(
+                                notification.createdAt
+                            ).toLocaleString("en-IN")}
+
+                        </div>
+
+                    `;
+
+                    list.appendChild(item);
+
+                }
+            );
+
+        } catch (error) {
+
+            console.error(
+                "Notification error:",
+                error
+            );
+
+        }
+    }
+
+
+</script>
+    </script>
+
+</body>
+
+</html>

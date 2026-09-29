@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login - NOVA</title>
+<link rel="stylesheet" href="login.css">
+</head>
+<body>
+<main class="login-page">
+  <div class="login-card">
+    <div class="account-icon">👤</div>
+    <p class="welcome">Sign in your accout</p>
+    <button class="google-btn" type="button"><span class="google-logo">G</span><span>Continue with Google</span></button>
+    <div class="divider"><span>or</span></div>
+    <p class="new-user">New to NOVA?</p>
+<button
+    class="create-btn"
+    type="button"
+    onclick="window.location.href='account.html'">
+    Create an account
+</button>
+<button
+        class="logout-btn"
+        type="button"
+        onclick="logoutAccount()">
+        Logout
+    </button>
+  </div>
+</main>
+<script src="login.js"></script>
+</body>
+</html>

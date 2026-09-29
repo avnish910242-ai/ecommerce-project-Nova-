@@ -1,0 +1,1347 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>NOVA STORE</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        /* ================= CART ================= */
+
+        .cart-overlay {
+            position: fixed;
+            inset: 0;
+            background:rgba(0, 0, 0, 0.45);
+            z-index: 9998;
+            display: none;
+        }
+
+        .cart-overlay.active {
+            display: block;
+        }
+
+        .cart-sidebar {
+            position: fixed;
+            top: 0;
+            right: -420px;
+            width: 400px;
+            max-width: 90%;
+            height: 100vh;
+            background: white;
+            z-index: 9999;
+            box-shadow: -5px 0 25px rgba(0, 0, 0, 0.2);
+            transition: right 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .cart-sidebar.active {
+            right: 0;
+        }
+
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .cart-header h2 {
+            margin: 0;
+        }
+
+        .cart-close {
+            border: none;
+            background: white;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .cart-body {
+    padding: 20px;
+
+    flex: 1;
+    min-height: 0;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    box-sizing: border-box;
+}
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .cart-item-info {
+            flex: 1;
+        }
+
+        .cart-item-info h3 {
+            margin: 0 0 6px;
+            font-size: 16px;
+        }
+
+        .cart-price {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .quantity-controls button {
+            width: 30px;
+            height: 30px;
+            border: none;
+            border-radius: 6px;
+            background:black;
+            color: white;
+            cursor: pointer;
+        }
+
+        .remove-btn {
+            border: none;
+            background: #ffe8e8;
+            color: #d00;
+            padding: 7px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+
+        .cart-footer {
+            padding: 20px;
+            border-top: 1px solid #ddd;
+        }
+
+        .cart-total {
+            display: flex;
+            justify-content: space-between;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: blue;
+        }
+
+      /*  .checkout-btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            background:red;
+            color: blue;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .checkout-btn:hover {
+            background: #333;
+        }*/
+
+        .empty-cart {
+            text-align: center;
+            padding: 60px 20px;
+            color: #777;
+        }
+
+        /* ================= SIDEBAR ================= */
+
+        .sidebar-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            z-index: 9998;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: 0.25s;
+        }
+
+        .sidebar-overlay.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 280px;
+            max-width: 85vw;
+            height: 100vh;
+            box-sizing: border-box;
+            background: white;
+            z-index: 9999;
+            overflow-y: auto;
+            transform: translateX(-105%);
+            transition: transform 0.3s ease;
+            box-shadow: 6px 0 25px rgba(41, 5, 224, 0.15);
+        }
+
+        .sidebar.active {
+            transform: translateX(0);
+        }
+
+        .sidebar-logo {
+            font-size: 28px;
+            font-weight: 900;
+            padding: 22px 18px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .sidebar-logo span {
+            color: blue;
+        }
+
+        .sidebar-section {
+            padding: 10px 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .sidebar-section a {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 14px;
+            border-radius: 9px;
+            text-decoration: none;
+            color: #222;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .sidebar-section a:hover {
+            background:whitesmoke;
+            color:black;
+        }
+
+        .sidebar-title {
+            padding: 18px 18px 7px;
+            color: blue;
+            font-size: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .sidebar-close {
+            position: absolute;
+            top: 17px;
+            right: 14px;
+            width: 38px;
+            height: 38px;
+            border: 0;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+            font-size: 18px;
+        }
+        .sidebar-close:hover {
+            background:white;
+            color: black;
+        }
+
+        .menu-btn {
+            cursor: pointer;
+        }
+
+        /* ================= CART BUTTON ================= */
+
+        .cart-btn {
+            cursor: pointer;
+           
+            
+        }
+@media (max-width: 600px) {
+
+    .cart-sidebar {
+        width: 70vw;
+        max-width: 320px;
+    }
+
+}
+    </style>
+</head>
+
+
+<body>
+
+    <!-- ================= NAVBAR ================= -->
+
+    <header class="navbar" id="home">
+
+        <div class="nav-left">
+
+            <!-- Menu Button -->
+
+            <button class="menu-btn" onclick="toggleSidebar()">
+                ☰
+            </button>
+
+
+            <!-- Logo -->
+
+            <a href="#home" class="logo">
+                NOVA
+            </a>
+
+        </div>
+
+
+      <!-- Right Icons -->
+
+<div class="nav-icons">
+
+    <div class="search-box">
+
+        <input
+            type="text"
+            id="searchInput"
+            placeholder="Search products"
+            onkeydown="handleSearchKey(event)"
+        >
+
+        <button
+            type="button"
+            class="search-button"
+            onclick="searchProduct()">
+            🔍
+        </button>
+
+    </div>
+
+    <button
+    class="account-btn"
+    onclick="window.location.href='login.html'"
+    
+>
+    👤
+</button>
+
+    <button
+        class="cart-btn"
+        onclick="openCart()">
+         🛒 
+        
+    </button>
+
+</div>
+
+</header>
+
+
+    <!-- ================= SIDEBAR ================= -->
+
+    <div class="sidebar-overlay" onclick="closeSidebar()">
+    </div>
+
+
+ <aside class="sidebar" id="sidebar">
+
+    <button class="sidebar-close" type="button" onclick="closeSidebar()">
+        ✕
+    </button>
+
+
+    <!-- Sidebar Logo -->
+
+    <div class="sidebar-logo">
+        NOVA
+    </div>
+
+
+    <!-- Main Menu -->
+
+    <div class="sidebar-section">
+
+        <a href="#home" onclick="closeSidebar()">
+            🏠
+            <span>Home</span>
+        </a>
+
+        <a href="#shop" onclick="closeSidebar();">
+    🛍️
+    <span>Shop</span>
+</a>
+
+        <a href="#categories" onclick="closeSidebar()">
+            ▣
+            <span>Categories</span>
+        </a>
+
+        <a href="#deals" onclick="closeSidebar()">
+            🔥
+            <span>Deals</span>
+        </a>
+
+    </div>
+
+
+    <!-- Shopping -->
+
+    <div class="sidebar-title">
+        YOUR SHOPING
+    </div>
+
+    <div class="sidebar-section">
+
+        <a href="#" onclick="openCart(); closeSidebar(); return false;">
+             🛒 
+            <span>Cart</span>
+        </a>
+
+        <a href="#" onclick="showWishlist(); closeSidebar(); return false;">
+            ♡
+            <span>Wishlist</span>
+        </a>
+<a href="#orders" onclick="showOrdersPage(); closeSidebar(); return false;">
+    📦
+    <span>My Orders</span>
+</a>
+
+    </div>
+
+
+   <!-- Categories -->
+
+<div class="sidebar-title">
+    CATEGORIES
+</div>
+
+<div class="sidebar-section">
+
+    <a href="#shop" onclick="filterCategory('Fashion'); closeSidebar(); return false;">
+        👕
+        <span>Fashion</span>
+    </a>
+
+    <a href="#shop" onclick="filterCategory('Electronics'); closeSidebar(); return false;">
+        💻
+        <span>Electronics</span>
+    </a>
+
+    <a href="#shop" onclick="filterCategory('Shoes'); closeSidebar(); return false;">
+        👟
+        <span>Shoes</span>
+    </a>
+
+    <a href="#shop" onclick="filterCategory('Accessories'); closeSidebar(); return false;">
+        🎒
+        <span>Accessories</span>
+    </a>
+
+</div>
+    <!-- Account -->
+
+    <div class="sidebar-title">
+       ACCOUNT
+    </div>
+
+    <div class="sidebar-section">
+<a href="login.html">
+    👤
+    <span id="accountName">My Account</span>
+</a>
+        <a href="#" id="logoutLink"
+           onclick="logoutUser(); return false;"
+           style="display: none;">
+            🚪
+            <span>Logout</span>
+        </a>
+<a href="settings.html">
+    ⚙️
+    <span>Settings</span>
+</a>
+
+    </div>
+
+</aside>
+
+
+<!-- ================= CART ================= -->
+
+<div
+    class="cart-overlay"
+    id="cartOverlay"
+    onclick="closeCart()">
+</div>
+
+
+<aside
+    class="cart-sidebar"
+    id="cartSidebar">
+
+
+   <!-- ================= CART HEADER ================= -->
+
+<div class="cart-header">
+
+    <div class="cart-title-area">
+
+        <h2>
+             🛒 Your Cart
+        </h2>
+
+        <div class="cart-address-row">
+
+            <!-- UPDATE LOCATION -->
+    <button
+    type="button"
+    class="update-location-btn"
+    onclick="showDeliveryForm()">
+     ➤  Choose Location
+     
+     
+</button>
+            <!-- SCROLLING ADDRESS -->
+            <marquee
+                class="cart-address"
+                id="savedAddressText"
+                behavior="scroll"
+                direction="left"
+                scrollamount="4">
+                Choose location
+            </marquee> 
+
+        </div>
+
+    </div>
+
+    <!-- CLOSE BUTTON -->
+    <button
+        class="cart-close"
+        type="button"
+        onclick="closeCart()">
+        ✕
+    </button>
+
+</div>
+    <!-- ================= CART PRODUCTS ================= -->
+<div
+    class="cart-body"
+    id="cartBody">
+</div>
+<div
+    class="cart-body"
+    id="ordersList"
+    style="display:none;">
+</div>
+
+<!-- ==========================================
+     ADD DELIVERY ADDRESS
+<!-- ==========================================
+     DELIVERY ADDRESS
+========================================== -->
+
+<div class="delivery-address-box" style="display: none;">
+
+    <!-- =========================
+         HEADER
+    ========================== -->
+
+    <div class="delivery-header">
+
+        <h2> Add Delivery Address</h2>
+
+    </div>
+
+
+    <!-- =========================
+         SCROLLABLE ADDRESS FIELDS
+    ========================== -->
+
+    <div class="delivery-fields">
+
+
+        <!-- FULL NAME -->
+
+        <div class="address-row">
+
+            <label>Full Name</label>
+
+            <input
+                type="text"
+                id="deliveryFullName"
+                placeholder="Enter full name"
+            >
+
+        </div>
+
+
+        <!-- MOBILE -->
+
+        <div class="address-row">
+
+            <label>Mobile No.</label>
+
+            <input
+                type="tel"
+                id="deliveryPhone"
+                placeholder="Enter mobile number"
+            >
+
+        </div>
+
+
+        <!-- PIN CODE -->
+
+        <div class="address-row">
+
+            <label>PIN Code</label>
+
+            <input
+                type="text"
+                id="deliveryPin"
+                placeholder="Enter PIN code"
+            >
+
+        </div>
+
+
+        <!-- HOUSE NO -->
+
+        <div class="address-row">
+
+            <label>House No.</label>
+
+            <input
+                type="text"
+                id="deliveryHouse"
+                placeholder="House / Flat / Building"
+            >
+
+        </div>
+
+<div class="address-row">
+    <label>Village / Area</label>
+
+    <input
+        type="text"
+        id="deliveryArea"
+        placeholder="Enter village / area"
+    >
+</div>
+       
+
+        <!-- LANDMARK -->
+
+        <div class="address-row">
+
+            <label>Landmark</label>
+
+            <input
+                type="text"
+                id="deliveryLandmark"
+                placeholder="Nearby landmark"
+            >
+
+        </div>
+
+
+        <!-- TOWN / CITY -->
+
+        <div class="address-row">
+
+            <label>Town/City</label>
+
+            <input
+                type="text"
+                id="deliveryCity"
+                placeholder="Enter town / city"
+            >
+
+        </div>
+
+
+        <!-- STATE -->
+
+        <div class="address-row">
+
+            <label>State</label>
+
+            <select id="deliveryState">
+
+                <option value="">
+                    Select State
+                </option>
+
+                <option>Bihar</option>
+
+                <option>
+                    Uttar Pradesh
+                </option>
+
+                <option>
+                    Jharkhand
+                </option>
+
+                <option>
+                    West Bengal
+                </option>
+
+                <option>Delhi</option>
+
+                <option>Maharashtra</option>
+
+                <option>Rajasthan</option>
+
+                <option>
+                    Madhya Pradesh
+                </option>
+
+                <option>Gujarat</option>
+
+                <option>Punjab</option>
+
+                <option>Haryana</option>
+
+                <option>Odisha</option>
+
+                <option>Other</option>
+
+            </select>
+
+        </div>
+
+
+    </div>
+    <!-- END SCROLLABLE ADDRESS FIELDS -->
+
+
+    <!-- =========================
+         FIXED BOTTOM SECTION
+    ========================== -->
+
+
+    <!-- CURRENT LOCATION -->
+
+    <button
+        type="button"
+        class="current-location-btn"
+        onclick="useCurrentLocation()"
+    >
+
+         ➤  Use My Current Location
+
+    </button>
+
+
+    <!-- LOCATION STATUS -->
+
+    <div
+        id="locationStatus"
+        class="location-status"
+    >
+
+         ➤  Location status...
+
+    </div>
+
+
+    <!-- SAVE ADDRESS -->
+
+    <button
+        type="button"
+        class="save-address-btn"
+        onclick="saveDeliveryAddress()"
+    >
+
+        Save Address
+
+    </button>
+
+
+</div>
+    <!-- PAYMENT METHOD -->
+
+<div
+    id="paymentMethod"
+    style="
+        display:none;
+        padding:20px;
+        background:#fff;
+        border-top:1px solid #ddd;
+    "
+>
+
+    <h2 style="margin-top:0;">
+        Select Payment Method
+    </h2>
+
+    <p style="color:#666;">
+        Choose how you want to pay.
+    </p>
+
+    <button
+        type="button"
+        onclick="startOnlinePayment()"
+        style="
+            width:100%;
+            padding:15px;
+            margin-top:15px;
+            border:none;
+            border-radius:10px;
+            background:whitesmoke;
+            color:blue;
+            font-size:16px;
+            font-weight:600;
+            cursor:pointer;
+        "
+    >
+         Online Payment
+    </button>
+
+    <button
+        type="button"
+        onclick="selectDeliveryOnPayment()"
+        style="
+            width:100%;
+            padding:15px;
+            margin-top:12px;
+            border:1px solid #ddd;
+            border-radius:10px;
+            background:whitesmoke;
+            color:red;
+            font-size:16px;
+            font-weight:600;
+            cursor:pointer;
+        "
+    >
+         Delivery on Payment
+    </button>
+
+</div>
+
+
+    <!-- ================= ORDER SUMMARY ================= -->
+<div
+    class="cart-footer"
+    id="cartFooter"
+    style="display:none;">
+        <div class="summary-row">
+
+            <span>
+                Subtotal
+            </span>
+
+            <span id="cartSubtotal">
+                ₹0
+            </span>
+
+        </div>
+
+
+        <div class="summary-row">
+
+            <span>
+                Delivery
+            </span>
+
+            <span>
+                FREE
+            </span>
+
+        </div>
+
+
+        <div class="cart-total">
+
+            <span>
+                Total
+            </span>
+
+            <span id="cartTotal">
+                ₹0
+            </span>
+
+        </div>
+
+
+        <button
+            class="checkout-btn"
+            type="button"
+            onclick="checkout()">
+
+             BUY NOW
+
+        </button>
+
+    </div>
+
+</aside>
+   <script>
+
+/* ==========================================
+   DISPLAY CART
+========================================== */
+
+function displayCart() {
+
+    const cartBody = document.getElementById("cartBody");
+    const cartTotal = document.getElementById("cartTotal");
+    const cartSubtotal = document.getElementById("cartSubtotal");
+
+    if (!cartBody) {
+        return;
+    }
+
+    /* EMPTY CART */
+    if (cart.length === 0) {
+
+        cartBody.innerHTML = `
+            <div class="empty-cart">
+                <div style="font-size:50px;">🛒
+                </div>
+                <h3>Your cart is empty</h3>
+                <p>Add some products to your cart.</p>
+            </div>
+        `;
+
+        if (cartSubtotal) {
+            cartSubtotal.textContent = "₹0";
+        }
+
+        if (cartTotal) {
+            cartTotal.textContent = "₹0";
+        }
+
+        return;
+    }
+
+    /* SUBTOTAL */
+    let subtotal = 0;
+
+    cart.forEach(function(item) {
+
+        const price = Number(item.price) || 0;
+        const quantity = Number(item.quantity) || 1;
+
+        subtotal += price * quantity;
+
+    });
+
+    /* CART PRODUCTS */
+    cartBody.innerHTML = "";
+
+    cart.forEach(function(item, index) {
+
+        const price = Number(item.price) || 0;
+        const quantity = Number(item.quantity) || 1;
+        const itemTotal = price * quantity;
+
+        let imageURL = "";
+
+        if (item.image) {
+
+            if (item.image.startsWith("http")) {
+                imageURL = item.image;
+            } else {
+                imageURL =
+                    "http://localhost:3000" + item.image;
+            }
+
+        }
+
+        const cartItem = document.createElement("div");
+
+        cartItem.className = "cart-item";
+
+        cartItem.innerHTML = `
+
+            <div class="cart-product-image">
+
+                ${
+                    imageURL
+                    ?
+                    `
+                    <img
+                        src="${imageURL}"
+                        alt="${item.name || "Product"}"
+                    >
+                    `
+                    :
+                    `
+                    <div class="no-cart-image">
+                        📦
+                    </div>
+                    `
+                }
+
+            </div>
+
+            <div class="cart-item-info">
+
+                <h3>
+                    ${item.name || "Product"}
+                </h3>
+
+                <p class="cart-price">
+                    ₹${price.toLocaleString("en-IN")}
+                </p>
+
+                <div class="quantity-controls">
+
+                    <button
+                        type="button"
+                        onclick="decreaseQuantity(${index})">
+                        −
+                    </button>
+
+                    <span>
+                        ${quantity}
+                    </span>
+
+                    <button
+                        type="button"
+                        onclick="increaseQuantity(${index})">
+                        +
+                    </button>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="remove-btn"
+                    onclick="removeFromCart(${index})">
+                    Remove
+                </button>
+
+            </div>
+
+            <strong class="cart-item-total">
+                ₹${itemTotal.toLocaleString("en-IN")}
+            </strong>
+
+        `;
+
+        cartBody.appendChild(cartItem);
+
+    });
+
+    /* UPDATE SUBTOTAL */
+    if (cartSubtotal) {
+        cartSubtotal.textContent =
+            "₹" + subtotal.toLocaleString("en-IN");
+    }
+
+    /* UPDATE TOTAL */
+    if (cartTotal) {
+        cartTotal.textContent =
+            "₹" + subtotal.toLocaleString("en-IN");
+    }
+
+}
+
+</script>
+
+<!-- ================= HERO ================= -->
+
+<section class="hero">
+
+    <div class="hero-text ">
+
+        <p class="small-title">
+            NEW COLLECTION 2026
+        </p>
+
+            <h1>
+                Upgrade Your
+                <span>
+                    Everyday.
+                </span>
+            </h1>
+
+
+            <p class="description">
+              Enjoy your life, we’ll work for you.
+
+            </p>
+
+
+            <button class="shop-btn" onclick="shopNow()">
+                Shop Now →
+            </button>
+
+        </div>
+
+
+        <div class="hero-image">
+
+            <div class="product-circle">
+               NOVA
+            </div>
+
+        </div>
+
+    </section>
+<!-- ================= CATEGORIES ================= -->
+
+<section class="categories" id="categories">
+
+    <div class="section-heading">
+
+        <div>
+
+            <p>
+                EXPLORE
+            </p>
+
+            <h2>
+                Shop by Category
+            </h2>
+
+        </div>
+
+    </div>
+
+
+    <div class="category-grid">
+
+        <!-- Fashion -->
+
+        <a href="#shop"
+           class="category"
+           onclick="filterCategory('Fashion'); return false;">
+
+            <div class="category-icon">
+                👕
+            </div>
+
+            <h3> 
+                Fashion
+            </h3>
+
+            <p>
+                120+ Products
+            </p>
+
+        </a>
+
+
+        <!-- Electronics -->
+
+        <a href="#shop"
+           class="category"
+           onclick="filterCategory('Electronics'); return false;">
+
+            <div class="category-icon">
+                💻
+            </div>
+
+            <h3>
+                Electronics
+            </h3>
+
+            <p>
+                80+ Products
+            </p>
+
+        </a>
+
+
+        <!-- Books -->
+
+        <a href="#shop"
+           class="category"
+           onclick="filterCategory('Books'); return false;">
+
+            <div class="category-icon">
+                📚
+            </div>
+
+            <h3>
+                Books
+            </h3>
+
+            <p>
+                120+ Products
+            </p>
+
+        </a>
+
+
+        <!-- Foods -->
+
+        <a href="#shop"
+           class="category"
+           onclick="filterCategory('Foods'); return false;">
+
+            <div class="category-icon">
+                🍔
+            </div>
+
+            <h3>
+                Foods
+            </h3>
+
+            <p>
+                120+ Products
+            </p>
+
+        </a>
+
+
+        <!-- Shoes -->
+
+        <a href="#shop"
+           class="category"
+           onclick="filterCategory('Shoes'); return false;">
+
+            <div class="category-icon">
+                👟
+            </div>
+
+            <h3>
+                Shoes
+            </h3>
+
+            <p>
+                95+ Products
+            </p>
+
+        </a>
+
+
+        <!-- Others -->
+
+        <a href="#shop"
+           class="category"
+           onclick="filterCategory('Others'); return false;">
+
+            <div class="category-icon">
+                🛍️
+            </div>
+
+            <h3>
+                Others
+            </h3>
+
+            <p>
+                120+ Products
+            </p>
+
+        </a>
+
+    </div>
+
+</section>
+
+    <!-- ================= PRODUCTS ================= -->
+
+<section class="products" id="shop">
+
+    <div class="section-heading">
+
+        <div>
+            <p>PRODUCTS</p>
+
+            <h2>All Products</h2>
+        </div>
+
+    </div>
+
+
+    <!-- Products will load here automatically -->
+    <div
+        class="product-grid"
+        id="productGrid">
+    </div>
+
+
+    <!-- Loading message -->
+    <p
+        id="productsLoading"
+        style="
+            display:none;
+            text-align:center;
+            padding:30px;
+        ">
+        Loading more products...
+    </p>
+
+</section>
+
+    <!-- ================= DEALS ================= -->
+
+    <section  class="deals" id="deals">
+
+        <div class="section-heading">
+
+            <div>
+
+                <p>
+                    LIMITED TIME
+                </p>
+
+                <h2>
+                    Special Deals
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        <div class="deal-box">
+
+            <h2>
+                Get up to 30% OFF
+            </h2>
+
+            <p>
+                Discover selected products at special prices.
+            </p>
+
+
+            <a href="products.html">
+                Shop Deals →
+            </a>
+
+        </div>
+
+    </section>
+ 
+    <!-- ================= FOOTER ================= -->
+
+    <footer>
+
+        <div class="footer-logo">
+            NOVA
+        </div>
+
+
+        <p>
+            Modern products. Better living.
+        </p>
+
+
+        <h2 class="copyright">
+            © 2026 NOVA All rights reserved.
+        </h2>
+
+    </footer>
+
+
+    <!-- ================= JAVASCRIPT ================= -->
+
+    <script src="./script.js"></script>
+</body>
+</html>

@@ -1,0 +1,107 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: white;
+        }
+
+        .header {
+            color: black;
+            padding: 20px;
+            font-size: 20px;
+            font-weight: none;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .role-btn {
+            display: block;
+            width: 100%;
+            padding: 18px;
+            margin: 20px 0;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            cursor: pointer;
+            background: rgb(222, 225, 226);
+            color: black;
+        }
+
+        .role-btn:hover {
+            background: whitesmoke;
+        }
+
+        .back {
+            text-decoration: none;
+            color: #555;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header">
+        ⚙️ Settings
+    </div>
+
+    <div class="container">
+
+        <h2>Select Your Role</h2>
+<button class="role-btn" onclick="openSeller()">
+    Seller
+</button>
+
+        <br>
+
+        <a class="back" href="index.html">
+            ← Back to Home
+        </a>
+        <p style="color: red;">if you want to become a seller please contact on </p>
+        <p>avnish910242@gmail.com</p>
+        
+
+    </div>
+<script>
+    function openSeller() {
+
+    const user = JSON.parse(
+        localStorage.getItem("novaUser")
+    );
+
+    // Login nahi hai
+    if (!user) {
+        window.location.href = "login.html";
+        return;
+    }
+
+    // Seller role check
+    if (
+        !user.roles ||
+        !user.roles.includes("seller")
+    ) {
+        alert("You are not a seller.");
+        return;
+    }
+
+    // Seller hai
+    window.location.href = "seller.html";
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1454 @@
+const express = require("express");
+const mongoose = require("mongoose");
+const cors = require("cors");
+const bcrypt = require("bcryptjs");
+const path = require("path");
+const fs = require("fs");
+const multer = require("multer");
+const DeliveryAddress = require("./DeliveryAddress");
+
+const app = express();
+
+app.use(cors());
+app.use(express.json());
+
+
+// ==========================================
+// UPLOAD FOLDER
+// ==========================================
+
+const uploadFolder = path.join(__dirname, "uploads");
+
+if (!fs.existsSync(uploadFolder)) {
+    fs.mkdirSync(uploadFolder);
+}
+
+
+// ==========================================
+// IMAGE UPLOAD
+// ==========================================
+
+const storage = multer.diskStorage({
+
+    destination: function (req, file, cb) {
+        cb(null, uploadFolder);
+    },
+
+    filename: function (req, file, cb) {
+
+        const fileName =
+            Date.now() +
+            "-" +
+            file.originalname.replace(/\s+/g, "-");
+
+        cb(null, fileName);
+    }
+
+});
+
+const upload = multer({
+
+    storage: storage,
+
+    fileFilter: function (req, file, cb) {
+
+        if (file.mimetype.startsWith("image/")) {
+            cb(null, true);
+        } else {
+            cb(new Error("Only image files are allowed"));
+        }
+
+    }
+
+});
+
+
+// Make images accessible
+app.use(
+    "/uploads",
+    express.static(uploadFolder)
+);
+
+
+// ==========================================
+// MONGODB
+// ==========================================
+
+mongoose
+    .connect("mongodb://127.0.0.1:27017/ecommerce-shop")
+    .then(() => {
+        console.log("MongoDB connected!");
+    })
+    .catch((error) => {
+        console.log("MongoDB error:", error.message);
+    });
+
+
+// ==========================================
+// PRODUCT SCHEMA
+// ==========================================
+
+const productSchema = new mongoose.Schema({
+
+    name: {
+        type: String,
+        required: true
+    },
+
+    category: {
+        type: String,
+        default: ""
+    },
+
+    price: {
+        type: Number,
+        required: true
+    },
+
+    stock: {
+        type: Number,
+        default: 0
+    },
+
+    description: {
+        type: String,
+        default: ""
+    },
+
+    image: {
+        type: String,
+        default: ""
+    },
+
+    sellerEmail: {
+        type: String,
+        default: ""
+    }
+
+});
+
+const Product =
+    mongoose.model("Product", productSchema);
+    // ==========================================
+// NOTIFICATION SCHEMA
+// ==========================================
+
+const notificationSchema = new mongoose.Schema(
+    {
+        sellerEmail: {
+            type: String,
+            required: true
+        },
+
+        title: {
+            type: String,
+            required: true
+        },
+
+        message: {
+            type: String,
+            required: true
+        },
+
+        orderId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Order",
+            required: true
+        },
+
+        isRead: {
+            type: Boolean,
+            default: false
+        }
+    },
+    {
+        timestamps: true
+    }
+);
+
+const Notification =
+    mongoose.model(
+        "Notification",
+        notificationSchema
+    );
+
+
+// ==========================================
+// USER SCHEMA
+// ==========================================
+
+const userSchema = new mongoose.Schema({
+
+    name: {
+        type: String,
+        required: true
+    },
+
+    email: {
+        type: String,
+        required: true,
+        unique: true
+    },
+
+    password: {
+        type: String,
+        required: true
+    },
+
+  roles: {
+    type: [String],
+    enum: ["customer", "seller"],
+    default: ["customer"]
+}
+
+});
+
+const User =
+    mongoose.model("User", userSchema);
+
+
+// ==========================================
+// ORDER SCHEMA
+// ==========================================
+
+const orderSchema = new mongoose.Schema({
+
+    customerName: {
+        type: String,
+        required: true
+    },
+
+    customerEmail: {
+        type: String,
+        required: true
+    },
+
+    items: [
+        {
+            productId: {
+                type: mongoose.Schema.Types.ObjectId,
+                required: true
+            },
+
+            name: {
+                type: String,
+                required: true
+            },
+
+            price: {
+                type: Number,
+                required: true
+            },
+
+            quantity: {
+                type: Number,
+                required: true
+            },
+
+            image: {
+                type: String,
+                default: ""
+            }
+        }
+    ],
+
+    totalAmount: {
+        type: Number,
+        required: true
+    },
+
+    address: {
+        type: String,
+        required: true
+    },
+
+    phone: {
+        type: String,
+        required: true
+    },
+
+paymentMethod: {
+    type: String,
+
+    enum: [
+        "ONLINE",
+        "DELIVERY_ON_PAYMENT"
+    ],
+
+    required: true
+},
+
+    status: {
+        type: String,
+
+        enum: [
+            "Pending",
+            "Confirmed",
+            "Shipped",
+            "Delivered",
+            "Cancelled"
+        ],
+
+        default: "Pending"
+    },
+
+    createdAt: {
+        type: Date,
+        default: Date.now
+    }
+
+});
+
+const Order =
+    mongoose.model("Order", orderSchema);
+
+
+// ==========================================
+// HOME
+// ==========================================
+
+app.get("/", (req, res) => {
+
+    res.send("E-commerce Backend is running!");
+
+});
+
+
+// ==========================================
+// GET ALL PRODUCTS
+// ==========================================
+
+app.get("/api/products", async (req, res) => {
+
+    try {
+
+        const products =
+            await Product.find().sort({ _id: -1 });
+
+        res.json(products);
+
+    } catch (error) {
+
+        console.log(error);
+
+        res.status(500).json({
+            message: error.message
+        });
+
+    }
+
+});
+
+
+// ==========================================
+// ADD PRODUCT
+// ==========================================
+
+app.post(
+    "/api/products",
+    upload.single("image"),
+    async (req, res) => {
+
+        try {
+
+            console.log("Adding product...");
+            console.log(req.body);
+
+            const product =
+                new Product({
+
+                    name: req.body.name,
+
+                    category:
+                        req.body.category || "",
+
+                    price:
+                        Number(req.body.price),
+
+                    stock:
+                        Number(req.body.stock || 0),
+
+                    description:
+                        req.body.description || "",
+
+                    image:
+                        req.file
+                            ? "/uploads/" + req.file.filename
+                            : "",
+
+                    sellerEmail:
+                        req.body.sellerEmail || ""
+
+                });
+
+            const savedProduct =
+                await product.save();
+
+            console.log(
+                "Product saved:",
+                savedProduct
+            );
+
+            res.status(201).json(savedProduct);
+
+        } catch (error) {
+
+            console.log(
+                "ADD PRODUCT ERROR:",
+                error
+            );
+
+            res.status(500).json({
+                message: error.message
+            });
+
+        }
+
+    }
+);
+
+// ==========================================
+// GET SINGLE PRODUCT
+// ==========================================
+
+app.get(
+    "/api/products/:id",
+    async (req, res) => {
+
+        try {
+
+            const product =
+                await Product.findById(
+                    req.params.id
+                );
+
+            if (!product) {
+
+                return res.status(404).json({
+                    message: "Product not found"
+                });
+
+            }
+
+            res.json(product);
+
+        } catch (error) {
+
+            console.log(
+                "GET PRODUCT ERROR:",
+                error
+            );
+
+            res.status(500).json({
+                message: error.message
+            });
+
+        }
+
+    }
+);
+// ==========================================
+// UPDATE PRODUCT
+// ==========================================
+
+app.put(
+    "/api/products/:id",
+    upload.single("image"),
+    async (req, res) => {
+
+        try {
+
+            const product =
+                await Product.findById(req.params.id);
+
+            if (!product) {
+
+                return res.status(404).json({
+                    message: "Product not found"
+                });
+
+            }
+
+            product.name =
+                req.body.name;
+
+            product.category =
+                req.body.category || "";
+
+            product.price =
+                Number(req.body.price);
+
+            product.stock =
+                Number(req.body.stock || 0);
+
+            product.description =
+                req.body.description || "";
+
+            if (req.file) {
+
+                product.image =
+                    "/uploads/" +
+                    req.file.filename;
+
+            }
+
+            const updatedProduct =
+                await product.save();
+
+            res.json(updatedProduct);
+
+        } catch (error) {
+
+            console.log(
+                "UPDATE ERROR:",
+                error
+            );
+
+            res.status(500).json({
+                message: error.message
+            });
+
+        }
+
+    }
+);
+
+
+// ==========================================
+// DELETE PRODUCT
+// ==========================================
+
+app.delete(
+    "/api/products/:id",
+    async (req, res) => {
+
+        try {
+
+            const product =
+                await Product.findByIdAndDelete(
+                    req.params.id
+                );
+
+            if (!product) {
+
+                return res.status(404).json({
+                    message: "Product not found"
+                });
+
+            }
+
+            res.json({
+                message: "Product deleted successfully"
+            });
+
+        } catch (error) {
+
+            console.log(error);
+
+            res.status(500).json({
+                message: error.message
+            });
+
+        }
+
+    }
+);
+
+
+// ==========================================
+// REGISTER
+// ==========================================
+
+app.post(
+    "/api/register",
+    async (req, res) => {
+
+        try {
+
+            const {
+                name,
+                email,
+                password,
+                role
+            } = req.body;
+
+            if (!name || !email || !password) {
+
+                return res.status(400).json({
+                    message: "All fields are required"
+                });
+
+            }
+
+            const existingUser =
+                await User.findOne({
+                    email: email
+                });
+
+            if (existingUser) {
+
+                return res.status(400).json({
+                    message: "Email already registered"
+                });
+
+            }
+
+            const hashedPassword =
+                await bcrypt.hash(
+                    password,
+                    10
+                );
+
+            const user =
+                new User({
+
+                    name: name,
+
+                    email: email,
+
+                    password: hashedPassword,
+
+                    role:
+                        role === "retailer"
+                            ? "retailer"
+                            : "customer"
+
+                });
+
+            await user.save();
+
+            res.status(201).json({
+
+                message:
+                    "Account created successfully!",
+
+                user: {
+
+                    name: user.name,
+
+                    email: user.email,
+
+                    role: user.role
+
+                }
+
+            });
+
+        } catch (error) {
+
+            console.log(error);
+
+            res.status(500).json({
+                message: error.message
+            });
+
+        }
+
+    }
+);
+
+
+// ==========================================
+// LOGIN
+// ==========================================
+
+app.post(
+    "/api/login",
+    async (req, res) => {
+
+        try {
+
+            const {
+                email,
+                password
+            } = req.body;
+
+            if (!email || !password) {
+
+                return res.status(400).json({
+                    message:
+                        "Email and password are required"
+                });
+
+            }
+
+            const user =
+                await User.findOne({
+                    email: email
+                });
+
+            if (!user) {
+
+                return res.status(401).json({
+                    message:
+                        "Invalid email or password"
+                });
+
+            }
+
+            const passwordMatch =
+                await bcrypt.compare(
+                    password,
+                    user.password
+                );
+
+            if (!passwordMatch) {
+
+                return res.status(401).json({
+                    message:
+                        "Invalid email or password"
+                });
+
+            }
+
+            res.json({
+
+                message: "Login successful!",
+
+                user: {
+
+                    name: user.name,
+
+                    email: user.email,
+
+                    roles: user.roles
+
+                }
+
+            });
+
+        } catch (error) {
+
+            console.log(error);
+
+            res.status(500).json({
+                message: error.message
+            });
+
+        }
+
+    }
+);
+// ==========================================
+// SAVE / UPDATE DELIVERY ADDRESS
+// ==========================================
+
+app.post(
+    "/api/delivery-address",
+    async (req, res) => {
+
+        try {
+
+            const {
+                email,
+                fullName,
+                mobile,
+                house,
+                area,
+                city,
+                state,
+                pincode,
+                landmark,
+                address,
+                latitude,
+                longitude
+            } = req.body;
+
+
+            // ==========================================
+            // REQUIRED FIELDS
+            // ==========================================
+
+            if (!email) {
+                return res.status(400).json({
+                    message: "Email is required"
+                });
+            }
+
+            if (!fullName) {
+                return res.status(400).json({
+                    message: "Full Name is required"
+                });
+            }
+
+            if (!mobile) {
+                return res.status(400).json({
+                    message: "Mobile number is required"
+                });
+            }
+
+       /*     if (!house) {
+                return res.status(400).json({
+                    message: "House is required"
+                });
+            } */
+
+            if (!area) {
+                return res.status(400).json({
+                    message: "Area is required"
+                });
+            }
+  /*
+            if (!city) {
+                return res.status(400).json({
+                    message: "City is required"
+                });
+            }
+
+            if (!state) {
+                return res.status(400).json({
+                    message: "State is required"
+                });
+            } */
+
+            if (!pincode) {
+                return res.status(400).json({
+                    message: "PIN Code is required"
+                });
+            }
+
+
+            // ==========================================
+            // SAVE / UPDATE ADDRESS FOR THIS EMAIL
+            // ==========================================
+const savedAddress =
+    await DeliveryAddress.findOneAndUpdate(
+
+        {
+            email: email
+        },
+
+        {
+            email: email,
+
+            fullName: fullName,
+
+            mobile: mobile,
+
+            house: house,
+
+            area: area,
+
+            city: city,
+
+            state: state,
+
+            pincode: pincode,
+
+            landmark: landmark,
+
+            address:
+                address ||
+                (
+                    email +
+                    " ," +
+                    mobile +
+                    ", " +
+                    area +
+                    ", " +
+                    city +
+                    ", " +
+                    state
+                ),
+
+            latitude:
+                latitude !== undefined &&
+                latitude !== ""
+                    ? Number(latitude)
+                    : null,
+
+            longitude:
+                longitude !== undefined &&
+                longitude !== ""
+                    ? Number(longitude)
+                    : null
+        },
+
+        {
+            new: true,
+            upsert: true
+        }
+    );
+
+
+            // ==========================================
+            // SUCCESS
+            // ==========================================
+
+            res.status(200).json({
+
+                message:
+                    "Delivery address saved successfully!",
+
+                address:
+                    savedAddress
+
+            });
+
+
+        } catch (error) {
+
+            console.log(
+                "DELIVERY ADDRESS ERROR:",
+                error
+            );
+
+            res.status(500).json({
+
+                message:
+                    error.message
+
+            });
+
+        }
+
+    }
+);
+// ==========================================
+// GET DELIVERY ADDRESS BY EMAIL
+// ==========================================
+
+app.get(
+    "/api/delivery-address/:email",
+    async (req, res) => {
+
+        try {
+
+            const email =
+                req.params.email;
+
+            const address =
+                await DeliveryAddress.findOne({
+                    email: email
+                });
+
+            if (!address) {
+
+                return res.status(404).json({
+                    message: "Address not found"
+                });
+
+            }
+
+            res.json({
+                address: address
+            });
+
+        } catch (error) {
+
+            console.log(
+                "GET DELIVERY ADDRESS ERROR:",
+                error
+            );
+
+            res.status(500).json({
+                message: error.message
+            });
+
+        }
+
+    }
+);
+
+
+// ==========================================
+// CREATE ORDER
+// ==========================================
+
+app.post(
+    "/api/orders",
+    async (req, res) => {
+
+        try {
+
+          const {
+    customerName,
+    customerEmail,
+    items,
+    totalAmount,
+    address,
+    phone,
+    paymentMethod
+} = req.body;
+
+            if (!customerName) {
+
+                return res.status(400).json({
+                    message:
+                        "Customer name is required"
+                });
+
+            }
+
+            if (!customerEmail) {
+
+                return res.status(400).json({
+                    message:
+                        "Customer email is required"
+                });
+
+            }
+
+            if (
+                !items ||
+                !Array.isArray(items) ||
+                items.length === 0
+            ) {
+
+                return res.status(400).json({
+                    message: "Cart is empty"
+                });
+
+            }
+
+            if (!address) {
+
+                return res.status(400).json({
+                    message:
+                        "Address is required"
+                });
+
+            }
+
+            if (!phone) {
+
+                return res.status(400).json({
+                    message:
+                        "Phone is required"
+                });
+
+            }
+            if (!paymentMethod) {
+
+    return res.status(400).json({
+        message:
+            "Payment method is required"
+    });
+
+}
+const order =
+    new Order({
+
+        customerName:
+            customerName,
+
+        customerEmail:
+            customerEmail,
+
+        items:
+            items,
+
+        totalAmount:
+            Number(totalAmount),
+
+        address:
+            address,
+
+        phone:
+            phone,
+
+        paymentMethod:
+            paymentMethod
+
+    });
+            const savedOrder =
+    await order.save();
+    // ==========================================
+// FIND SELLERS FROM ORDER PRODUCTS
+// ==========================================
+const sellerEmails = new Set();
+
+for (const item of items) {
+
+    const product =
+        await Product.findById(item.productId);
+
+    if (!product) {
+        continue;
+    }
+
+    if (product.sellerEmail) {
+        sellerEmails.add(
+            product.sellerEmail
+        );
+    }
+}
+    // DECREASE PRODUCT STOCK
+for (const item of items) {
+    const product =
+        await Product.findById(item.productId);
+
+    if (!product) {
+        continue;
+    }
+
+    const quantity =
+        Number(item.quantity) || 0;
+
+    product.stock =
+        Math.max(
+            0,
+            Number(product.stock || 0) - quantity
+        );
+
+    await product.save();
+}
+// ==========================================
+// CREATE SELLER NOTIFICATIONS
+// ==========================================
+
+for (const sellerEmail of sellerEmails) {
+
+    await Notification.create({
+        sellerEmail: sellerEmail,
+
+        title: "🔔 New Order Received",
+
+        message:
+            `Customer ${customerName} placed a new order. ` +
+            `Total: ₹${Number(totalAmount).toLocaleString("en-IN")}`,
+
+        orderId: savedOrder._id
+    });
+}
+   
+
+// ==========================================
+// SEND SUCCESS RESPONSE
+// ==========================================
+
+res.status(201).json({
+
+                message:
+                    "Order placed successfully!",
+
+                order:
+                    savedOrder
+
+            });
+
+        } catch (error) {
+
+            console.log(error);
+
+            res.status(500).json({
+                message: error.message
+            });
+
+        }
+
+    }
+);
+// ==========================================
+// GET SELLER NOTIFICATIONS
+// ==========================================
+
+app.get(
+    "/api/notifications/:sellerEmail",
+    async (req, res) => {
+
+        try {
+
+            const notifications =
+                await Notification
+                    .find({
+                        sellerEmail:
+                            req.params.sellerEmail
+                    })
+                    .sort({
+                        createdAt: -1
+                    });
+
+            res.json(notifications);
+
+        } catch (error) {
+
+            console.log(error);
+
+            res.status(500).json({
+                message: error.message
+            });
+
+        }
+
+    }
+);
+
+// ==========================================
+// GET ALL ORDERS
+// ==========================================
+
+app.get(
+    "/api/orders",
+    async (req, res) => {
+
+        try {
+
+            const orders =
+                await Order
+                    .find()
+                    .sort({
+                        createdAt: -1
+                    });
+
+            res.json(orders);
+
+        } catch (error) {
+
+            console.log(error);
+
+            res.status(500).json({
+                message: error.message
+            });
+
+        }
+
+    }
+);
+
+
+// ==========================================
+// GET CUSTOMER ORDERS
+// ==========================================
+
+app.get(
+    "/api/orders/customer/:email",
+    async (req, res) => {
+
+        try {
+
+            const orders =
+                await Order
+                    .find({
+                        customerEmail:
+                            req.params.email
+                    })
+                    .sort({
+                        createdAt: -1
+                    });
+
+            res.json(orders);
+
+        } catch (error) {
+
+            console.log(error);
+
+            res.status(500).json({
+                message: error.message
+            });
+
+        }
+
+    }
+);
+
+
+// ==========================================
+// GET SINGLE ORDER
+// ==========================================
+
+app.get(
+    "/api/orders/:id",
+    async (req, res) => {
+
+        try {
+
+            const order =
+                await Order.findById(
+                    req.params.id
+                );
+
+            if (!order) {
+
+                return res.status(404).json({
+                    message:
+                        "Order not found"
+                });
+
+            }
+
+            res.json(order);
+
+        } catch (error) {
+
+            console.log(error);
+
+            res.status(500).json({
+                message: error.message
+            });
+
+        }
+
+    }
+);
+
+
+// ==========================================
+// UPDATE ORDER STATUS
+// ==========================================
+
+app.put(
+    "/api/orders/:id/status",
+    async (req, res) => {
+
+        try {
+
+            const {
+                status
+            } = req.body;
+
+            const allowedStatuses = [
+
+                "Pending",
+                "Confirmed",
+                "Shipped",
+                "Delivered",
+                "Cancelled"
+
+            ];
+
+            if (
+                !allowedStatuses.includes(status)
+            ) {
+
+                return res.status(400).json({
+                    message:
+                        "Invalid status"
+                });
+
+            }
+
+            const order =
+                await Order.findById(
+                    req.params.id
+                );
+
+            if (!order) {
+
+                return res.status(404).json({
+                    message:
+                        "Order not found"
+                });
+
+            }
+
+            order.status =
+                status;
+
+            const updatedOrder =
+                await order.save();
+
+            res.json({
+
+                message:
+                    "Order status updated successfully!",
+
+                order:
+                    updatedOrder
+
+            });
+
+        } catch (error) {
+
+            console.log(error);
+
+            res.status(500).json({
+                message: error.message
+            });
+
+        }
+
+    }
+);
+
+
+// ==========================================
+// CANCEL ORDER
+// ==========================================
+
+app.put(
+    "/api/orders/:id/cancel",
+    async (req, res) => {
+
+        try {
+
+            const order =
+                await Order.findById(
+                    req.params.id
+                );
+
+            if (!order) {
+
+                return res.status(404).json({
+                    message:
+                        "Order not found"
+                });
+
+            }
+
+            if (
+                order.status === "Delivered"
+            ) {
+
+                return res.status(400).json({
+                    message:
+                        "Delivered order cannot be cancelled"
+                });
+
+            }
+
+            if (
+                order.status === "Cancelled"
+            ) {
+
+                return res.status(400).json({
+                    message:
+                        "Order already cancelled"
+                });
+
+            }
+
+            order.status =
+                "Cancelled";
+
+            const updatedOrder =
+                await order.save();
+
+            res.json({
+
+                message:
+                    "Order cancelled successfully!",
+
+                order:
+                    updatedOrder
+
+            });
+
+        } catch (error) {
+
+            console.log(error);
+
+            res.status(500).json({
+                message: error.message
+            });
+
+        }
+
+    }
+);
+
+
+// ==========================================
+// START SERVER
+// ==========================================
+
+app.listen(
+    3000,
+    () => {
+
+        console.log(
+            "Server running at http://localhost:3000"
+        );
+
+    }
+);
