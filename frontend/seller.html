@@ -831,7 +831,7 @@
     // ==========================================
 
     let url =
-        "http://localhost:3000/api/products";
+        "https://nova-backend-7i1l.onrender.com/api/products";
 
     let method =
         "POST";
@@ -842,7 +842,7 @@
     if (editId) {
 
         url =
-            "http://localhost:3000/api/products/" +
+            "https://nova-backend-7i1l.onrender.com/api/products/" +
             editId;
 
         method =
@@ -1054,7 +1054,7 @@ async function loadSellerProducts() {
         }
 
         const response = await fetch(
-            "http://localhost:3000/api/products"
+            "https://nova-backend-7i1l.onrender.com/api/products"
         );
 
         const products = await response.json();
@@ -1085,7 +1085,7 @@ async function loadSellerProducts() {
             card.className = "seller-product-card";
 
             const imageHTML = product.image
-                ? `<img src="http://localhost:3000${product.image}" alt="${escapeHTML(product.name || "Product")}">`
+                ? `<img src="https://nova-backend-7i1l.onrender.com${product.image}" alt="${escapeHTML(product.name || "Product")}">`
                 : `<span class="no-image">📦</span>`;
 
             card.innerHTML = `
@@ -1177,7 +1177,7 @@ async function loadSellerProducts() {
 
             try {
                 const response = await fetch(
-                    "http://localhost:3000/api/products/" + id,
+                    "https://nova-backend-7i1l.onrender.com/api/products/" + id,
                     {
                         method: "DELETE"
                     }
@@ -1211,7 +1211,7 @@ async function editProduct(id) {
 
         const response =
             await fetch(
-                "http://localhost:3000/api/products/" + id
+                "https://nova-backend-7i1l.onrender.com/api/products/" + id
             );
 
         const product =
@@ -1357,7 +1357,7 @@ async function editProduct(id) {
 
             const response =
                 await fetch(
-                    "http://localhost:3000/api/notifications/" +
+                    "https://nova-backend-7i1l.onrender.comapi/notifications/" +
                     encodeURIComponent(user.email)
                 );
 

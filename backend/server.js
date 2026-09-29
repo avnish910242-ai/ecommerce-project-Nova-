@@ -1,5 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
+require("dotenv").config();
 const cors = require("cors");
 const bcrypt = require("bcryptjs");
 const path = require("path");
@@ -73,15 +74,15 @@ app.use(
 // ==========================================
 // MONGODB
 // ==========================================
-
 mongoose
-    .connect("mongodb://127.0.0.1:27017/ecommerce-shop")
+    .connect(process.env.MONGODB_URI)
     .then(() => {
         console.log("MongoDB connected!");
     })
     .catch((error) => {
         console.log("MongoDB error:", error.message);
     });
+
 
 
 // ==========================================
@@ -1447,7 +1448,7 @@ app.listen(
     () => {
 
         console.log(
-            "Server running at http://localhost:3000"
+            "Server running at https://nova-backend-7i1l.onrender.com"
         );
 
     }

@@ -450,22 +450,21 @@ function displayCart() {
         let imageURL = "";
 
 
-        if (item.image) {
+     if (item.image) {
 
-            if (item.image.startsWith("http")) {
+    if (item.image.startsWith("http")) {
 
-                imageURL = item.image;
+        imageURL = item.image;
 
-            } else {
+    } else {
 
-                imageURL =
-                    "http://localhost:3000" +
-                    item.image;
+        imageURL =
+            "https://nova-backend-7i1l.onrender.com" +
+            item.image;
 
-            }
+    }
 
-        }
-
+}
 
         // ==========================================
         // CART ITEM
@@ -704,7 +703,7 @@ async function checkout() {
     try {
 
         const response = await fetch(
-            "http://localhost:3000/api/delivery-address/" +
+              "https://nova-backend-7i1l.onrender.com/api/delivery-address/" +
             encodeURIComponent(user.email)
         );
 
@@ -872,7 +871,7 @@ async function loadProducts() {
 
         const response =
             await fetch(
-                "http://localhost:3000/api/products"
+                "https://nova-backend-7i1l.onrender.com/api/products"
             );
 
 
@@ -1154,7 +1153,7 @@ function createProductCard(
         } else {
 
             imageURL =
-                "http://localhost:3000" +
+                "https://nova-backend-7i1l.onrender.com" +
                 (
                     productImage.startsWith("/")
                     ? productImage
@@ -1565,7 +1564,7 @@ async function editProduct(id) {
 
         const response =
             await fetch(
-                "http://localhost:3000/api/products"
+                "https://nova-backend-7i1l.onrender.com/api/products"
             );
 
 
@@ -1670,7 +1669,7 @@ async function editProduct(id) {
         if (product.image) {
 
             currentPreview.src =
-                "http://localhost:3000" +
+                "https://nova-backend-7i1l.onrender.com" +
                 product.image;
 
             currentImage.style.display =
@@ -1922,7 +1921,7 @@ async function updateProduct() {
         const response =
             await fetch(
 
-                "http://localhost:3000/api/products/" +
+                "https://nova-backend-7i1l.onrender.com/api/products/" +
                 id,
 
                 {
@@ -2284,7 +2283,7 @@ async function saveDeliveryAddress() {
 
         const response =
             await fetch(
-                "http://localhost:3000/api/delivery-address",
+                "https://nova-backend-7i1l.onrender.com/api/delivery-address",
                 {
 
                     method:
@@ -3105,7 +3104,7 @@ async function showDeliveryForm(source = locationOpenedFrom) {
 
         const response =
             await fetch(
-                "http://localhost:3000/api/delivery-address/" +
+                "https://nova-backend-7i1l.onrender.com/api/delivery-address/" +
                 encodeURIComponent(user.email)
             );
 
@@ -3613,7 +3612,7 @@ async function placeOrder(paymentMethod) {
 
         const response =
             await fetch(
-                "http://localhost:3000/api/orders",
+                "https://nova-backend-7i1l.onrender.com/api/orders",
                 {
                     method: "POST",
 
@@ -3741,7 +3740,7 @@ document.addEventListener(
 // MY ORDERS
 // ==========================================
 
-const API_URL = "http://localhost:3000";
+const API_URL = "https://nova-backend-7i1l.onrender.com";
 // ==========================================
 // SHOW MY ORDERS PAGE
 // ==========================================

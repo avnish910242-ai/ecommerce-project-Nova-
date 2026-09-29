@@ -949,16 +949,16 @@ function displayCart() {
 
         let imageURL = "";
 
-        if (item.image) {
+    if (item.image) {
 
-            if (item.image.startsWith("http")) {
-                imageURL = item.image;
-            } else {
-                imageURL =
-                    "http://localhost:3000" + item.image;
-            }
+    if (item.image.startsWith("http")) {
+        imageURL = item.image;
+    } else {
+        imageURL =
+            "https://nova-backend-7i1l.onrender.com" + item.image;
+    }
 
-        }
+}
 
         const cartItem = document.createElement("div");
 

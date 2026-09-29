@@ -99,17 +99,16 @@ if (registerForm) {
                 "Creating account...";
 
             try {
+const response =
+    await fetch(
+        "https://nova-backend-7i1l.onrender.com/api/register",
+        {
+            method: "POST",
 
-                const response =
-                    await fetch(
-                        "http://localhost:3000/api/register",
-                        {
-                            method: "POST",
-
-                            headers: {
-                                "Content-Type":
-                                    "application/json"
-                            },
+            headers: {
+                "Content-Type":
+                    "application/json"
+            },
 
                             body: JSON.stringify({
                                 name: name,
@@ -207,7 +206,7 @@ if (loginForm) {
 
                 const response =
                     await fetch(
-                        "http://localhost:3000/api/login",
+                        "https://nova-backend-7i1l.onrender.com/api/login",
                         {
                             method: "POST",
 
