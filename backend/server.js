@@ -6,14 +6,12 @@ const bcrypt = require("bcryptjs");
 const path = require("path");
 const fs = require("fs");
 const multer = require("multer");
-const DeliveryAddress = require("./DeliveryAddress");
-
-const app = express();
-
-app.use(cors());
-app.use(express.json());
-
-
+const cloudinary = require("cloudinary").v2;
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+});
 // ==========================================
 // UPLOAD FOLDER
 // ==========================================
@@ -21,31 +19,22 @@ app.use(express.json());
 const uploadFolder = path.join(__dirname, "uploads");
 
 if (!fs.existsSync(uploadFolder)) {
-    fs.mkdirSync(uploadFolder);
-}
 
+    fs.mkdirSync(uploadFolder);
+
+}
+const DeliveryAddress = require("./DeliveryAddress");
+
+const app = express();
+
+app.use(cors());
+app.use(express.json());
 
 // ==========================================
 // IMAGE UPLOAD
 // ==========================================
 
-const storage = multer.diskStorage({
-
-    destination: function (req, file, cb) {
-        cb(null, uploadFolder);
-    },
-
-    filename: function (req, file, cb) {
-
-        const fileName =
-            Date.now() +
-            "-" +
-            file.originalname.replace(/\s+/g, "-");
-
-        cb(null, fileName);
-    }
-
-});
+const storage = multer.memoryStorage();
 
 const upload = multer({
 
@@ -62,14 +51,6 @@ const upload = multer({
     }
 
 });
-
-
-// Make images accessible
-app.use(
-    "/uploads",
-    express.static(uploadFolder)
-);
-
 
 // ==========================================
 // MONGODB
@@ -339,8 +320,6 @@ app.get("/api/products", async (req, res) => {
     }
 
 });
-
-
 // ==========================================
 // ADD PRODUCT
 // ==========================================
@@ -355,10 +334,49 @@ app.post(
             console.log("Adding product...");
             console.log(req.body);
 
+            let imageUrl = "";
+
+            // ==========================================
+            // UPLOAD IMAGE TO CLOUDINARY
+            // ==========================================
+
+            if (req.file) {
+
+                const result =
+                    await new Promise((resolve, reject) => {
+
+                        const stream =
+                            cloudinary.uploader.upload_stream(
+                                {
+                                    folder: "nova-products"
+                                },
+
+                                (error, result) => {
+
+                                    if (error) {
+                                        reject(error);
+                                    } else {
+                                        resolve(result);
+                                    }
+                                }
+                            );
+
+                        stream.end(req.file.buffer);
+
+                    });
+
+                imageUrl = result.secure_url;
+            }
+
+            // ==========================================
+            // CREATE PRODUCT
+            // ==========================================
+
             const product =
                 new Product({
 
-                    name: req.body.name,
+                    name:
+                        req.body.name,
 
                     category:
                         req.body.category || "",
@@ -373,9 +391,7 @@ app.post(
                         req.body.description || "",
 
                     image:
-                        req.file
-                            ? "/uploads/" + req.file.filename
-                            : "",
+                        imageUrl,
 
                     sellerEmail:
                         req.body.sellerEmail || ""
@@ -390,7 +406,10 @@ app.post(
                 savedProduct
             );
 
-            res.status(201).json(savedProduct);
+
+            res.status(201).json(
+                savedProduct
+            );
 
         } catch (error) {
 
@@ -485,12 +504,38 @@ app.put(
             product.description =
                 req.body.description || "";
 
+            // ==========================================
+            // UPLOAD NEW IMAGE TO CLOUDINARY
+            // ==========================================
+
             if (req.file) {
 
-                product.image =
-                    "/uploads/" +
-                    req.file.filename;
+                const result =
+                    await new Promise((resolve, reject) => {
 
+                        const stream =
+                            cloudinary.uploader.upload_stream(
+                                {
+                                    folder: "nova-products"
+                                },
+
+                                (error, result) => {
+
+                                    if (error) {
+                                        reject(error);
+                                    } else {
+                                        resolve(result);
+                                    }
+
+                                }
+                            );
+
+                        stream.end(req.file.buffer);
+
+                    });
+
+                product.image =
+                    result.secure_url;
             }
 
             const updatedProduct =
@@ -513,7 +558,6 @@ app.put(
 
     }
 );
-
 
 // ==========================================
 // DELETE PRODUCT

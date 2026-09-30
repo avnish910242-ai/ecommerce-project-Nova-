@@ -1664,18 +1664,30 @@ async function editProduct(id) {
             document.getElementById(
                 "editCurrentPreview"
             );
+if (product.image) {
 
+    if (
+        product.image.startsWith("http://") ||
+        product.image.startsWith("https://")
+    ) {
 
-        if (product.image) {
+        currentPreview.src =
+            product.image;
 
-            currentPreview.src =
-                "https://nova-backend-7i1l.onrender.com" +
-                product.image;
+    } else {
 
-            currentImage.style.display =
-                "block";
+        currentPreview.src =
+            "https://nova-backend-7i1l.onrender.com" +
+            product.image;
 
-        } else {
+    }
+
+    currentImage.style.display =
+        "block";
+
+}
+
+      else {
 
             currentImage.style.display =
                 "none";
