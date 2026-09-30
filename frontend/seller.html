@@ -1083,10 +1083,32 @@ async function loadSellerProducts() {
 
             const card = document.createElement("div");
             card.className = "seller-product-card";
+let imageURL = "";
 
-            const imageHTML = product.image
-                ? `<img src="https://nova-backend-7i1l.onrender.com${product.image}" alt="${escapeHTML(product.name || "Product")}">`
-                : `<span class="no-image">📦</span>`;
+if (product.image) {
+
+    if (
+        product.image.startsWith("http://") ||
+        product.image.startsWith("https://")
+    ) {
+        // Cloudinary image
+        imageURL = product.image;
+
+    } else {
+        // Old local image
+        imageURL =
+            "https://nova-backend-7i1l.onrender.com" +
+            (
+                product.image.startsWith("/")
+                    ? product.image
+                    : "/" + product.image
+            );
+    }
+}
+
+const imageHTML = imageURL
+    ? `<img src="${imageURL}" alt="${escapeHTML(product.name || "Product")}">`
+    : `<span class="no-image">📦</span>`;
 
             card.innerHTML = `
                 <div class="seller-product-image">
