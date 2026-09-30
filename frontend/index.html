@@ -322,12 +322,13 @@
             onkeydown="handleSearchKey(event)"
         >
 
-        <button
-            type="button"
-            class="search-button"
-            onclick="searchProduct()">
-            🔍
-        </button>
+       <button
+    type="button"
+    class="search-button"
+    onclick="handleSearchButton()">
+    🔍
+</button>
+
 
     </div>
 
@@ -1344,6 +1345,30 @@ function displayCart() {
 
 
     <!-- ================= JAVASCRIPT ================= -->
+<script>
+
+function searchProduct() {
+    // aapka existing code
+}
+
+
+// 👇 ISKE JUST BAAD YE ADD KARO
+function handleSearchButton() {
+    if (window.innerWidth <= 768) {
+        const searchBox = document.querySelector(".search-box");
+
+        if (!searchBox.classList.contains("active")) {
+            searchBox.classList.add("active");
+            document.getElementById("searchInput").focus();
+        } else {
+            searchProduct();
+        }
+    } else {
+        searchProduct();
+    }
+}
+
+</script>
 
     <script src="./script.js"></script>
     <script>

@@ -3302,3 +3302,47 @@ footer p {
         background-position: 140% 100%, 0 0;
     }
 }
+@media (max-width: 768px) {
+
+    .search-box {
+        width: 40px;
+        height: 40px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .search-box input {
+        display: none;
+    }
+
+    .search-box .search-button {
+        width: 40px;
+        height: 40px;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        font-size: 20px;
+    }
+
+    /* Search icon click ke baad */
+    .search-box.active {
+        width: 220px;
+        overflow: visible;
+    }
+
+    .search-box.active input {
+        display: block;
+        width: 180px;
+        height: 38px;
+        padding: 0 40px 0 10px;
+        border: 1px solid #ddd;
+        border-radius: 20px;
+        outline: none;
+    }
+
+    .search-box.active .search-button {
+        position: absolute;
+        right: 0;
+        top: 0;
+    }
+}
