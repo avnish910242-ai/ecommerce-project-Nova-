@@ -1,7 +1,44 @@
 // ==========================================
-// NOVA - COMPLETE JAVASCRIPT
+// INTERNET STATUS
 // ==========================================
 
+function updateInternetStatus() {
+
+    const navbar = document.querySelector(".navbar");
+
+    if (!navbar) return;
+    if (navigator.onLine) {
+
+    navbar.classList.remove("offline");
+
+  
+
+} else {
+
+    navbar.classList.add("offline");
+
+}
+
+    if (navigator.onLine) {
+
+        navbar.classList.remove("offline");
+
+    } else {
+
+        navbar.classList.add("offline");
+
+    }
+}
+
+window.addEventListener("online", updateInternetStatus);
+window.addEventListener("offline", updateInternetStatus);
+
+window.addEventListener("load", updateInternetStatus);
+
+
+// ==========================================
+// NOVA - COMPLETE JAVASCRIPT
+// ==========================================
 
 function similarity(a, b) {
 
@@ -845,35 +882,26 @@ let isLoadingProducts = false;
 // ==========================================
 // LOAD PRODUCTS
 // ==========================================
-
 async function loadProducts() {
 
     const productGrid =
         document.getElementById("productGrid");
 
-
     if (!productGrid) {
 
-        console.log(
-            "productGrid nahi mila"
-        );
+        console.log("productGrid nahi mila");
 
         return;
     }
 
-
     try {
 
-        console.log(
-            "Products loading..."
-        );
-
+        console.log("Products loading...");
 
         const response =
             await fetch(
                 "https://nova-backend-7i1l.onrender.com/api/products"
             );
-
 
         if (!response.ok) {
 
@@ -884,14 +912,22 @@ async function loadProducts() {
 
         }
 
-
         allProducts =
             await response.json();
-
 
         console.log(
             "MongoDB Products:",
             allProducts
+        );
+
+
+        // ==========================================
+        // SAVE PRODUCTS FOR OFFLINE USE
+        // ==========================================
+
+        localStorage.setItem(
+            "novaProducts",
+            JSON.stringify(allProducts)
         );
 
 
@@ -923,11 +959,55 @@ async function loadProducts() {
         );
 
 
+        // ==========================================
+        // LOAD SAVED PRODUCTS OFFLINE
+        // ==========================================
+
+        const savedProducts =
+            localStorage.getItem("novaProducts");
+
+
+        if (savedProducts) {
+
+            try {
+
+                allProducts =
+                    JSON.parse(savedProducts);
+
+                console.log(
+                    "OFFLINE PRODUCTS:",
+                    allProducts
+                );
+
+
+                if (
+                    Array.isArray(allProducts) &&
+                    allProducts.length > 0
+                ) {
+
+                    productGrid.innerHTML = "";
+
+                    productsShown = 0;
+
+                    loadMoreProducts();
+
+                    return;
+                }
+
+            } catch (offlineError) {
+
+                console.error(
+                    "Offline products error:",
+                    offlineError
+                );
+
+            }
+        }
+
+
         productGrid.innerHTML =
-            "<p>product loading error.</p>";
-
+            "<p>No offline products available.</p>";
     }
-
 }
 
 // ==========================================
