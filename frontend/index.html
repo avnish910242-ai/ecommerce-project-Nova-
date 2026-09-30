@@ -10,7 +10,9 @@
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/png" href="images/log.png">
     <meta name="google-site-verification" content="fRCyZmSVDi14QdOCz7JsHBsf36_opR9gfnpoCjQZofg" />
+<link rel="manifest" href="manifest.json">
 
+<meta name="theme-color" content="#000000">
     <style>
         /* ================= CART ================= */
         .cart-overlay {
@@ -1344,5 +1346,18 @@ function displayCart() {
     <!-- ================= JAVASCRIPT ================= -->
 
     <script src="./script.js"></script>
+    <script>
+if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+        navigator.serviceWorker.register("service-worker.js")
+            .then(() => {
+                console.log("NOVA Service Worker registered");
+            })
+            .catch(error => {
+                console.log("Service Worker error:", error);
+            });
+    });
+}
+</script>
 </body>
 </html>
