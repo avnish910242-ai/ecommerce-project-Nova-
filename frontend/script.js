@@ -280,19 +280,33 @@ function updateCartCount() {
         totalItems += Number(item.quantity) || 0;
     });
 
-    if (totalItems === 0) {
+    cartButton.innerHTML = `
 
-        cartButton.innerHTML = "🛒";
+        <svg
+            viewBox="0 0 24 24"
+            width="26"
+            height="26"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round">
 
-    } else { 
+            <path d="M3 4h2l2.2 11.2a2 2 0 0 0 2 1.6h7.9a2 2 0 0 0 1.9-1.4L21 8H6"></path>
 
-        cartButton.innerHTML =
-            '🛒 <span class="cart-number">' + totalItems + '</span>';
+            <circle cx="10" cy="20" r="1.3"></circle>
+            <circle cx="18" cy="20" r="1.3"></circle>
 
-    }
+        </svg>
+
+        ${
+            totalItems > 0
+            ? `<span class="cart-number">${totalItems}</span>`
+            : ""
+        }
+
+    `;
 }
-
-
 // ==========================================
 // OPEN CART
 // ==========================================
@@ -1585,16 +1599,165 @@ function searchProduct() {
 // SEARCH ENTER
 // ==========================================
 
+// ==========================================
+// SAVE SEARCH IN LOCAL STORAGE
+// ==========================================
+
+function saveSearchTerm(term) {
+
+    term = String(term || "").trim();
+
+    if (!term) {
+        return;
+    }
+
+    let searches =
+        JSON.parse(
+            localStorage.getItem("novaSearches")
+        ) || [];
+
+    searches =
+        searches.filter(function(item) {
+            return item.toLowerCase() !== term.toLowerCase();
+        });
+
+    searches.unshift(term);
+
+    searches = searches.slice(0, 10);
+
+    localStorage.setItem(
+        "novaSearches",
+        JSON.stringify(searches)
+    );
+}
+
+// ==========================================
+// SHOW MOBILE SEARCH SUGGESTIONS
+// ==========================================
+function showMobileSearchSuggestions() {
+
+    const box =
+        document.getElementById(
+            "mobileSearchSuggestions"
+        );
+
+    const input =
+        document.getElementById(
+            "searchInput"
+        );
+
+    if (!box || !input) {
+        return;
+    }
+
+    const typed =
+        input.value.trim().toLowerCase();
+
+    box.innerHTML = "";
+
+    if (!typed) {
+        box.style.display = "none";
+        return;
+    }
+
+    const products =
+        document.querySelectorAll(
+            ".product-card"
+        );
+
+    products.forEach(
+        function(card) {
+
+            const productName =
+                card.querySelector(
+                    ".product-name"
+                );
+
+            if (!productName) {
+                return;
+            }
+
+            const name =
+                productName.textContent
+                    .trim();
+
+            if (
+                name
+                    .toLowerCase()
+                    .includes(typed)
+            ) {
+
+                const suggestion =
+                    document.createElement(
+                        "div"
+                    );
+
+                suggestion.className =
+                    "mobile-search-suggestion";
+
+                suggestion.textContent =
+                    name;
+
+                suggestion.onclick =
+                    function() {
+
+                        input.value = name;
+
+                        box.style.display =
+                            "none";
+
+                        searchProduct();
+
+                    };
+
+                box.appendChild(
+                    suggestion
+                );
+            }
+
+        }
+    );
+
+    if (box.children.length > 0) {
+
+        box.style.display = "block";
+
+    } else {
+
+        box.style.display = "none";
+
+    }
+}
+// ==========================================
+// SEARCH ENTER
+// ==========================================
+
 function handleSearchKey(event) {
 
     if (event.key === "Enter") {
 
+        const input =
+            document.getElementById("searchInput");
+
+        const term =
+            input ? input.value.trim() : "";
+
+        saveSearchTerm(term);
+
         searchProduct();
+
+        const suggestions =
+            document.getElementById(
+                "mobileSearchSuggestions"
+            );
+
+        if (suggestions) {
+            suggestions.style.display = "none";
+        }
 
     }
 
 }
-
 
 // ==========================================
 // PAGE LOAD
@@ -1624,6 +1787,15 @@ document.addEventListener(
         // MongoDB Products
 
         loadProducts();
+        const searchInput =
+    document.getElementById("searchInput");
+
+if (searchInput) {
+    searchInput.addEventListener(
+        "input",
+        showMobileSearchSuggestions
+    );
+}
 
 
         console.log(
@@ -3818,16 +3990,7 @@ showOrdersPage();
 // START PRODUCTS
 // ==========================================
 
-document.addEventListener(
-    "DOMContentLoaded",
-    function () {
 
-        console.log("NOVA: Loading products...");
-
-        loadProducts();
-
-    }
-);
 // ==========================================
 // MY ORDERS
 // ==========================================
@@ -4518,4 +4681,124 @@ function openShop() {
         behavior: "smooth", 
         block: "start" 
     }); 
- }
+ }function goHome() {
+
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+
+    window.scrollTo(0, 0);
+
+    const home = document.getElementById("home");
+
+    if (home) {
+        home.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+    }
+}
+// ==========================================
+// SHOW MOBILE SEARCH SUGGESTIONS
+// ==========================================
+
+function showMobileSearchSuggestions() {
+
+    const box =
+        document.getElementById(
+            "mobileSearchSuggestions"
+        );
+
+    const input =
+        document.getElementById(
+            "searchInput"
+        );
+
+    if (!box || !input) {
+        return;
+    }
+
+    const typed =
+        input.value.trim().toLowerCase();
+
+    box.innerHTML = "";
+
+    if (!typed) {
+        box.style.display = "none";
+        return;
+    }
+
+    const products =
+        document.querySelectorAll(
+            ".product-card"
+        );
+
+    const names = [];
+
+    products.forEach(function(card) {
+
+        const nameElement =
+            card.querySelector(
+                ".product-name"
+            );
+
+        if (!nameElement) {
+            return;
+        }
+
+        const name =
+            nameElement.textContent.trim();
+
+        if (
+            name &&
+            name.toLowerCase().includes(typed) &&
+            !names.includes(name)
+        ) {
+
+            names.push(name);
+
+        }
+
+    });
+
+
+    names.forEach(function(name) {
+
+        const suggestion =
+            document.createElement("div");
+
+        suggestion.className =
+            "mobile-search-suggestion";
+
+        suggestion.textContent =
+            name;
+
+        suggestion.onclick =
+            function() {
+
+                input.value = name;
+
+                box.style.display =
+                    "none";
+
+                searchProduct();
+
+            };
+
+        box.appendChild(
+            suggestion
+        );
+
+    });
+
+
+    if (names.length > 0) {
+
+        box.style.display = "block";
+
+    } else {
+
+        box.style.display = "none";
+
+    }
+
+}

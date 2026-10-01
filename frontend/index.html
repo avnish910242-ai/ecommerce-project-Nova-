@@ -273,11 +273,49 @@
            
             
         }
-@media (max-width: 600px) {
+        /* ================= CART BUTTON SIZE ================= */
+
+.cart-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: #111;
+    cursor: pointer;
+}
+
+.cart-btn svg {
+    width: 28px;
+    height: 28px;
+    display: block;
+}
+/* =========================
+   MOBILE CART
+   ========================= */
+
+@media (max-width: 700px) {
 
     .cart-sidebar {
-        width: 70vw;
-        max-width: 320px;
+        width: 100%;
+        max-width: none;
+
+        top: 0;
+        right: -100%;
+
+        height: calc(100vh - 75px);
+
+        border-radius: 0;
+
+        z-index: 100000;
+    }
+
+    .cart-sidebar.active {
+        right: 0;
     }
 
 }
@@ -286,68 +324,185 @@
 
 
 <body>
+<!-- ================= NAVBAR ================= -->
+<header class="navbar" id="home">
 
-    <!-- ================= NAVBAR ================= -->
+    <!-- Left -->
+    <div class="nav-left">
 
-    <header class="navbar" id="home">
+        <button
+            class="menu-btn"
+            onclick="toggleSidebar()">
+            ☰
+        </button>
 
-        <div class="nav-left">
+        <a href="#home" class="logo">
+            NOVA
+        </a>
 
-            <!-- Menu Button -->
+    </div>
 
-            <button class="menu-btn" onclick="toggleSidebar()">
-                ☰
+
+    <!-- Right / Search + Account + Cart -->
+    <div class="nav-icons">
+
+        <!-- Mobile Back -->
+        <button
+            type="button"
+            class="mobile-search-back"
+            onclick="closeMobileSearch()"
+            aria-label="Back">
+            ←
+        </button>
+
+
+        <!-- Search Box -->
+        <div class="search-box">
+
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Search products"
+                onkeydown="handleSearchKey(event)"
+            >
+
+            <button
+                type="button"
+                class="search-button"
+                onclick="handleSearchButton()"
+                aria-label="Search">
+
+                <svg
+                    viewBox="0 0 24 24"
+                    width="20"
+                    height="20"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round">
+
+                    <circle
+                        cx="11"
+                        cy="11"
+                        r="7">
+                    </circle>
+
+                    <path
+                        d="m20 20-4-4">
+                    </path>
+
+                </svg>
+
             </button>
-
-
-            <!-- Logo -->
-
-            <a href="#home" class="logo">
-                NOVA
-            </a>
 
         </div>
 
 
-      <!-- Right Icons -->
-
-<div class="nav-icons">
-
-    <div class="search-box">
-
-        <input
-            type="text"
-            id="searchInput"
-            placeholder="Search products"
-            onkeydown="handleSearchKey(event)"
-        >
-
-       <button
+        <!-- Mobile Mic -->
+      <button
     type="button"
-    class="search-button"
-    onclick="handleSearchButton()">
-    🔍
-</button>
+    class="mobile-mic-btn"
+    aria-label="Voice Search">
 
+    <svg
+        viewBox="0 0 24 24"
+        width="21"
+        height="21"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round">
+
+        <rect
+            x="9"
+            y="3"
+            width="6"
+            height="11"
+            rx="3">
+        </rect>
+
+        <path d="M5 11a7 7 0 0 0 14 0"></path>
+
+        <path d="M12 18v3"></path>
+
+        <path d="M8 21h8"></path>
+
+    </svg>
+            <!-- Mobile Search Suggestions -->
+
+</button>
+   <!-- Mobile Search Suggestions -->
+ <div
+  
+            id="mobileSearchSuggestions"
+            class="mobile-search-suggestions">
+        </div>
+
+
+        <!-- Account -->
+        <button
+            class="account-btn"
+            onclick="window.location.href='login.html'"
+            aria-label="Account">
+
+            <svg
+                viewBox="0 0 24 24"
+                aria-hidden="true">
+
+                <circle
+                    cx="12"
+                    cy="8"
+                    r="3.5">
+                </circle>
+
+                <path
+                    d="M5 21c.8-4 3.2-6 7-6s6.2 2 7 6">
+                </path>
+
+            </svg>
+
+        </button>
+
+
+        <!-- Cart -->
+        <button
+            class="cart-btn"
+            onclick="openCart()"
+            aria-label="Cart">
+
+            <svg
+                viewBox="0 0 24 24"
+                width="26"
+                height="26"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round">
+
+                <path
+                    d="M3 4h2l2.2 11.2a2 2 0 0 0 2 1.6h7.9a2 2 0 0 0 1.9-1.4L21 8H6">
+                </path>
+
+                <circle
+                    cx="10"
+                    cy="20"
+                    r="1.3">
+                </circle>
+
+                <circle
+                    cx="18"
+                    cy="20"
+                    r="1.3">
+                </circle>
+
+            </svg>
+
+        </button>
 
     </div>
-
-    <button
-    class="account-btn"
-    onclick="window.location.href='login.html'"
-    
->
-    👤
-</button>
-
-    <button
-        class="cart-btn"
-        onclick="openCart()">
-         🛒 
-        
-    </button>
-
-</div>
 
 </header>
 
@@ -499,21 +654,60 @@
 <div class="cart-header">
 
     <div class="cart-title-area">
+<h2 class="cart-title">
 
-        <h2>
-             🛒 Your Cart
-        </h2>
+    <span class="cart-header-icon">
+
+        <svg
+            viewBox="0 0 24 24"
+            width="24"
+            height="24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round">
+
+            <path d="M3 4h2l2.2 11.2a2 2 0 0 0 2 1.6h7.9a2 2 0 0 0 1.9-1.4L21 8H6"></path>
+
+            <circle cx="10" cy="20" r="1.3"></circle>
+            <circle cx="18" cy="20" r="1.3"></circle>
+
+        </svg>
+
+        <span id="cartHeaderCount" class="cart-header-count"></span>
+
+    </span>
+
+    My Cart
+
+</h2>
 
         <div class="cart-address-row">
 
             <!-- UPDATE LOCATION -->
-    <button
-    type="button"
-    class="update-location-btn"
+   <button 
+    type="button" 
+    class="update-location-btn" 
     onclick="showDeliveryForm()">
-     ➤  Choose Location
-     
-     
+
+    <svg
+        viewBox="0 0 24 24"
+        width="16"
+        height="16"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round">
+
+        <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0z"></path>
+        <circle cx="12" cy="10" r="2.5"></circle>
+
+    </svg>
+
+    Choose Location
+
 </button>
             <!-- SCROLLING ADDRESS -->
             <marquee
@@ -1354,20 +1548,126 @@ function searchProduct() {
 
 // 👇 ISKE JUST BAAD YE ADD KARO
 function handleSearchButton() {
-    if (window.innerWidth <= 768) {
-        const searchBox = document.querySelector(".search-box");
 
-        if (!searchBox.classList.contains("active")) {
-            searchBox.classList.add("active");
-            document.getElementById("searchInput").focus();
-        } else {
-            searchProduct();
+    if (window.innerWidth <= 500) {
+
+        const navbar =
+            document.querySelector(".navbar");
+
+        const searchInput =
+            document.getElementById("searchInput");
+
+        const suggestions =
+            document.getElementById(
+                "mobileSearchSuggestions"
+            );
+
+
+        // ==============================
+        // SEARCH OPEN
+        // ==============================
+
+        if (
+            !navbar.classList.contains(
+                "search-open"
+            )
+        ) {
+
+            navbar.classList.add(
+                "search-open"
+            );
+
+            // Search open hote hi
+            // purane hints hide
+            if (suggestions) {
+                suggestions.style.display =
+                    "none";
+            }
+
+            if (searchInput) {
+                searchInput.focus();
+            }
+
         }
-    } else {
-        searchProduct();
+
+
+        // ==============================
+        // SEARCH
+        // ==============================
+
+        else {
+
+            const term =
+                searchInput
+                    ? searchInput.value.trim()
+                    : "";
+
+
+            if (term) {
+
+                saveSearchTerm(term);
+
+                searchProduct();
+
+            }
+
+
+            // Search karne ke baad
+            // hints hide
+
+            if (suggestions) {
+                suggestions.style.display =
+                    "none";
+            }
+
+        }
+
+    }
+
+
+    // ==============================
+    // DESKTOP SEARCH
+    // ==============================
+
+    else {
+
+        const searchInput =
+            document.getElementById(
+                "searchInput"
+            );
+
+        const term =
+            searchInput
+                ? searchInput.value.trim()
+                : "";
+
+
+        if (term) {
+
+            saveSearchTerm(term);
+
+            searchProduct();
+
+        }
+
+    }
+
+}
+function closeMobileSearch() {
+
+    const navbar = document.querySelector(".navbar");
+    const searchInput = document.getElementById("searchInput");
+
+    if (!navbar) {
+        return;
+    }
+
+    navbar.classList.remove("search-open");
+
+    if (searchInput) {
+        searchInput.blur();
     }
 }
-
 </script>
 
     <script src="./script.js"></script>
@@ -1384,5 +1684,30 @@ if ("serviceWorker" in navigator) {
     });
 }
 </script>
+<!-- MOBILE BOTTOM NAV -->
+<div class="mobile-bottom-nav">
+    <button onclick="closeCart(); closeSidebar(); window.scrollTo({top: 0, behavior: 'smooth'});">
+    <span class="home-icon">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M3 10.5L12 3l9 7.5"></path>
+            <path d="M5.5 9.5V21h13V9.5"></path>
+            <path d="M9.5 21v-6h5v6"></path>
+        </svg>
+    </span>
+
+    <small>Home</small>
+</button>
+
+ <button onclick="window.location.href='settings.html'">
+    <span>＋</span>
+    <small>Add products</small>
+</button>
+
+    <button onclick="showOrdersPage()">
+        <span>▣</span>
+        <small>My Orders</small>
+    </button>
+
+</div>
 </body>
 </html>
