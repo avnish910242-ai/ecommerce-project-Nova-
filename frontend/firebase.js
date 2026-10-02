@@ -46,24 +46,7 @@ if (!Array.isArray(user.roles) || !user.roles.includes("seller")) {
             console.log("NOVA app अभी installed नहीं है।");
             return;
         }
-
-        const permission =
-            await Notification.requestPermission();
-
-        if (permission !== "granted") {
-            console.log("Notification permission नहीं मिली।");
-            return;
-        }
-
-        const registration =
-    await navigator.serviceWorker.register(
-        "/firebase-messaging-sw.js",
-        {
-            scope: "/"
-        }
-    );
-
-await navigator.serviceWorker.ready;
+const registration = await navigator.serviceWorker.ready;
 
         const token = await messaging.getToken({
             vapidKey:
