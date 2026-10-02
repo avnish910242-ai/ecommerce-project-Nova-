@@ -11,12 +11,6 @@ const firebaseConfig = {
     appId: "1:172487693630:web:93be7d1a29f9f1ea5ac86f"
 };
 
-const firebaseApp =
-    firebase.initializeApp(firebaseConfig);
-
-const messaging =
-    firebase.messaging(firebaseApp);
-// ==========================================
 // INTERNET STATUS
 // ==========================================
 
