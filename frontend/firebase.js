@@ -2,13 +2,15 @@
 // NOVA - FIREBASE PUSH NOTIFICATION
 // ==========================================
 
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-    apiKey: "AIzaSyAV2BH5auPh4RJeyU_dqp-YOGU-2JtXKaxo",
-    authDomain: "sheshop99.firebaseapp.com",
-    projectId: "sheshop99",
-    storageBucket: "sheshop99.firebasestorage.app",
-    messagingSenderId: "172487693630",
-    appId: "1:172487693630:web:93be7d1a29f9f1ea5ac86f"
+  apiKey: "AIzaSyAV2BH5auPh4RJeyU_dqp-YOG_2JtXKaxo",
+  authDomain: "sheshop99.firebaseapp.com",
+  projectId: "sheshop99",
+  storageBucket: "sheshop99.firebasestorage.app",
+  messagingSenderId: "172487693630",
+  appId: "1:172487693630:web:93be7d1a29f9f1ea5ac86f",
+  measurementId: "G-1XNWR1SMBQ"
 };
 
 if (!firebase.apps.length) {
