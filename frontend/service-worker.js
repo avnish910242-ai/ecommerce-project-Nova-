@@ -13,7 +13,7 @@ importScripts(
 );
 
 firebase.initializeApp({
-    apiKey: "YOUR_FIREBASE_WEB_API_KEY",
+    apiKey: "AIzaSyAV2BH5auPh4RJeyU_dqp-YOG_2JtXKaxo",
     authDomain: "sheshop99.firebaseapp.com",
     projectId: "sheshop99",
     storageBucket: "sheshop99.firebasestorage.app",
