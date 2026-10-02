@@ -56,9 +56,14 @@ if (!Array.isArray(user.roles) || !user.roles.includes("seller")) {
         }
 
         const registration =
-            await navigator.serviceWorker.register(
-                "/firebase-messaging-sw.js"
-            );
+    await navigator.serviceWorker.register(
+        "/firebase-messaging-sw.js",
+        {
+            scope: "/"
+        }
+    );
+
+await navigator.serviceWorker.ready;
 
         const token = await messaging.getToken({
             vapidKey:
