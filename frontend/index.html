@@ -1670,6 +1670,9 @@ function closeMobileSearch() {
 </script>
 
     <script src="./script.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-messaging-compat.js"></script>
+<script src="firebase.js"></script>
     <script>
 if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
@@ -1683,9 +1686,7 @@ if ("serviceWorker" in navigator) {
     });
 }
 </script>
-<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-messaging-compat.js"></script>
-<script src="firebase.js"></script>
+
 <!-- MOBILE BOTTOM NAV -->
 <div class="mobile-bottom-nav">
     <button onclick="closeCart(); closeSidebar(); window.scrollTo({top: 0, behavior: 'smooth'});">
