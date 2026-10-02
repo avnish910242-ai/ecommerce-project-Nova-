@@ -97,3 +97,23 @@ if (!Array.isArray(user.roles) || !user.roles.includes("seller")) {
 }
 
 setupSellerPushNotifications();
+messaging.onMessage((payload) => {
+
+    console.log("FCM foreground message received:", payload);
+
+    const title =
+        payload.notification?.title || "NOVA";
+
+    const body =
+        payload.notification?.body || "New notification";
+
+    if (Notification.permission === "granted") {
+
+        new Notification(title, {
+            body: body,
+            icon: "/favicon.ico"
+        });
+
+    }
+
+});
