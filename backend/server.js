@@ -1205,7 +1205,7 @@ for (const item of items) {
 // CREATE SELLER NOTIFICATIONS
 // ==========================================
 
-   for (const sellerEmail of sellerEmails) {
+for (const sellerEmail of sellerEmails) {
 
     await Notification.create({
         sellerEmail: sellerEmail,
@@ -1218,6 +1218,51 @@ for (const item of items) {
 
         orderId: savedOrder._id
     });
+
+    // ==========================================
+    // SEND FCM PUSH NOTIFICATION
+    // ==========================================
+
+    const seller = await User.findOne({
+        email: sellerEmail
+    });
+
+    if (
+        seller &&
+        Array.isArray(seller.fcmTokens) &&
+        seller.fcmTokens.length > 0
+    ) {
+
+        const messaging = getMessaging();
+
+        for (const token of seller.fcmTokens) {
+
+            try {
+
+                await messaging.send({
+                    token: token,
+
+                    notification: {
+                        title: "🔔 New Order",
+                        body: `${customerName} ordered ${items.length} item(s)`
+                    }
+                });
+
+                console.log(
+                    "FCM notification sent to:",
+                    sellerEmail
+                );
+
+            } catch (error) {
+
+                console.log(
+                    "FCM notification error:",
+                    error.message
+                );
+
+            }
+        }
+    }
 }
 
 // ==========================================
