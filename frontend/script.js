@@ -1344,7 +1344,36 @@ function createProductCard(
                 type="button"
                 ${productStock <= 0 ? "disabled" : ""}
             >
-                🛒 Add to Cart
+                   <svg
+                viewBox="0 0 24 24"
+                width="26"
+                height="26"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round">
+
+                <path
+                    d="M3 4h2l2.2 11.2a2 2 0 0 0 2 1.6h7.9a2 2 0 0 0 1.9-1.4L21 8H6">
+                </path>
+
+                <circle
+                    cx="10"
+                    cy="20"
+                    r="1.3">
+                </circle>
+
+                <circle
+                    cx="18"
+                    cy="20"
+                    r="1.3">
+                </circle>
+
+            </svg>
+
+            
+            Add cart
             </button>
 
         </div>
