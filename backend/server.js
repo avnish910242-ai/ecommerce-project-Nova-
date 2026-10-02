@@ -1,3 +1,12 @@
+const { initializeApp, cert } = require("firebase-admin/app");
+
+const serviceAccount = require("./sheshop99-firebase-adminsdk-fbsvc-502dcf728c.json");
+
+initializeApp({
+    credential: cert(serviceAccount)
+});
+
+const { getMessaging } = require("firebase-admin/messaging");
 const express = require("express");
 const mongoose = require("mongoose");
 require("dotenv").config();
@@ -181,6 +190,10 @@ const userSchema = new mongoose.Schema({
     type: [String],
     enum: ["customer", "seller"],
     default: ["customer"]
+},
+fcmTokens: {
+    type: [String],
+    default: []
 }
 
 });
@@ -994,6 +1007,56 @@ app.get(
 
     }
 );
+// ==========================================
+// SAVE SELLER FCM TOKEN
+// ==========================================
+
+app.post("/api/seller/fcm-token", async (req, res) => {
+
+    try {
+
+        const { email, token } = req.body;
+
+        if (!email || !token) {
+            return res.status(400).json({
+                message: "Email and token are required"
+            });
+        }
+
+        const user = await User.findOne({
+            email: email
+        });
+
+        if (!user) {
+            return res.status(404).json({
+                message: "User not found"
+            });
+        }
+
+        if (!user.roles.includes("seller")) {
+            return res.status(403).json({
+                message: "User is not a seller"
+            });
+        }
+
+        if (!user.fcmTokens.includes(token)) {
+            user.fcmTokens.push(token);
+            await user.save();
+        }
+
+        res.json({
+            message: "FCM token saved successfully"
+        });
+
+    } catch (error) {
+
+        console.log("FCM token error:", error);
+
+        res.status(500).json({
+            message: error.message
+        });
+    }
+});
 
 
 // ==========================================
@@ -1142,21 +1205,20 @@ for (const item of items) {
 // CREATE SELLER NOTIFICATIONS
 // ==========================================
 
-for (const sellerEmail of sellerEmails) {
+   for (const sellerEmail of sellerEmails) {
 
     await Notification.create({
         sellerEmail: sellerEmail,
 
-        title: "🔔 New Order Received",
+        title: "🔔 New Order",
 
         message:
-            `Customer ${customerName} placed a new order. ` +
-            `Total: ₹${Number(totalAmount).toLocaleString("en-IN")}`,
+            `${customerName} ordered ${items.length} item(s)\n` +
+            `📍 ${address}`,
 
         orderId: savedOrder._id
     });
 }
-   
 
 // ==========================================
 // SEND SUCCESS RESPONSE
