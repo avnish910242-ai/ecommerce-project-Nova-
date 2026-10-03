@@ -32,7 +32,7 @@ messaging.onBackgroundMessage(function(payload) {
 
     const notificationTitle =
         payload.notification?.title ||
-        "NOVA";
+        "SEASHOP";
 
     const notificationOptions = {
 

@@ -43,7 +43,7 @@ if (!Array.isArray(user.roles) || !user.roles.includes("seller")) {
             window.navigator.standalone === true;
 
         if (!isInstalled) {
-            console.log("NOVA app अभी installed नहीं है।");
+            console.log("SEASHOP app is not install.");
             return;
         }
 const registration = await navigator.serviceWorker.ready;
