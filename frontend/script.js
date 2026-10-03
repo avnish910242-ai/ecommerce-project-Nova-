@@ -1672,8 +1672,7 @@ function saveSearchTerm(term) {
 
 // ==========================================
 // SHOW MOBILE SEARCH SUGGESTIONS
-// ==========================================
-function showMobileSearchSuggestions() {
+// ==========================================function showMobileSearchSuggestions() {
 
     const box =
         document.getElementById(
@@ -1692,17 +1691,47 @@ function showMobileSearchSuggestions() {
     const typed =
         input.value.trim().toLowerCase();
 
-    box.innerHTML = "";
+
+    // ==========================================
+    // EMPTY SEARCH
+    // ==========================================
 
     if (!typed) {
+
+        box.innerHTML = "";
         box.style.display = "none";
+
         return;
     }
+
+
+    // ==========================================
+    // SEARCH KE BAAD SAME TEXT PAR HINT MAT DIKHAO
+    // ==========================================
+
+    if (
+        input.dataset.lastSearched === typed
+    ) {
+
+        box.innerHTML = "";
+        box.style.display = "none";
+
+        return;
+    }
+
+
+    box.innerHTML = "";
+
+
+    // ==========================================
+    // PRODUCTS
+    // ==========================================
 
     const products =
         document.querySelectorAll(
             ".product-card"
         );
+
 
     products.forEach(
         function(card) {
@@ -1716,9 +1745,10 @@ function showMobileSearchSuggestions() {
                 return;
             }
 
+
             const name =
-                productName.textContent
-                    .trim();
+                productName.textContent.trim();
+
 
             if (
                 name
@@ -1737,10 +1767,23 @@ function showMobileSearchSuggestions() {
                 suggestion.textContent =
                     name;
 
+
+                // ==================================
+                // HINT PAR CLICK
+                // ==================================
+
                 suggestion.onclick =
-                    function() {
+                    function(event) {
+
+                        event.preventDefault();
+                        event.stopPropagation();
 
                         input.value = name;
+
+                        input.dataset.lastSearched =
+                            name.toLowerCase();
+
+                        box.innerHTML = "";
 
                         box.style.display =
                             "none";
@@ -1749,68 +1792,92 @@ function showMobileSearchSuggestions() {
 
                     };
 
+
                 box.appendChild(
                     suggestion
                 );
+
             }
 
         }
     );
 
-    if (box.children.length > 0) {
 
-        box.style.display = "block";
+    // ==========================================
+    // SHOW / HIDE HINTS
+    // ==========================================
+
+    if (
+        box.children.length > 0
+    ) {
+
+        box.style.display =
+            "block";
 
     } else {
 
-        box.style.display = "none";
+        box.style.display =
+            "none";
 
     }
-}
+
+
 // ==========================================
 // SEARCH ENTER
 // ==========================================
-
 function handleSearchKey(event) {
 
-    if (event.key === "Enter") {
-
-        const input =
-            document.getElementById("searchInput");
-
-        const term =
-            input ? input.value.trim() : "";
-
-        if (term) {
-
-            saveSearchTerm(term);
-            input.dataset.lastSearched = term.toLowerCase();
-
-            searchProduct();
-
-        }
-
-        const suggestions =
-            document.getElementById(
-                "mobileSearchSuggestions"
-            );
-
-        // Search ke turant baad hide
-        if (suggestions) {
-            suggestions.style.display = "none";
-        }
-
-        // Agar searchProduct hints ko dobara show kare
-        setTimeout(() => {
-            if (suggestions) {
-                suggestions.style.display = "none";
-            }
-        }, 100);
-
+    if (event.key !== "Enter") {
+        return;
     }
 
-}
+    const input =
+        document.getElementById("searchInput");
 
+    const suggestions =
+        document.getElementById(
+            "mobileSearchSuggestions"
+        );
+
+    if (!input) {
+        return;
+    }
+
+    const term =
+        input.value.trim();
+
+    // ==========================================
+    // ENTER DABATE HI HINTS CLOSE
+    // ==========================================
+
+    if (suggestions) {
+        suggestions.innerHTML = "";
+        suggestions.style.display = "none";
+    }
+
+    // ==========================================
+    // SEARCH
+    // ==========================================
+
+    if (term) {
+
+        saveSearchTerm(term);
+
+        input.dataset.lastSearched =
+            term.toLowerCase();
+
+        searchProduct();
+    }
+
+    // ==========================================
+    // SEARCH KE BAAD HINTS CLOSED
+    // ==========================================
+
+    if (suggestions) {
+        suggestions.innerHTML = "";
+        suggestions.style.display = "none";
+    }
+}
 // ==========================================
 // PAGE LOAD
 // ==========================================
