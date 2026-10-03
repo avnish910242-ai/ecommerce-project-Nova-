@@ -4174,3 +4174,33 @@ footer p {
     }
 
 }
+@media (max-width: 768px) {
+
+    .categories {
+        display: block;
+    }
+
+    .section-heading {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .category-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        width: 100%;
+    }
+
+    .category {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+}
+.product-description {
+    margin: 12px 4px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #555;
+}

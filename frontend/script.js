@@ -1223,7 +1223,13 @@ function createProductCard(
 
     const productStock =
         Number(product.stock) || 0;
+// ==========================================
+// PRODUCT DESCRIPTION
+// ==========================================
 
+const productDescription =
+    product.description ||
+    "";
 
     // ==========================================
     // PRODUCT IMAGE
@@ -1335,6 +1341,9 @@ function createProductCard(
                 ? "✓ In Stock (" + productStock + ")"
                 : "✕ Out of Stock"
             }
+        </p>
+                <p class="product-description">
+            ${productDescription}
         </p>
 
 
@@ -1772,18 +1781,31 @@ function handleSearchKey(event) {
         const term =
             input ? input.value.trim() : "";
 
-        saveSearchTerm(term);
+        if (term) {
 
-        searchProduct();
+            saveSearchTerm(term);
+            input.dataset.lastSearched = term.toLowerCase();
+
+            searchProduct();
+
+        }
 
         const suggestions =
             document.getElementById(
                 "mobileSearchSuggestions"
             );
 
+        // Search ke turant baad hide
         if (suggestions) {
             suggestions.style.display = "none";
         }
+
+        // Agar searchProduct hints ko dobara show kare
+        setTimeout(() => {
+            if (suggestions) {
+                suggestions.style.display = "none";
+            }
+        }, 100);
 
     }
 
@@ -4750,12 +4772,32 @@ function showMobileSearchSuggestions() {
     const typed =
         input.value.trim().toLowerCase();
 
+
+    // ==========================================
+    // SEARCH KE BAAD SAME TEXT PAR HINT MAT DIKHAO
+    // ==========================================
+
+    if (
+        input.dataset.lastSearched === typed &&
+        typed !== ""
+    ) {
+
+        box.innerHTML = "";
+        box.style.display = "none";
+
+        return;
+    }
+
+
     box.innerHTML = "";
 
     if (!typed) {
+
         box.style.display = "none";
+
         return;
     }
+
 
     const products =
         document.querySelectorAll(
@@ -4763,6 +4805,7 @@ function showMobileSearchSuggestions() {
         );
 
     const names = [];
+
 
     products.forEach(function(card) {
 
@@ -4802,17 +4845,23 @@ function showMobileSearchSuggestions() {
         suggestion.textContent =
             name;
 
+
         suggestion.onclick =
             function() {
 
                 input.value = name;
 
-                box.style.display =
-                    "none";
+                input.dataset.lastSearched =
+                    name.toLowerCase();
+
+                box.innerHTML = "";
+
+                box.style.display = "none";
 
                 searchProduct();
 
             };
+
 
         box.appendChild(
             suggestion

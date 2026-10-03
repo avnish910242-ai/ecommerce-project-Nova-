@@ -8,7 +8,7 @@
     <title>SEASHOP</title>
 
     <link rel="stylesheet" href="style.css">
-    <link rel="icon" type="image/png" href="images/log.png">
+    <link rel="icon" type="image/svg+xml" href="svg/seashop.svg">
     <meta name="google-site-verification" content="fRCyZmSVDi14QdOCz7JsHBsf36_opR9gfnpoCjQZofg" />
 <link rel="manifest" href="manifest.json">
 
@@ -1576,11 +1576,9 @@ function handleSearchButton() {
                 "search-open"
             );
 
-            // Search open hote hi
-            // purane hints hide
+            // Search open hote hi hints hide
             if (suggestions) {
-                suggestions.style.display =
-                    "none";
+                suggestions.style.display = "none";
             }
 
             if (searchInput) {
@@ -1605,18 +1603,23 @@ function handleSearchButton() {
             if (term) {
 
                 saveSearchTerm(term);
+                 input.dataset.lastSearched =
+        term.toLowerCase();
 
                 searchProduct();
 
-            }
+                // Search ke baad hints completely hide
+                if (suggestions) {
+                    suggestions.style.display = "none";
+                }
 
+                // Agar searchProduct dobara hints show kare
+                setTimeout(() => {
+                    if (suggestions) {
+                        suggestions.style.display = "none";
+                    }
+                }, 100);
 
-            // Search karne ke baad
-            // hints hide
-
-            if (suggestions) {
-                suggestions.style.display =
-                    "none";
             }
 
         }
@@ -1635,6 +1638,11 @@ function handleSearchButton() {
                 "searchInput"
             );
 
+        const suggestions =
+            document.getElementById(
+                "mobileSearchSuggestions"
+            );
+
         const term =
             searchInput
                 ? searchInput.value.trim()
@@ -1646,6 +1654,10 @@ function handleSearchButton() {
             saveSearchTerm(term);
 
             searchProduct();
+
+            if (suggestions) {
+                suggestions.style.display = "none";
+            }
 
         }
 
