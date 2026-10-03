@@ -1,6 +1,6 @@
 {
   "name": "SEASHOP",
-  "short_name": "SS",
+  "short_name": "SEASHOP",
   "description": "SEASHOP online shopping store",
   "start_url": "/",
   "display": "standalone",
@@ -9,9 +9,9 @@
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "images/log.png",
-      "sizes": "512x512",
-      "type": "image/png"
+      "src": "svg/seashop.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
     }
   ]
 }
