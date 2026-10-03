@@ -403,7 +403,8 @@
       <button
     type="button"
     class="mobile-mic-btn"
-    aria-label="Voice Search">
+    aria-label="Voice Search"
+   onclick="startVoiceSearch()">
 
     <svg
         viewBox="0 0 24 24"
@@ -1726,6 +1727,38 @@ if ("serviceWorker" in navigator) {
         <small style="color: blue;">My Orders</small>
     </button>
 
+</div>
+<!-- Center Voice Mic -->
+<div id="voiceMicScreen">
+    <div class="voice-mic-circle">
+
+        <svg
+            viewBox="0 0 24 24"
+            width="48"
+            height="48"
+            fill="none"
+            stroke="white"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round">
+
+            <rect
+                x="9"
+                y="3"
+                width="6"
+                height="11"
+                rx="3">
+            </rect>
+
+            <path d="M5 11a7 7 0 0 0 14 0"></path>
+
+            <path d="M12 18v3"></path>
+
+            <path d="M8 21h8"></path>
+
+        </svg>
+
+    </div>
 </div>
 </body>
 </html>

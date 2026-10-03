@@ -4881,3 +4881,137 @@ function showMobileSearchSuggestions() {
     }
 
 }
+// ==========================================
+// MOBILE VOICE SEARCH
+// ==========================================
+
+const SpeechRecognition =
+    window.SpeechRecognition ||
+    window.webkitSpeechRecognition;
+
+let voiceRecognition = null;
+
+if (SpeechRecognition) {
+
+    voiceRecognition = new SpeechRecognition();
+
+    voiceRecognition.lang = "en-IN";
+    voiceRecognition.continuous = false;
+    voiceRecognition.interimResults = false;
+
+
+    // ==========================================
+    // MIC START
+    // ==========================================
+
+    voiceRecognition.onstart = function () {
+
+        const micScreen =
+            document.getElementById("voiceMicScreen");
+
+        if (micScreen) {
+            micScreen.classList.add("active");
+        }
+
+    };
+
+
+    // ==========================================
+    // VOICE RESULT
+    // ==========================================
+
+    voiceRecognition.onresult = function (event) {
+
+        const spokenText =
+            event.results[0][0].transcript;
+
+        const searchInput =
+            document.getElementById("searchInput");
+
+        if (searchInput) {
+
+            searchInput.value =
+                spokenText;
+
+            searchInput.dispatchEvent(
+                new Event("input", {
+                    bubbles: true
+                })
+            );
+
+            handleSearchButton();
+
+        }
+
+    };
+
+
+    // ==========================================
+    // MIC ERROR
+    // ==========================================
+
+    voiceRecognition.onerror = function (event) {
+
+        console.log(
+            "Voice search error:",
+            event.error
+        );
+
+        const micScreen =
+            document.getElementById("voiceMicScreen");
+
+        if (micScreen) {
+            micScreen.classList.remove("active");
+        }
+
+    };
+
+
+    // ==========================================
+    // MIC END
+    // ==========================================
+
+    voiceRecognition.onend = function () {
+
+        const micScreen =
+            document.getElementById("voiceMicScreen");
+
+        if (micScreen) {
+            micScreen.classList.remove("active");
+        }
+
+    };
+
+}
+
+
+// ==========================================
+// START VOICE SEARCH
+// ==========================================
+
+function startVoiceSearch() {
+
+    if (!voiceRecognition) {
+
+        alert(
+            "Voice search is not supported in this browser."
+        );
+
+        return;
+
+    }
+
+    try {
+
+        voiceRecognition.start();
+
+    } catch (error) {
+
+        console.log(
+            "Voice search:",
+            error
+        );
+
+    }
+
+}
