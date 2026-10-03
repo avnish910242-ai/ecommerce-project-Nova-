@@ -1672,7 +1672,8 @@ function saveSearchTerm(term) {
 
 // ==========================================
 // SHOW MOBILE SEARCH SUGGESTIONS
-// ==========================================function showMobileSearchSuggestions() {
+// ==========================================
+function showMobileSearchSuggestions() {
 
     const box =
         document.getElementById(
@@ -1821,7 +1822,7 @@ function saveSearchTerm(term) {
 
     }
 
-
+}
 // ==========================================
 // SEARCH ENTER
 // ==========================================
@@ -5082,3 +5083,47 @@ function startVoiceSearch() {
     }
 
 }
+// ==========================================
+// SEASHOP APP INTRO
+// INSTALLED APP ONLY
+// ==========================================
+
+(function () {
+
+    const intro =
+        document.getElementById("seashopIntro");
+
+    if (!intro) {
+        return;
+    }
+
+    const isInstalled =
+        window.matchMedia(
+            "(display-mode: standalone)"
+        ).matches
+        ||
+        window.navigator.standalone === true;
+
+    // Normal browser mein intro nahi
+    if (!isInstalled) {
+        intro.remove();
+        return;
+    }
+
+    // Installed app mein intro show
+    intro.style.display = "flex";
+
+    // 2.5 second baad main app
+    setTimeout(function () {
+
+        intro.classList.add(
+            "seashopIntroHide"
+        );
+
+        setTimeout(function () {
+            intro.remove();
+        }, 500);
+
+    }, 2500);
+
+})();
