@@ -4343,18 +4343,17 @@ footer p {
         0.45s
         forwards;
 }
-
 #seashopIntroText {
     margin-top: 12px;
 
     font-size: 28px;
-    font-weight: 800;
+    font-weight: 900;
 
     letter-spacing: 3px;
 
     color: #1677ff;
 
-    font-family: "Trebuchet MS", Arial, sans-serif;
+    font-family: "Arial Rounded MT Bold", "Trebuchet MS", Arial, sans-serif;
 
     opacity: 0;
 
