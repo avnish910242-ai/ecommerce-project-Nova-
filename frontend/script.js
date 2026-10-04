@@ -1171,10 +1171,7 @@ function filterCategory(category) {
 // CREATE PRODUCT CARD
 // ==========================================
 
-function createProductCard(
-    productGrid,
-    product
-) {
+function createProductCard(productGrid, product) {
 
     const productCard =
         document.createElement("div");
@@ -1206,16 +1203,19 @@ function createProductCard(
     if (!Number.isFinite(productPrice)) {
         productPrice = 0;
     }
+
+
     // ==========================================
     // PRODUCT CATEGORY
     // ==========================================
 
-         const productCategory =
-         product.category ||
-            "Product";
+    const productCategory =
+        product.category ||
+        "Product";
 
-        productCard.dataset.category =
-    productCategory;
+    productCard.dataset.category =
+        productCategory;
+
 
     // ==========================================
     // PRODUCT STOCK
@@ -1223,13 +1223,16 @@ function createProductCard(
 
     const productStock =
         Number(product.stock) || 0;
-// ==========================================
-// PRODUCT DESCRIPTION
-// ==========================================
 
-const productDescription =
-    product.description ||
-    "";
+
+    // ==========================================
+    // PRODUCT DESCRIPTION
+    // ==========================================
+
+    const productDescription =
+        product.description ||
+        "";
+
 
     // ==========================================
     // PRODUCT IMAGE
@@ -1317,6 +1320,31 @@ const productDescription =
             }
 
 
+            <!-- 3 DOTS -->
+
+            <button
+                class="product-menu-btn"
+                type="button"
+                aria-label="Product options"
+            >
+                ⋮
+            </button>
+
+
+            <!-- SHARE MENU -->
+
+            <div class="product-menu">
+
+                <button
+                    class="product-share-btn"
+                    type="button"
+                >
+                    ↗ Share
+                </button>
+
+            </div>
+
+
         </div>
 
 
@@ -1342,7 +1370,9 @@ const productDescription =
                 : "✕ Out of Stock"
             }
         </p>
-                <p class="product-description">
+
+
+        <p class="product-description">
             ${productDescription}
         </p>
 
@@ -1354,42 +1384,142 @@ const productDescription =
                 type="button"
                 ${productStock <= 0 ? "disabled" : ""}
             >
-                   <svg
-                viewBox="0 0 24 24"
-                width="26"
-                height="26"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.8"
-                stroke-linecap="round"
-                stroke-linejoin="round">
 
-                <path
-                    d="M3 4h2l2.2 11.2a2 2 0 0 0 2 1.6h7.9a2 2 0 0 0 1.9-1.4L21 8H6">
-                </path>
+                <svg
+                    viewBox="0 0 24 24"
+                    width="26"
+                    height="26"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round">
 
-                <circle
-                    cx="10"
-                    cy="20"
-                    r="1.3">
-                </circle>
+                    <path
+                        d="M3 4h2l2.2 11.2a2 2 0 0 0 2 1.6h7.9a2 2 0 0 0 1.9-1.4L21 8H6">
+                    </path>
 
-                <circle
-                    cx="18"
-                    cy="20"
-                    r="1.3">
-                </circle>
+                    <circle
+                        cx="10"
+                        cy="20"
+                        r="1.3">
+                    </circle>
 
-            </svg>
+                    <circle
+                        cx="18"
+                        cy="20"
+                        r="1.3">
+                    </circle>
 
+                </svg>
 
-            Add cart
+                Add cart
+
             </button>
 
         </div>
 
     `;
 
+
+    // ==========================================
+    // 3 DOTS MENU
+    // ==========================================
+
+    const menuButton =
+        productCard.querySelector(
+            ".product-menu-btn"
+        );
+
+    const productMenu =
+        productCard.querySelector(
+            ".product-menu"
+        );
+
+    if (menuButton && productMenu) {
+
+        menuButton.addEventListener(
+            "click",
+            function(event) {
+
+                event.stopPropagation();
+
+                document
+                    .querySelectorAll(".product-menu.show")
+                    .forEach(function(menu) {
+
+                        if (menu !== productMenu) {
+                            menu.classList.remove("show");
+                        }
+
+                    });
+
+                productMenu.classList.toggle("show");
+
+            }
+        );
+
+    }
+// ==========================================
+// SHARE PRODUCT
+// ==========================================
+
+const shareButton =
+    productCard.querySelector(
+        ".product-share-btn"
+    );
+
+if (shareButton) {
+
+    shareButton.addEventListener(
+        "click",
+        async function(event) {
+
+            event.stopPropagation();
+
+            const productId =
+                product._id || "";
+
+            const shareURL =
+                window.location.origin +
+                window.location.pathname +
+                "?product=" +
+                encodeURIComponent(productId);
+
+            try {
+
+                await navigator.share({
+
+                    title:
+                        productName,
+
+                    text:
+                        "Check out " +
+                        productName +
+                        " on NOVA",
+
+                    url:
+                        shareURL
+
+                });
+
+            } catch (error) {
+
+                console.log(
+                    "Share cancelled:",
+                    error
+                );
+
+            }
+
+            productMenu.classList.remove(
+                "show"
+            );
+
+        }
+    );
+
+}
 
     // ==========================================
     // ADD TO CART
@@ -1417,7 +1547,6 @@ const productDescription =
         );
 
     }
-
 
 
     // ==========================================
@@ -1476,9 +1605,11 @@ function searchProduct() {
 
     const input =
         document.getElementById("searchInput");
+        const productGrid =
+    document.getElementById("productGrid");
 
     if (!input) {
-        console.log("Search input nahi mila");
+        console.log("Search input is not found.");
         return;
     }
 
@@ -1493,17 +1624,24 @@ function searchProduct() {
     // SEARCH EMPTY → SAB PRODUCTS SHOW
     // ==========================================
 
-    if (query === "") {
+   if (query === "") {
 
-        products.forEach(function(card) {
+    products.forEach(function(card) {
 
-            card.style.display = "";
-            card.style.outline = "";
+        card.style.display = "";
+        card.style.outline = "";
 
-        });
+    });
 
-        return;
+    const oldMessage =
+        document.getElementById("searchNoProductsMessage");
+
+    if (oldMessage) {
+        oldMessage.style.display = "none";
     }
+
+    return;
+}
 
 
     // ==========================================
@@ -1573,14 +1711,45 @@ function searchProduct() {
     // NO PRODUCT
     // ==========================================
 
-    if (matchedProducts.length === 0) {
+  if (matchedProducts.length === 0) {
 
-        alert("Product is not found.");
+    products.forEach(function(card) {
+        card.style.display = "none";
+        card.style.outline = "";
+    });
 
-        return;
+    let message =
+        document.getElementById("searchNoProductsMessage");
+
+    if (!message) {
+
+        message = document.createElement("p");
+
+        message.id = "searchNoProductsMessage";
+        message.className = "no-products-message";
+        message.textContent = "No products found.";
+
+        productGrid.appendChild(message);
     }
 
+ const productsSection =
+    document.getElementById("shop");
 
+if (productsSection) {
+    productsSection.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+}
+
+    return;
+}
+const oldMessage =
+    document.getElementById("searchNoProductsMessage");
+
+if (oldMessage) {
+    oldMessage.style.display = "none";
+}
     // ==========================================
     // HIDE ALL
     // ==========================================
