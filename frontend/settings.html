@@ -1,107 +1,427 @@
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
     <title>Settings</title>
 
     <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             margin: 0;
             font-family: Arial, sans-serif;
-            background: white;
+            background: #f7f8fa;
+            color: #111;
         }
+
+        /* HEADER */
 
         .header {
-            color: black;
-            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            padding: 18px 22px;
+
+            background: white;
+
+            border-bottom: 1px solid #e8e8e8;
+
             font-size: 20px;
-            font-weight: none;
+            font-weight: 600;
         }
+
+        .settings-icon {
+            font-size: 21px;
+        }
+
+
+        /* MAIN CONTAINER */
 
         .container {
-            max-width: 700px;
-            margin: 0px auto;
+
+            width: calc(100% - 30px);
+
+            max-width: 600px;
+
+            margin: 35px auto;
+
             background: white;
+
             padding: 30px;
-            border-radius: 12px;
-            text-align: center;
+
+            border-radius: 16px;
+
+            box-shadow:
+                0 4px 18px rgba(0, 0, 0, 0.06);
+
         }
 
+
+        /* TITLE */
+
+        .title {
+
+            margin: 0;
+
+            font-size: 24px;
+
+            font-weight: 600;
+
+        }
+
+        .subtitle {
+
+            margin: 8px 0 25px;
+
+            color: #777;
+
+            font-size: 14px;
+
+        }
+
+
+        /* SELLER BUTTON */
+
         .role-btn {
-            display: block;
+
             width: 100%;
-            padding: 18px;
-            margin: 20px 0;
-            border: none;
-            border-radius: 10px;
-            font-size: 18px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            padding: 17px 18px;
+
+            margin-top: 15px;
+
+            border: 1px solid #e5e5e5;
+
+            border-radius: 12px;
+
+            background: #f8f9fa;
+
+            color: #111;
+
+            font-size: 16px;
+
+            font-weight: 600;
+
             cursor: pointer;
-            background: rgb(222, 225, 226);
-            color: black;
+
+            transition:
+                background 0.2s ease,
+                border-color 0.2s ease,
+                transform 0.15s ease;
+
         }
 
         .role-btn:hover {
-            background: whitesmoke;
+
+            background: #f1f3f5;
+
+            border-color: #d8d8d8;
+
         }
 
-        .back {
-            text-decoration: none;
-            color: #555;
+        .role-btn:active {
+
+            transform: scale(0.99);
+
         }
+
+
+        .seller-left {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+
+        }
+
+
+        .seller-icon {
+
+            width: 38px;
+
+            height: 38px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            border-radius: 10px;
+
+            background: #e9ecef;
+
+            font-size: 20px;
+
+        }
+
+
+        .arrow {
+
+            font-size: 20px;
+
+            color: #777;
+
+        }
+
+
+        /* CONTACT INFO */
+
+        .contact-box {
+
+            margin-top: 28px;
+
+            padding-top: 20px;
+
+            border-top: 1px solid #eeeeee;
+
+            text-align: center;
+
+        }
+
+        .contact-text {
+
+            margin: 0 0 8px;
+
+            color: #777;
+
+            font-size: 13px;
+
+        }
+
+        .email {
+
+            margin: 0;
+
+            color: #1677ff;
+
+            font-size: 14px;
+
+            font-weight: 500;
+
+            word-break: break-word;
+
+        }
+
+
+        /* BACK */
+
+        .back {
+
+            display: block;
+
+            margin-top: 25px;
+
+            text-align: center;
+
+            text-decoration: none;
+
+            color: #555;
+
+            font-size: 14px;
+
+        }
+
+        .back:hover {
+
+            color: #1677ff;
+
+        }
+
+
+        /* MOBILE */
+
+        @media (max-width: 600px) {
+
+            .header {
+
+                padding: 16px;
+
+                font-size: 19px;
+
+            }
+
+            .container {
+
+                width: calc(100% - 24px);
+
+                margin: 20px auto;
+
+                padding: 22px 18px;
+
+                border-radius: 14px;
+
+            }
+
+            .title {
+
+                font-size: 22px;
+
+            }
+
+            .role-btn {
+
+                padding: 15px;
+
+            }
+
+        }
+
     </style>
+
 </head>
+
 
 <body>
 
+
+    <!-- HEADER -->
+
     <div class="header">
-        ⚙️ Settings
+
+        <span class="settings-icon">⚙️</span>
+
+        <span>Settings</span>
+
     </div>
+
+
+    <!-- MAIN -->
 
     <div class="container">
 
-        <h2>Select Your Role</h2>
-<button class="role-btn" onclick="openSeller()">
-    Seller
-</button>
 
-        <br>
+        <h2 class="title">
+            Select Your Role
+        </h2>
 
-        <a class="back" href="index.html">
+        <p class="subtitle">
+            Choose an option to continue
+        </p>
+
+
+        <!-- SELLER -->
+
+        <button
+            class="role-btn"
+            onclick="openSeller()"
+        >
+
+            <span class="seller-left">
+
+                <span class="seller-icon">
+                    🛍️
+                </span>
+
+                <span>
+                    Seller
+                </span>
+
+            </span>
+
+            <span class="arrow">
+                ›
+            </span>
+
+        </button>
+
+
+        <!-- CONTACT -->
+
+        <div class="contact-box">
+
+            <p class="contact-text">
+                Want to become a seller?
+                Please contact us at
+            </p>
+
+            <p class="email">
+                avnish910242@gmail.com
+            </p>
+
+        </div>
+
+
+        <!-- BACK -->
+
+        <a
+            class="back"
+            href="index.html"
+        >
             ← Back to Home
         </a>
-        <p style="color: red;">if you want to become a seller please contact on </p>
-        <p>avnish910242@gmail.com</p>
-        
+
 
     </div>
+
+
 <script>
-    function openSeller() {
+
+function openSeller() {
 
     const user = JSON.parse(
         localStorage.getItem("novaUser")
     );
 
+
     // Login nahi hai
+
     if (!user) {
-        window.location.href = "login.html";
+
+        window.location.href =
+            "login.html";
+
         return;
+
     }
 
+
     // Seller role check
+
     if (
         !user.roles ||
         !user.roles.includes("seller")
     ) {
-        alert("You are not a seller.");
+
+        alert(
+            "You are not a seller."
+        );
+
         return;
+
     }
 
+
     // Seller hai
-    window.location.href = "seller.html";
+
+    window.location.href =
+        "seller.html";
+
 }
+
 </script>
 
+
 </body>
+
 </html>
