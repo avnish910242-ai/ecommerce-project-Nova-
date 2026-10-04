@@ -2906,7 +2906,6 @@ footer p {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 15px;
-    color: blue;
 }
 
 .delivery-header h2 {
@@ -4300,7 +4299,6 @@ footer p {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: blue;
 }
 
 #seashopIntroLogo {
@@ -4354,7 +4352,9 @@ footer p {
 
     letter-spacing: 3px;
 
-    color: #111827;
+    color: #1677ff;
+
+    font-family: "Trebuchet MS", Arial, sans-serif;
 
     opacity: 0;
 
@@ -4457,4 +4457,111 @@ footer p {
 }
 #seashopIntro {
     background: #F0F7FF !important;
+}
+/* SEARCH CLEAR CROSS - FINAL FIX */
+
+.search-box .clear-search-button {
+    display: flex !important;
+
+    width: 40px !important;
+    height: 46px !important;
+
+    align-items: center !important;
+    justify-content: center !important;
+
+    border: none !important;
+    border-left: none !important;
+
+    background: transparent !important;
+
+    color: #555 !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+
+    cursor: pointer;
+}
+
+.search-box .clear-search-button.show {
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+}
+
+.search-box .clear-search-button svg {
+    display: block !important;
+
+    width: 18px !important;
+    height: 18px !important;
+
+    stroke: #555 !important;
+}
+
+.search-box .clear-search-button:hover {
+    background: transparent !important;
+}
+/* ==========================================
+   SEARCH CROSS - FINAL
+========================================== */
+
+.search-box {
+    position: relative !important;
+}
+
+/* Clear button */
+.search-box .clear-search-button {
+    display: flex !important;
+
+    width: 36px !important;
+    height: 40px !important;
+
+    position: absolute !important;
+    right: 40px !important;
+    top: 0px !important;
+
+    align-items: center !important;
+    justify-content: center !important;
+
+    border: none !important;
+    border-left: none !important;
+    border-radius: 50% !important;
+
+    background: transparent !important;
+    color: #555 !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+
+    z-index: 20 !important;
+}
+
+/* Jab text ho */
+.search-box .clear-search-button.show {
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+}
+
+/* Cross SVG */
+.search-box .clear-search-button svg {
+    width: 18px !important;
+    height: 18px !important;
+
+    display: block !important;
+
+    stroke: #555 !important;
+}
+
+/* Hover */
+.search-box .clear-search-button:hover {
+    background: transparent !important;
+    color: #000 !important;
 }

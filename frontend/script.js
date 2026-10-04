@@ -4988,31 +4988,33 @@ if (SpeechRecognition) {
     // VOICE RESULT
     // ==========================================
 
-    voiceRecognition.onresult = function (event) {
+voiceRecognition.onresult = function (event) {
 
-        const spokenText =
-            event.results[0][0].transcript;
+    const spokenText =
+        event.results[0][0].transcript;
 
-        const searchInput =
-            document.getElementById("searchInput");
+    const searchInput =
+        document.getElementById("searchInput");
 
-        if (searchInput) {
+    if (searchInput) {
 
-            searchInput.value =
-                spokenText;
+        searchInput.value =
+            spokenText;
 
-            searchInput.dispatchEvent(
-                new Event("input", {
-                    bubbles: true
-                })
-            );
+        // Cross ko show karo
+        searchInput.dispatchEvent(
+            new Event("input", {
+                bubbles: true
+            })
+        );
 
-            handleSearchButton();
+        // Voice se bolna khatam hote hi
+        // automatically search karo
+        handleSearchButton();
 
-        }
+    }
 
-    };
-
+};
 
     // ==========================================
     // MIC ERROR
@@ -5127,3 +5129,38 @@ function startVoiceSearch() {
     }, 2500);
 
 })();
+function toggleClearSearch() {
+
+    const input = document.getElementById("searchInput");
+    const clearButton =
+        document.getElementById("clearSearchButton");
+
+    if (!input || !clearButton) {
+        return;
+    }
+
+    if (input.value.trim() !== "") {
+        clearButton.classList.add("show");
+    } else {
+        clearButton.classList.remove("show");
+    }
+}
+
+
+function clearSearch() {
+
+    const input =
+        document.getElementById("searchInput");
+
+    if (!input) {
+        return;
+    }
+
+    input.value = "";
+
+    toggleClearSearch();
+
+    handleSearchButton();
+
+    input.focus();
+}
