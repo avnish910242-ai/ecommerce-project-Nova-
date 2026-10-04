@@ -1147,7 +1147,7 @@ nav a:hover::after {
 .checkout-btn:hover {
     transform: translateY(-2px);
 
-    background: white;
+   
 }
 
 /* =========================================================
@@ -2906,6 +2906,7 @@ footer p {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 15px;
+    color: blue;
 }
 
 .delivery-header h2 {
@@ -4299,6 +4300,7 @@ footer p {
     display: flex;
     align-items: center;
     justify-content: center;
+    color: blue;
 }
 
 #seashopIntroLogo {

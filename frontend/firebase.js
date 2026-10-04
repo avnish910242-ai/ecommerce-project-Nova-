@@ -90,7 +90,7 @@ messaging.onMessage((payload) => {
     console.log("FCM foreground message received:", payload);
 
     const title =
-        payload.notification?.title || "NOVA";
+        payload.notification?.title || "SEASHOP";
 
     const body =
         payload.notification?.body || "New notification";
