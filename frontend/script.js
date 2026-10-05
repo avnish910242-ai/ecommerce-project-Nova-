@@ -5341,3 +5341,13 @@ function clearSearch() {
 
     input.focus();
 }
+function handleAccountClick() {
+
+    const savedUser = localStorage.getItem("novaUser");
+
+    if (savedUser) {
+        window.location.href = "account.html";
+    } else {
+        window.location.href = "login.html";
+    }
+}

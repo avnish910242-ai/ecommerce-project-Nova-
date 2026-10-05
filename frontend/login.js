@@ -533,16 +533,16 @@ function initializeGoogleLogin() {
 
     googleButton.innerHTML = "";
 
-    google.accounts.id.renderButton(
-        googleButton,
-        {
-            theme: "outline",
-            size: "large",
-            width: 300,
-            text: "continue_with",
-            shape: "rectangular"
-        }
-    );
+   google.accounts.id.renderButton(
+    googleButton,
+    {
+        theme: "outline",
+        size: "medium",
+        width: 230,
+        text: "continue_with",
+        shape: "pill"
+    }
+);
 
     console.log(
         "Google Sign-In button initialized."
