@@ -5322,26 +5322,8 @@ function toggleClearSearch() {
         clearButton.classList.remove("show");
     }
 }
+function loadAccountProfilePicture() {
 
-
-function clearSearch() {
-
-    const input =
-        document.getElementById("searchInput");
-
-    if (!input) {
-        return;
-    }
-
-    input.value = "";
-
-    toggleClearSearch();
-
-    handleSearchButton();
-
-    input.focus();
-}
-{
     const savedUser =
         localStorage.getItem("novaUser");
 
@@ -5362,6 +5344,7 @@ function clearSearch() {
     }
 
     try {
+
         const user =
             JSON.parse(savedUser);
 
@@ -5369,19 +5352,33 @@ function clearSearch() {
             user.picture &&
             typeof user.picture === "string"
         ) {
-            profilePic.src = user.picture;
 
-            profilePic.style.display = "block";
-            defaultIcon.style.display = "none";
+            profilePic.src =
+                user.picture;
 
-            profilePic.onerror = function () {
-                profilePic.style.display = "none";
-                defaultIcon.style.display = "block";
-            };
+            profilePic.style.display =
+                "block";
+
+            defaultIcon.style.display =
+                "none";
+
+            profilePic.onerror =
+                function () {
+
+                    profilePic.style.display =
+                        "none";
+
+                    defaultIcon.style.display =
+                        "block";
+                };
 
         } else {
-            profilePic.style.display = "none";
-            defaultIcon.style.display = "block";
+
+            profilePic.style.display =
+                "none";
+
+            defaultIcon.style.display =
+                "block";
         }
 
     } catch (error) {
@@ -5391,46 +5388,18 @@ function clearSearch() {
             error
         );
 
-        profilePic.style.display = "none";
-        defaultIcon.style.display = "block";
+        profilePic.style.display =
+            "none";
+
+        defaultIcon.style.display =
+            "block";
     }
 }
+
 document.addEventListener(
     "DOMContentLoaded",
     loadAccountProfilePicture
 );
-
-// ==========================================
-// ACCOUNT MENU
-// ==========================================
-// ==========================================
-// ACCOUNT MENU
-// ==========================================
-
-function toggleAccountMenu() {
-    const savedUser = localStorage.getItem("novaUser");
-
-    // Login nahi hai
-    if (!savedUser) {
-        window.location.href = "login.html";
-        return;
-    }
-
-    const menu = document.getElementById("accountMenu");
-
-    if (!menu) {
-        return;
-    }
-
-    if (menu.style.display === "block") {
-        menu.style.display = "none";
-    } else {
-        loadAccountMenu();
-        menu.style.display = "block";
-    }
-}
-
-
 // LOAD ACCOUNT MENU USER
 function loadAccountMenu() {
     const savedUser =
