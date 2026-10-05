@@ -224,15 +224,12 @@ if (loginForm) {
 
                 if (response.ok) {
 
-                 const googleUser = {
-    ...data.user,
-    picture: response.picture || null
-};
-
-localStorage.setItem(
-    "novaUser",
-    JSON.stringify(googleUser)
-);
+                    localStorage.setItem(
+                        "novaUser",
+                        JSON.stringify(
+                            data.user
+                        )
+                    );
 
                     console.log(
                         "Logged in user:",
@@ -571,4 +568,59 @@ window.addEventListener(
         initializeGoogleLogin();
 
     }
+);
+function showLoggedInGoogleAccount() {
+
+    const savedUser =
+        localStorage.getItem("novaUser");
+
+    const googleButton =
+        document.getElementById("googleSignInButton");
+
+    const accountBox =
+        document.getElementById("loggedInGoogleAccount");
+
+    const emailBox =
+        document.getElementById("loggedInGoogleEmail");
+
+    if (!googleButton || !accountBox || !emailBox) {
+        return;
+    }
+
+    if (!savedUser) {
+        googleButton.style.display = "block";
+        accountBox.style.display = "none";
+        return;
+    }
+
+    try {
+
+        const user =
+            JSON.parse(savedUser);
+
+        if (user.email) {
+
+            emailBox.textContent =
+                user.email;
+
+            googleButton.style.display =
+                "none";
+
+            accountBox.style.display =
+                "flex";
+        }
+
+    } catch (error) {
+
+        console.log(
+            "Login account display error:",
+            error
+        );
+
+    }
+}
+
+document.addEventListener(
+    "DOMContentLoaded",
+    showLoggedInGoogleAccount
 );
