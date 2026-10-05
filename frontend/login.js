@@ -99,16 +99,17 @@ if (registerForm) {
                 "Creating account...";
 
             try {
-const response =
-    await fetch(
-        "https://nova-backend-7i1l.onrender.com/api/register",
-        {
-            method: "POST",
 
-            headers: {
-                "Content-Type":
-                    "application/json"
-            },
+                const response =
+                    await fetch(
+                        "https://nova-backend-7i1l.onrender.com/api/register",
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
 
                             body: JSON.stringify({
                                 name: name,
@@ -388,7 +389,187 @@ function logoutAccount() {
 
 
 // ==========================================
+// GOOGLE LOGIN
+// ==========================================
+
+function handleGoogleLogin(response) {
+
+    const message =
+        document.getElementById(
+            "accountMessage"
+        );
+
+    if (message) {
+        message.textContent =
+            "Google login ho raha hai...";
+    }
+
+    fetch(
+        "https://nova-backend-7i1l.onrender.com/api/google-login",
+        {
+            method: "POST",
+
+            headers: {
+                "Content-Type":
+                    "application/json"
+            },
+
+            body: JSON.stringify({
+                credential:
+                    response.credential
+            })
+        }
+    )
+    .then(function(res) {
+
+        return res.json();
+
+    })
+    .then(function(data) {
+
+        console.log(
+            "Google login response:",
+            data
+        );
+
+        if (data.user) {
+
+            localStorage.setItem(
+                "novaUser",
+                JSON.stringify(
+                    data.user
+                )
+            );
+
+            if (message) {
+                message.textContent =
+                    "✅ Google login successful!";
+            }
+
+            setTimeout(function() {
+
+                window.location.href =
+                    "index.html";
+
+            }, 500);
+
+        } else {
+
+            if (message) {
+
+                message.textContent =
+                    "❌ " +
+                    (
+                        data.message ||
+                        "Google login failed."
+                    );
+
+            }
+
+        }
+
+    })
+    .catch(function(error) {
+
+        console.log(
+            "Google login error:",
+            error
+        );
+
+        if (message) {
+
+            message.textContent =
+                "❌ Google login failed.";
+
+        }
+
+    });
+}
+
+
+// ==========================================
+// INITIALIZE GOOGLE LOGIN
+// ==========================================
+
+function initializeGoogleLogin() {
+
+    const googleButton =
+        document.getElementById(
+            "googleSignInButton"
+        );
+
+    if (!googleButton) {
+
+        console.log(
+            "Google button container not found."
+        );
+
+        return;
+    }
+
+    if (
+        !window.google ||
+        !window.google.accounts ||
+        !window.google.accounts.id
+    ) {
+
+        console.log(
+            "Google Identity Services not loaded yet."
+        );
+
+        setTimeout(
+            initializeGoogleLogin,
+            500
+        );
+
+        return;
+    }
+
+    google.accounts.id.initialize({
+
+        client_id:
+            "172487693630-f62h6g0m0itq8pcbe01saqeeho9u6o8h.apps.googleusercontent.com",
+
+        callback:
+            handleGoogleLogin
+
+    });
+
+    googleButton.innerHTML = "";
+
+    google.accounts.id.renderButton(
+        googleButton,
+        {
+            theme: "outline",
+            size: "large",
+            width: 300,
+            text: "continue_with",
+            shape: "rectangular"
+        }
+    );
+
+    console.log(
+        "Google Sign-In button initialized."
+    );
+}
+
+
+// ==========================================
 // LOAD ACCOUNT
 // ==========================================
 
 loadAccount();
+
+
+// ==========================================
+// START GOOGLE LOGIN
+// ==========================================
+
+window.addEventListener(
+    "load",
+    function() {
+
+        initializeGoogleLogin();
+
+    }
+);
