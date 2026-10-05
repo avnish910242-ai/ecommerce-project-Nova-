@@ -12,6 +12,12 @@ const mongoose = require("mongoose");
 require("dotenv").config();
 const cors = require("cors");
 const bcrypt = require("bcryptjs");
+const { OAuth2Client } = require("google-auth-library");
+const GOOGLE_CLIENT_ID =
+    "172487693630-f62h6g0m0itq8pcbe01saqeeho9u6o8h.apps.googleusercontent.com";
+
+const googleClient =
+    new OAuth2Client(GOOGLE_CLIENT_ID);
 const path = require("path");
 const fs = require("fs");
 const multer = require("multer");
@@ -181,10 +187,11 @@ const userSchema = new mongoose.Schema({
         unique: true
     },
 
-    password: {
-        type: String,
-        required: true
-    },
+  password: {
+    type: String,
+    required: false,
+    default: null
+},
 
   roles: {
     type: [String],
@@ -787,6 +794,111 @@ app.post(
 
     }
 );
+// ==========================================
+// GOOGLE LOGIN
+// ==========================================
+
+app.post("/api/google-login", async (req, res) => {
+
+    try {
+
+        const { credential } = req.body;
+
+        if (!credential) {
+
+            return res.status(400).json({
+                message: "Google credential is required"
+            });
+
+        }
+
+        const ticket =
+            await googleClient.verifyIdToken({
+                idToken: credential,
+                audience: GOOGLE_CLIENT_ID
+            });
+
+        const payload =
+            ticket.getPayload();
+
+        const googleName =
+            payload.name || "Google User";
+
+        const googleEmail =
+            payload.email;
+
+        if (!googleEmail) {
+
+            return res.status(400).json({
+                message: "Google email not found"
+            });
+
+        }
+
+        let user =
+            await User.findOne({
+                email: googleEmail
+            });
+
+        // ==========================================
+        // CREATE NEW GOOGLE USER
+        // ==========================================
+
+        if (!user) {
+
+            user = await User.create({
+
+                name: googleName,
+
+                email: googleEmail,
+
+                password: null,
+
+                roles: ["customer"],
+
+                fcmTokens: []
+
+            });
+
+        }
+
+        // ==========================================
+        // LOGIN RESPONSE
+        // ==========================================
+
+        res.json({
+
+            message: "Google login successful!",
+
+            user: {
+
+                name: user.name,
+
+                email: user.email,
+
+                roles: user.roles
+
+            }
+
+        });
+
+    } catch (error) {
+
+        console.log(
+            "Google login error:",
+            error
+        );
+
+        res.status(401).json({
+
+            message:
+                "Google login failed"
+
+        });
+
+    }
+
+});
 // ==========================================
 // SAVE / UPDATE DELIVERY ADDRESS
 // ==========================================

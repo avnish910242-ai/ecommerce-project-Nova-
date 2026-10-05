@@ -3449,6 +3449,12 @@ function useCurrentLocation() {
                     "Longitude:",
                     longitude
                 );
+                console.log(
+    "GPS Accuracy:",
+    position.coords.accuracy,
+    "meters"
+);
+console.log("GPS Accuracy:", position.coords.accuracy, "meters");
 
             }
 
@@ -3508,12 +3514,14 @@ function useCurrentLocation() {
 
         {
             enableHighAccuracy: true,
-            timeout: 15000,
+            timeout: 20000,
             maximumAge: 0
         }
+        
 
     );
 
+console.log("GPS Accuracy:", position.coords.accuracy, "meters");
 }
 let addressSavedForCheckout = false;
 
