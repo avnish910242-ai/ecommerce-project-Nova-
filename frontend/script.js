@@ -5342,7 +5342,6 @@ function clearSearch() {
     input.focus();
 }
 function loadAccountProfilePicture() {
-
     const savedUser =
         localStorage.getItem("novaUser");
 
@@ -5356,7 +5355,7 @@ function loadAccountProfilePicture() {
         return;
     }
 
-    // Pehle dono ko same position me rakho
+    // Default state
     profilePic.style.display = "none";
     defaultIcon.style.display = "block";
 
@@ -5374,29 +5373,45 @@ function loadAccountProfilePicture() {
             typeof user.picture === "string"
         ) {
 
-            // Image pehle load hogi
-            profilePic.onload = function () {
-
-                profilePic.style.display =
-                    "block";
-
-                defaultIcon.style.display =
-                    "none";
-
-            };
-
-            profilePic.onerror = function () {
-
-                profilePic.style.display =
-                    "none";
-
-                defaultIcon.style.display =
-                    "block";
-
-            };
-
             profilePic.src =
                 user.picture;
+
+            function showProfilePicture() {
+
+                profilePic.style.display =
+                    "block";
+
+                defaultIcon.style.display =
+                    "none";
+            }
+
+            function showDefaultIcon() {
+
+                profilePic.style.display =
+                    "none";
+
+                defaultIcon.style.display =
+                    "block";
+            }
+
+            profilePic.onload =
+                showProfilePicture;
+
+            profilePic.onerror =
+                showDefaultIcon;
+
+            // Image already loaded/cache me hai
+            if (profilePic.complete) {
+
+                if (
+                    profilePic.naturalWidth > 0 &&
+                    profilePic.naturalHeight > 0
+                ) {
+                    showProfilePicture();
+                } else {
+                    showDefaultIcon();
+                }
+            }
 
         }
 
