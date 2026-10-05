@@ -5356,40 +5356,11 @@ function loadAccountProfilePicture() {
         return;
     }
 
-    function showDefaultIcon() {
-
-        profilePic.style.setProperty(
-            "display",
-            "none",
-            "important"
-        );
-
-        defaultIcon.style.setProperty(
-            "display",
-            "block",
-            "important"
-        );
-
-    }
-
-    function showProfilePicture() {
-
-        profilePic.style.setProperty(
-            "display",
-            "block",
-            "important"
-        );
-
-        defaultIcon.style.setProperty(
-            "display",
-            "none",
-            "important"
-        );
-
-    }
+    // Pehle dono ko same position me rakho
+    profilePic.style.display = "none";
+    defaultIcon.style.display = "block";
 
     if (!savedUser) {
-        showDefaultIcon();
         return;
     }
 
@@ -5403,27 +5374,29 @@ function loadAccountProfilePicture() {
             typeof user.picture === "string"
         ) {
 
-            profilePic.onerror = function () {
-
-                console.log(
-                    "Google profile picture failed to load"
-                );
-
-                showDefaultIcon();
-
-            };
-
+            // Image pehle load hogi
             profilePic.onload = function () {
 
-                showProfilePicture();
+                profilePic.style.display =
+                    "block";
+
+                defaultIcon.style.display =
+                    "none";
 
             };
 
-            profilePic.src = user.picture;
+            profilePic.onerror = function () {
 
-        } else {
+                profilePic.style.display =
+                    "none";
 
-            showDefaultIcon();
+                defaultIcon.style.display =
+                    "block";
+
+            };
+
+            profilePic.src =
+                user.picture;
 
         }
 
@@ -5434,14 +5407,259 @@ function loadAccountProfilePicture() {
             error
         );
 
-        showDefaultIcon();
+        profilePic.style.display =
+            "none";
 
+        defaultIcon.style.display =
+            "block";
     }
 }
-
 
 document.addEventListener(
     "DOMContentLoaded",
     loadAccountProfilePicture
 );
 
+// ==========================================
+// ACCOUNT MENU
+// ==========================================
+// ==========================================
+// ACCOUNT MENU
+// ==========================================
+
+function toggleAccountMenu() {
+    const savedUser = localStorage.getItem("novaUser");
+
+    // Login nahi hai
+    if (!savedUser) {
+        window.location.href = "login.html";
+        return;
+    }
+
+    const menu = document.getElementById("accountMenu");
+
+    if (!menu) {
+        return;
+    }
+
+    if (menu.style.display === "block") {
+        menu.style.display = "none";
+    } else {
+        loadAccountMenu();
+        menu.style.display = "block";
+    }
+}
+
+
+// LOAD ACCOUNT MENU USER
+function loadAccountMenu() {
+    const savedUser =
+        localStorage.getItem("novaUser");
+
+    if (!savedUser) {
+        return;
+    }
+
+    try {
+        const user =
+            JSON.parse(savedUser);
+
+        const name =
+            document.getElementById(
+                "accountMenuName"
+            );
+
+        const email =
+            document.getElementById(
+                "accountMenuEmail"
+            );
+
+        const profilePic =
+            document.getElementById(
+                "accountMenuProfilePic"
+            );
+
+        if (name) {
+            name.textContent =
+                user.name || "User";
+        }
+
+        if (email) {
+            email.textContent =
+                user.email || "";
+        }
+
+        if (profilePic) {
+            if (user.picture) {
+                profilePic.src =
+                    user.picture;
+
+                profilePic.style.display =
+                    "block";
+            } else {
+                profilePic.style.display =
+                    "none";
+            }
+        }
+
+    } catch (error) {
+        console.log(
+            "Account menu error:",
+            error
+        );
+    }
+}
+
+
+// GOOGLE ACCOUNT
+function openGoogleAccount() {
+    window.location.href =
+        "login.html";
+}
+
+
+// SWITCH ACCOUNT
+function switchAccount() {
+    localStorage.removeItem(
+        "novaUser"
+    );
+
+    window.location.href =
+        "login.html";
+}
+
+
+// SIGN OUT
+function logoutAccountFromMenu() {
+    localStorage.removeItem(
+        "novaUser"
+    );
+
+    localStorage.removeItem(
+        "novaCart"
+    );
+
+    sessionStorage.clear();
+
+    window.location.href =
+        "login.html";
+}
+
+
+// CLOSE MENU WHEN CLICKING OUTSIDE
+document.addEventListener(
+    "click",
+    function(event) {
+
+        const menu =
+            document.getElementById(
+                "accountMenu"
+            );
+
+        const accountButton =
+            document.querySelector(
+                ".account-btn"
+            );
+
+        if (!menu || !accountButton) {
+            return;
+        }
+
+        if (
+            !menu.contains(event.target) &&
+            !accountButton.contains(event.target)
+        ) {
+            menu.style.display =
+                "none";
+        }
+    }
+);
+// LOAD ACCOUNT MENU USER
+function toggleAccountMenu() {
+
+    const savedUser =
+        localStorage.getItem("novaUser");
+
+    if (!savedUser) {
+        window.location.href = "./login.html";
+        return;
+    }
+
+    const menu =
+        document.getElementById("accountMenu");
+
+    if (!menu) {
+        return;
+    }
+
+    loadAccountMenu();
+
+    menu.style.display =
+        menu.style.display === "block"
+            ? "none"
+            : "block";
+}
+
+// GOOGLE ACCOUNT
+function openGoogleAccount() {
+    window.location.href =
+        "login.html";
+}
+
+
+// SWITCH ACCOUNT
+function switchAccount() {
+    localStorage.removeItem(
+        "novaUser"
+    );
+
+    window.location.href =
+        "login.html";
+}
+
+
+// SIGN OUT
+function logoutAccountFromMenu() {
+    localStorage.removeItem(
+        "novaUser"
+    );
+
+    localStorage.removeItem(
+        "novaCart"
+    );
+
+    sessionStorage.clear();
+
+    window.location.href =
+        "login.html";
+}
+
+
+// CLOSE MENU WHEN CLICKING OUTSIDE
+document.addEventListener(
+    "click",
+    function(event) {
+
+        const menu =
+            document.getElementById(
+                "accountMenu"
+            );
+
+        const accountButton =
+            document.querySelector(
+                ".account-btn"
+            );
+
+        if (!menu || !accountButton) {
+            return;
+        }
+
+        if (
+            !menu.contains(event.target) &&
+            !accountButton.contains(event.target)
+        ) {
+            menu.style.display =
+                "none";
+        }
+    }
+);

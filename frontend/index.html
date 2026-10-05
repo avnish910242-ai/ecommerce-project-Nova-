@@ -481,13 +481,12 @@
             id="mobileSearchSuggestions"
             class="mobile-search-suggestions">
             </div>
-
+            
 <!-- Account -->
 <button
     class="account-btn"
-    onclick="window.location.href='login.html'"
+    onclick="toggleAccountMenu()"
     aria-label="Account">
-
     <img
         id="accountProfilePic"
         class="account-profile-pic"
@@ -513,6 +512,65 @@
 
 </button>
 
+<!-- ACCOUNT MENU -->
+<div id="accountMenu" class="account-menu">
+
+    <div class="account-menu-profile">
+
+        <img
+            id="accountMenuProfilePic"
+            class="account-menu-profile-pic"
+            alt="Profile">
+
+        <div class="account-menu-user-info">
+
+            <div
+                id="accountMenuName"
+                class="account-menu-name">
+            </div>
+
+            <div
+                id="accountMenuEmail"
+                class="account-menu-email">
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="account-menu-divider"></div>
+
+    <button
+        class="account-menu-item"
+        type="button"
+        onclick="openGoogleAccount()">
+
+        <span class="account-menu-icon">G</span>
+        <span>Google Account</span>
+
+    </button>
+
+    <button
+        class="account-menu-item"
+        type="button"
+        onclick="switchAccount()">
+
+        <span class="account-menu-icon">⇄</span>
+        <span>Switch account</span>
+
+    </button>
+
+    <button
+        class="account-menu-item account-menu-signout"
+        type="button"
+        onclick="logoutAccountFromMenu()">
+
+        <span class="account-menu-icon">↪</span>
+        <span>Sign out</span>
+
+    </button>
+
+</div>
         <!-- Cart -->
         <button
             class="cart-btn"
