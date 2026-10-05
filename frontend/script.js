@@ -5356,9 +5356,40 @@ function loadAccountProfilePicture() {
         return;
     }
 
+    function showDefaultIcon() {
+
+        profilePic.style.setProperty(
+            "display",
+            "none",
+            "important"
+        );
+
+        defaultIcon.style.setProperty(
+            "display",
+            "block",
+            "important"
+        );
+
+    }
+
+    function showProfilePicture() {
+
+        profilePic.style.setProperty(
+            "display",
+            "block",
+            "important"
+        );
+
+        defaultIcon.style.setProperty(
+            "display",
+            "none",
+            "important"
+        );
+
+    }
+
     if (!savedUser) {
-        profilePic.style.display = "none";
-        defaultIcon.style.display = "block";
+        showDefaultIcon();
         return;
     }
 
@@ -5367,17 +5398,32 @@ function loadAccountProfilePicture() {
         const user =
             JSON.parse(savedUser);
 
-        if (user.picture) {
+        if (
+            user.picture &&
+            typeof user.picture === "string"
+        ) {
+
+            profilePic.onerror = function () {
+
+                console.log(
+                    "Google profile picture failed to load"
+                );
+
+                showDefaultIcon();
+
+            };
+
+            profilePic.onload = function () {
+
+                showProfilePicture();
+
+            };
 
             profilePic.src = user.picture;
 
-            profilePic.style.display = "block";
-            defaultIcon.style.display = "none";
-
         } else {
 
-            profilePic.style.display = "none";
-            defaultIcon.style.display = "block";
+            showDefaultIcon();
 
         }
 
@@ -5388,12 +5434,14 @@ function loadAccountProfilePicture() {
             error
         );
 
-        profilePic.style.display = "none";
-        defaultIcon.style.display = "block";
+        showDefaultIcon();
+
     }
 }
+
 
 document.addEventListener(
     "DOMContentLoaded",
     loadAccountProfilePicture
 );
+

@@ -4656,17 +4656,18 @@ footer p {
 .product-share-btn:hover {
     background: #f3f3f3;
 }
-.account-profile-pic {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    object-fit: cover;
-}
 /* ==========================================
-   ACCOUNT PROFILE PHOTO - FINAL
+   FINAL ACCOUNT + CART ALIGNMENT
 ========================================== */
 
-.account-btn {
+.nav-icons {
+    display: flex !important;
+    align-items: center !important;
+    flex-wrap: nowrap !important;
+    min-width: 0 !important;
+}
+
+.nav-icons .account-btn {
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -4674,32 +4675,41 @@ footer p {
     width: 40px !important;
     height: 40px !important;
 
+    min-width: 40px !important;
+    max-width: 40px !important;
+
     padding: 0 !important;
     margin: 0 !important;
 
     flex: 0 0 40px !important;
     flex-shrink: 0 !important;
 
-    border: none !important;
-    background: white !important;
+    box-sizing: border-box !important;
 }
 
-.account-profile-pic {
+.nav-icons .account-profile-pic {
     display: block !important;
 
     width: 32px !important;
     height: 32px !important;
 
+    min-width: 32px !important;
+    min-height: 32px !important;
+
     max-width: 32px !important;
     max-height: 32px !important;
 
-    border-radius: 50% !important;
+    margin: 0 !important;
+    padding: 0 !important;
 
+    border-radius: 50% !important;
     object-fit: cover !important;
 
     flex-shrink: 0 !important;
 }
 
-.account-btn svg {
-    flex-shrink: 0;
+.nav-icons .account-btn svg {
+    width: 25px !important;
+    height: 25px !important;
+    flex-shrink: 0 !important;
 }
