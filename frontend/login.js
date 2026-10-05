@@ -122,34 +122,30 @@ if (registerForm) {
                 const data =
                     await response.json();
 
-                if (response.ok) {
+             if (response.ok) {
 
-                    const loggedInUser =
-                        data.user || {
-                            name: name,
-                            email: email
-                        };
+    message.textContent =
+        "✅ Account created successfully! Please login.";
 
-                    localStorage.setItem(
-                        "novaUser",
-                        JSON.stringify(
-                            loggedInUser
-                        )
-                    );
+    registerForm.reset();
 
-                    message.textContent =
-                        "✅ Account created successfully!";
+    setTimeout(function() {
 
-                    registerForm.reset();
+        showForm("login");
 
-                    setTimeout(function() {
+        const loginEmail =
+            document.getElementById("loginEmail");
 
-                        window.location.href =
-                            "index.html";
+        if (loginEmail) {
+            loginEmail.value = email;
+        }
 
-                    }, 1000);
+        message.textContent =
+            "Account created. Please login.";
 
-                } else {
+    }, 1000);
+
+} else {
 
                     message.textContent =
                         "❌ " +
