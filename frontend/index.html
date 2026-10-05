@@ -480,15 +480,21 @@
   
             id="mobileSearchSuggestions"
             class="mobile-search-suggestions">
-        </div>
 
 <!-- Account -->
 <button
     class="account-btn"
-    onclick="handleAccountClick()"
+    onclick="window.location.href='login.html'"
     aria-label="Account">
 
+    <img
+        id="accountProfilePic"
+        class="account-profile-pic"
+        alt="Profile"
+        style="display: none;">
+
     <svg
+        id="accountDefaultIcon"
         viewBox="0 0 24 24"
         aria-hidden="true">
 
@@ -503,8 +509,6 @@
         </path>
 
     </svg>
-
-    <span id="accountEmail"></span>
 
 </button>
 

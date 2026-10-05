@@ -5341,13 +5341,59 @@ function clearSearch() {
 
     input.focus();
 }
-function handleAccountClick() {
+function loadAccountProfilePicture() {
 
-    const savedUser = localStorage.getItem("novaUser");
+    const savedUser =
+        localStorage.getItem("novaUser");
 
-    if (savedUser) {
-        window.location.href = "account.html";
-    } else {
-        window.location.href = "login.html";
+    const profilePic =
+        document.getElementById("accountProfilePic");
+
+    const defaultIcon =
+        document.getElementById("accountDefaultIcon");
+
+    if (!profilePic || !defaultIcon) {
+        return;
+    }
+
+    if (!savedUser) {
+        profilePic.style.display = "none";
+        defaultIcon.style.display = "block";
+        return;
+    }
+
+    try {
+
+        const user =
+            JSON.parse(savedUser);
+
+        if (user.picture) {
+
+            profilePic.src = user.picture;
+
+            profilePic.style.display = "block";
+            defaultIcon.style.display = "none";
+
+        } else {
+
+            profilePic.style.display = "none";
+            defaultIcon.style.display = "block";
+
+        }
+
+    } catch (error) {
+
+        console.log(
+            "Profile picture error:",
+            error
+        );
+
+        profilePic.style.display = "none";
+        defaultIcon.style.display = "block";
     }
 }
+
+document.addEventListener(
+    "DOMContentLoaded",
+    loadAccountProfilePicture
+);

@@ -865,23 +865,27 @@ app.post("/api/google-login", async (req, res) => {
         // ==========================================
         // LOGIN RESPONSE
         // ==========================================
+// ==========================================
+// LOGIN RESPONSE
+// ==========================================
 
-        res.json({
+res.json({
 
-            message: "Google login successful!",
+    message: "Google login successful!",
 
-            user: {
+    user: {
 
-                name: user.name,
+        name: user.name,
 
-                email: user.email,
+        email: user.email,
 
-                roles: user.roles
+        roles: user.roles,
 
-            }
+        picture: payload.picture || null
 
-        });
+    }
 
+});
     } catch (error) {
 
         console.log(

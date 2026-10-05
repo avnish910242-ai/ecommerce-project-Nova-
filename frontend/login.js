@@ -224,12 +224,15 @@ if (loginForm) {
 
                 if (response.ok) {
 
-                    localStorage.setItem(
-                        "novaUser",
-                        JSON.stringify(
-                            data.user
-                        )
-                    );
+                 const googleUser = {
+    ...data.user,
+    picture: response.picture || null
+};
+
+localStorage.setItem(
+    "novaUser",
+    JSON.stringify(googleUser)
+);
 
                     console.log(
                         "Logged in user:",

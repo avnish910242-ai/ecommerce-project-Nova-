@@ -4656,3 +4656,9 @@ footer p {
 .product-share-btn:hover {
     background: #f3f3f3;
 }
+.account-profile-pic {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+}
