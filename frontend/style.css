@@ -4690,47 +4690,6 @@ footer p {
     position: relative !important;
 }
 
-.nav-icons .account-profile-pic {
-    position: absolute !important;
-
-    top: 50% !important;
-    left: 50% !important;
-
-    transform: translate(-50%, -50%) !important;
-
-    width: 25px !important;
-    height: 25px !important;
-
-    min-width: 25px !important;
-    min-height: 25px !important;
-
-    max-width: 25px !important;
-    max-height: 25px !important;
-
-    margin: 0 !important;
-    padding: 0 !important;
-
-    border-radius: 50% !important;
-    object-fit: cover !important;
-
-    z-index: 2 !important;
-}
-
-.nav-icons .account-btn svg {
-    position: absolute !important;
-
-    top: 50% !important;
-    left: 50% !important;
-
-    transform: translate(-50%, -50%) !important;
-
-    width: 25px !important;
-    height: 25px !important;
-
-    margin: 0 !important;
-
-    z-index: 1 !important;
-}
 
 /* ==========================================
    ACCOUNT MENU
