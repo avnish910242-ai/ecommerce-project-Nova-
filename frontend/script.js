@@ -5341,7 +5341,7 @@ function clearSearch() {
 
     input.focus();
 }
-function loadAccountProfilePicture() {
+{
     const savedUser =
         localStorage.getItem("novaUser");
 
@@ -5355,16 +5355,13 @@ function loadAccountProfilePicture() {
         return;
     }
 
-    // Default state
-    profilePic.style.display = "none";
-    defaultIcon.style.display = "block";
-
     if (!savedUser) {
+        profilePic.style.display = "none";
+        defaultIcon.style.display = "block";
         return;
     }
 
     try {
-
         const user =
             JSON.parse(savedUser);
 
@@ -5372,47 +5369,19 @@ function loadAccountProfilePicture() {
             user.picture &&
             typeof user.picture === "string"
         ) {
+            profilePic.src = user.picture;
 
-            profilePic.src =
-                user.picture;
+            profilePic.style.display = "block";
+            defaultIcon.style.display = "none";
 
-            function showProfilePicture() {
+            profilePic.onerror = function () {
+                profilePic.style.display = "none";
+                defaultIcon.style.display = "block";
+            };
 
-                profilePic.style.display =
-                    "block";
-
-                defaultIcon.style.display =
-                    "none";
-            }
-
-            function showDefaultIcon() {
-
-                profilePic.style.display =
-                    "none";
-
-                defaultIcon.style.display =
-                    "block";
-            }
-
-            profilePic.onload =
-                showProfilePicture;
-
-            profilePic.onerror =
-                showDefaultIcon;
-
-            // Image already loaded/cache me hai
-            if (profilePic.complete) {
-
-                if (
-                    profilePic.naturalWidth > 0 &&
-                    profilePic.naturalHeight > 0
-                ) {
-                    showProfilePicture();
-                } else {
-                    showDefaultIcon();
-                }
-            }
-
+        } else {
+            profilePic.style.display = "none";
+            defaultIcon.style.display = "block";
         }
 
     } catch (error) {
@@ -5422,14 +5391,10 @@ function loadAccountProfilePicture() {
             error
         );
 
-        profilePic.style.display =
-            "none";
-
-        defaultIcon.style.display =
-            "block";
+        profilePic.style.display = "none";
+        defaultIcon.style.display = "block";
     }
 }
-
 document.addEventListener(
     "DOMContentLoaded",
     loadAccountProfilePicture
