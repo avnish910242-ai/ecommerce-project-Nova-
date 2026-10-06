@@ -5164,7 +5164,6 @@ if (SpeechRecognition) {
     // ==========================================
     // VOICE RESULT
     // ==========================================
-
 voiceRecognition.onresult = function (event) {
 
     const spokenText =
@@ -5173,24 +5172,29 @@ voiceRecognition.onresult = function (event) {
     const searchInput =
         document.getElementById("searchInput");
 
+    const suggestions =
+        document.getElementById(
+            "mobileSearchSuggestions"
+        );
+
     if (searchInput) {
 
         searchInput.value =
             spokenText;
 
-        // Cross ko show karo
         searchInput.dispatchEvent(
             new Event("input", {
                 bubbles: true
             })
         );
 
-        // Voice se bolna khatam hote hi
-        // automatically search karo
+        // VOICE SEARCH PAR SUGGESTIONS HIDE
+        if (suggestions) {
+            suggestions.style.display = "none";
+        }
+
         handleSearchButton();
-
     }
-
 };
 
     // ==========================================

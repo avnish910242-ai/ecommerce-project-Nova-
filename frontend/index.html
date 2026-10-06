@@ -1730,12 +1730,10 @@ function handleSearchButton() {
                     ? searchInput.value.trim()
                     : "";
 
-
             if (term) {
 
                 saveSearchTerm(term);
 
-                // Last searched term save karo
                 if (searchInput) {
                     searchInput.dataset.lastSearched =
                         term.toLowerCase();
@@ -1743,20 +1741,9 @@ function handleSearchButton() {
 
                 searchProduct();
 
-                // Search ke baad hints completely hide
-                if (suggestions) {
-                    suggestions.style.display = "none";
-                }
-
-                // Agar searchProduct dobara hints show kare
-                setTimeout(() => {
-
-                    if (suggestions) {
-                        suggestions.style.display = "none";
-                    }
-
-                }, 100);
-
+                // IMPORTANT:
+                // Yahan suggestions ko hide nahi karna
+                // Text search ke baad suggestions visible rahengi
             }
 
         }
@@ -1785,12 +1772,10 @@ function handleSearchButton() {
                 ? searchInput.value.trim()
                 : "";
 
-
         if (term) {
 
             saveSearchTerm(term);
 
-            // Last searched term save karo
             if (searchInput) {
                 searchInput.dataset.lastSearched =
                     term.toLowerCase();
@@ -1798,14 +1783,10 @@ function handleSearchButton() {
 
             searchProduct();
 
-            if (suggestions) {
-                suggestions.style.display = "none";
-            }
-
+            // Text search par suggestions hide nahi hongi
         }
 
     }
-
 }
 function closeMobileSearch() {
 
