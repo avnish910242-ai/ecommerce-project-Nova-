@@ -5140,3 +5140,107 @@ footer p {
     }
 
 }
+/* ==========================================
+   FINAL ACCOUNT PROFILE PICTURE FIX
+========================================== */
+
+.nav-icons .account-btn {
+    position: relative !important;
+
+    width: 40px !important;
+    height: 40px !important;
+
+    min-width: 40px !important;
+    max-width: 40px !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    flex: 0 0 40px !important;
+
+    box-sizing: border-box !important;
+}
+
+/* GOOGLE PROFILE PHOTO */
+
+.nav-icons .account-btn #accountProfilePic {
+    position: absolute !important;
+
+    top: 50% !important;
+    left: 50% !important;
+
+    transform: translate(-50%, -50%) !important;
+
+    width: 28px !important;
+    height: 28px !important;
+
+    min-width: 28px !important;
+    max-width: 28px !important;
+
+    min-height: 28px !important;
+    max-height: 28px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    object-fit: cover !important;
+
+    border-radius: 50% !important;
+
+    visibility: visible !important;
+    opacity: 1 !important;
+
+    z-index: 2 !important;
+
+    box-sizing: border-box !important;
+}
+
+/* DEFAULT ACCOUNT ICON */
+
+.nav-icons .account-btn #accountDefaultIcon {
+    position: absolute !important;
+
+    top: 50% !important;
+    left: 50% !important;
+
+    transform: translate(-50%, -50%) !important;
+
+    width: 25px !important;
+    height: 25px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    z-index: 1 !important;
+}
+
+/* MOBILE */
+
+@media (max-width: 700px) {
+
+    .nav-icons .account-btn {
+        width: 40px !important;
+        height: 40px !important;
+
+        min-width: 40px !important;
+        max-width: 40px !important;
+
+        flex: 0 0 40px !important;
+    }
+
+    .nav-icons .account-btn #accountProfilePic {
+        width: 28px !important;
+        height: 28px !important;
+
+        min-width: 28px !important;
+        max-width: 28px !important;
+
+        min-height: 28px !important;
+        max-height: 28px !important;
+    }
+
+}
