@@ -1734,8 +1734,12 @@ function handleSearchButton() {
             if (term) {
 
                 saveSearchTerm(term);
-                 input.dataset.lastSearched =
-        term.toLowerCase();
+
+                // Last searched term save karo
+                if (searchInput) {
+                    searchInput.dataset.lastSearched =
+                        term.toLowerCase();
+                }
 
                 searchProduct();
 
@@ -1746,9 +1750,11 @@ function handleSearchButton() {
 
                 // Agar searchProduct dobara hints show kare
                 setTimeout(() => {
+
                     if (suggestions) {
                         suggestions.style.display = "none";
                     }
+
                 }, 100);
 
             }
@@ -1783,6 +1789,12 @@ function handleSearchButton() {
         if (term) {
 
             saveSearchTerm(term);
+
+            // Last searched term save karo
+            if (searchInput) {
+                searchInput.dataset.lastSearched =
+                    term.toLowerCase();
+            }
 
             searchProduct();
 
