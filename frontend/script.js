@@ -5337,30 +5337,51 @@ function loadAccountProfilePicture() {
         return;
     }
 
+    // ==========================================
+    // START: DONO HIDE
+    // ==========================================
+
+    profilePic.style.display = "none";
+    defaultIcon.style.display = "none";
+
+
+    // ==========================================
+    // NO USER
+    // ==========================================
+
     if (!savedUser) {
-        profilePic.style.display = "none";
+
         defaultIcon.style.display = "block";
+
         return;
     }
+
 
     try {
 
         const user =
             JSON.parse(savedUser);
 
+
+        // ==========================================
+        // PROFILE IMAGE AVAILABLE
+        // ==========================================
+
         if (
             user.picture &&
             typeof user.picture === "string"
         ) {
 
-            profilePic.src =
-                user.picture;
+            profilePic.onload =
+                function () {
 
-            profilePic.style.display =
-                "block";
+                    profilePic.style.display =
+                        "block";
 
-            defaultIcon.style.display =
-                "none";
+                    defaultIcon.style.display =
+                        "none";
+                };
+
 
             profilePic.onerror =
                 function () {
@@ -5372,14 +5393,17 @@ function loadAccountProfilePicture() {
                         "block";
                 };
 
-        } else {
 
-            profilePic.style.display =
-                "none";
+            profilePic.src =
+                user.picture;
+
+
+        } else {
 
             defaultIcon.style.display =
                 "block";
         }
+
 
     } catch (error) {
 
@@ -5395,6 +5419,7 @@ function loadAccountProfilePicture() {
             "block";
     }
 }
+
 
 document.addEventListener(
     "DOMContentLoaded",
@@ -5476,25 +5501,51 @@ function switchAccount() {
     window.location.href =
         "login.html";
 }
-
-
+// ==========================================
 // SIGN OUT
+// ==========================================
+
 function logoutAccountFromMenu() {
-    localStorage.removeItem(
-        "novaUser"
-    );
 
-    localStorage.removeItem(
-        "novaCart"
-    );
+    // LOGIN USER DATA REMOVE
+    localStorage.removeItem("novaUser");
 
+    // CART DATA REMOVE
+    localStorage.removeItem("novaCart");
+
+    // SESSION DATA CLEAR
     sessionStorage.clear();
 
-    window.location.href =
-        "login.html";
+    // DELIVERY ADDRESS
+    // DELETE NAHI HOGA
+
+    // ACCOUNT MENU CLOSE
+    const accountMenu =
+        document.getElementById("accountMenu");
+
+    if (accountMenu) {
+        accountMenu.style.display = "none";
+    }
+
+    // PROFILE IMAGE HIDE
+    const profilePic =
+        document.getElementById("accountProfilePic");
+
+    if (profilePic) {
+        profilePic.style.display = "none";
+    }
+
+    // DEFAULT ACCOUNT ICON SHOW
+    const defaultIcon =
+        document.getElementById("accountDefaultIcon");
+
+    if (defaultIcon) {
+        defaultIcon.style.display = "block";
+    }
+
+    // CURRENT PAGE PAR HI RAHEGA
+    // Koi redirect nahi hoga.
 }
-
-
 // CLOSE MENU WHEN CLICKING OUTSIDE
 document.addEventListener(
     "click",
@@ -5565,25 +5616,6 @@ function switchAccount() {
     window.location.href =
         "login.html";
 }
-
-
-// SIGN OUT
-function logoutAccountFromMenu() {
-    localStorage.removeItem(
-        "novaUser"
-    );
-
-    localStorage.removeItem(
-        "novaCart"
-    );
-
-    sessionStorage.clear();
-
-    window.location.href =
-        "login.html";
-}
-
-
 // CLOSE MENU WHEN CLICKING OUTSIDE
 document.addEventListener(
     "click",
@@ -5612,3 +5644,30 @@ document.addEventListener(
         }
     }
 );
+// ==========================================
+// CLEAR SEARCH
+// ==========================================
+
+function clearSearch() {
+
+    const searchInput =
+        document.getElementById("searchInput");
+
+    if (searchInput) {
+        searchInput.value = "";
+    }
+
+    // Search suggestions close
+    const suggestions =
+        document.getElementById("mobileSearchSuggestions");
+
+    if (suggestions) {
+        suggestions.innerHTML = "";
+        suggestions.style.display = "none";
+    }
+
+    // Product grid ko normal state mein lao
+    if (typeof renderProducts === "function") {
+        renderProducts();
+    }
+}

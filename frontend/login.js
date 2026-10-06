@@ -358,33 +358,6 @@ function loadAccount() {
 
 
 // ==========================================
-// LOGOUT
-// ==========================================
-
-function logoutAccount() {
-
-    // LOGIN DATA
-    localStorage.removeItem(
-        "novaUser"
-    );
-
-    // CART DATA
-    localStorage.removeItem(
-        "novaCart"
-    );
-
-    // SESSION DATA
-    sessionStorage.clear();
-
-    // DELIVERY ADDRESS DELETE NAHI HOGA
-
-    // HOME PAGE
-    window.location.href =
-        "index.html";
-}
-
-
-// ==========================================
 // GOOGLE LOGIN
 // ==========================================
 

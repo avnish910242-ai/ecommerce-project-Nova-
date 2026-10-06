@@ -4690,163 +4690,453 @@ footer p {
 .nav-icons .account-btn { 
     position: relative !important; 
 } 
- 
- 
-/* ========================================== 
-   ACCOUNT MENU 
-   ========================================== */ 
- 
-.account-menu { 
-    position: absolute; 
-    top: 58px; 
-    right: 10px; 
-    width: 300px; 
-    background: #2f2f2f; 
-    color: #ffffff; 
-    border-radius: 10px; 
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35); 
-    overflow: hidden; 
-    display: none; 
-    z-index: 99999; 
-} 
- 
-.account-menu-profile { 
-    display: flex; 
-    align-items: center; 
-    gap: 12px; 
-    padding: 14px; 
-} 
- 
-.account-menu-profile-pic { 
-    width: 44px; 
-    height: 44px; 
-    border-radius: 50%; 
-    object-fit: cover; 
-    background: #78909c; 
-    flex-shrink: 0; 
-} 
- 
-.account-menu-user-info { 
-    min-width: 0; 
-    flex: 1; 
-} 
- 
-.account-menu-name { 
-    font-size: 15px; 
-    font-weight: 600; 
-    white-space: nowrap; 
-    overflow: hidden; 
-    text-overflow: ellipsis; 
-} 
- 
-.account-menu-email { 
-    margin-top: 4px; 
-    font-size: 13px; 
-    color: #dddddd; 
-    white-space: nowrap; 
-    overflow: hidden; 
-    text-overflow: ellipsis; 
-} 
- 
-.account-menu-divider { 
-    height: 1px; 
-    background: rgba(255, 255, 255, 0.15); 
-} 
- 
-.account-menu-item { 
-    width: 100%; 
-    min-height: 48px; 
-    border: none; 
-    background: transparent; 
-    color: #ffffff; 
-    display: flex; 
-    align-items: center; 
-    gap: 14px; 
-    padding: 0 14px; 
-    font-size: 14px; 
-    cursor: pointer; 
-    text-align: left; 
-} 
- 
-.account-menu-item:hover { 
-    background: rgba(255, 255, 255, 0.10); 
-} 
- 
-.account-menu-icon { 
-    width: 22px; 
-    font-size: 18px; 
-    display: flex; 
-    justify-content: center; 
-    align-items: center; 
-    flex-shrink: 0; 
-} 
- 
-.account-menu-signout { 
-    border-top: 1px solid rgba(255, 255, 255, 0.12); 
-} 
- 
- 
-/* ========================================== 
-   MOBILE 
-   ========================================== */ 
- 
-@media (max-width: 600px) { 
- 
-    .account-menu { 
-        top: 55px; 
-        right: 8px; 
-        width: min(290px, calc(100vw - 16px)); 
-    } 
- 
-    .account-menu-profile { 
-        padding: 13px; 
-    } 
- 
-    .account-menu-item { 
-        min-height: 47px; 
-    } 
-} 
+ /* ==========================================
+    ACCOUNT MENU
+    ========================================== */
+
+.account-menu {
+    position: absolute;
+
+    top: 58px;
+    right: 12px;
+
+    width: 310px;
+    max-width: calc(100vw - 24px);
+
+    background: #ffffff;
+    color: #202124;
+
+    border: 1px solid #dadce0;
+    border-radius: 18px;
+
+    box-shadow:
+        0 4px 12px rgba(60, 64, 67, 0.18),
+        0 8px 28px rgba(60, 64, 67, 0.12);
+
+    overflow: hidden;
+
+    display: none;
+
+    z-index: 99999;
+    box-sizing: border-box;
+}
 
 
-/* ========================================== 
-   ACCOUNT PROFILE PICTURE
-========================================== */ 
+/* ==========================================
+   PROFILE
+   ========================================== */
 
-#accountProfilePic { 
-    width: 25px !important; 
-    height: 25px !important; 
-    visibility: visible !important; 
-    opacity: 1 !important; 
-    object-fit: cover !important; 
-    border-radius: 50% !important; 
-} 
+.account-menu-profile {
+    display: flex;
+    align-items: center;
+
+    gap: 13px;
+
+    padding: 17px 16px;
+}
 
 
-/* ========================================== 
-   ACCOUNT IMAGE + SVG SAME POSITION 
-========================================== */ 
- 
-.account-btn { 
-    position: relative !important; 
-} 
- 
-.account-btn #accountProfilePic, 
-.account-btn #accountDefaultIcon { 
-    position: absolute !important; 
-    top: 50% !important; 
-    left: 50% !important; 
-    transform: translate(-50%, -50%) !important; 
-    margin: 0 !important; 
-} 
- 
-.account-btn #accountProfilePic { 
-    width: 25px !important; 
-    height: 25px !important; 
-    object-fit: cover !important; 
-    border-radius: 50% !important; 
-} 
- 
-.account-btn #accountDefaultIcon { 
-    width: 25px !important; 
-    height: 25px !important; 
-} 
+.account-menu-profile-pic {
+    width: 48px;
+    height: 48px;
+
+    flex: 0 0 48px;
+
+    border-radius: 50%;
+
+    object-fit: cover;
+
+    background: #f1f3f4;
+
+    border: 1px solid #e1e3e6;
+}
+
+
+.account-menu-user-info {
+    min-width: 0;
+    flex: 1;
+}
+
+
+.account-menu-name {
+    font-size: 15px;
+    font-weight: 600;
+
+    line-height: 20px;
+
+    color: #202124;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+.account-menu-email {
+    margin-top: 3px;
+
+    font-size: 13px;
+    line-height: 18px;
+
+    color: #5f6368;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+/* ==========================================
+   DIVIDER
+   ========================================== */
+
+.account-menu-divider {
+    height: 1px;
+
+    background: #e8eaed;
+}
+
+
+/* ==========================================
+   MENU BUTTONS
+   ========================================== */
+
+.account-menu-item {
+    width: 100%;
+    height: 50px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 13px;
+
+    padding: 0 16px;
+
+    border: none;
+
+    background: #ffffff;
+    color: #202124;
+
+    font-size: 14px;
+    font-weight: 500;
+
+    text-align: left;
+    white-space: nowrap;
+
+    cursor: pointer;
+
+    box-sizing: border-box;
+
+    transition: background 0.15s ease;
+}
+
+
+.account-menu-item:hover {
+    background: #f6f8fa;
+}
+
+
+.account-menu-item:active {
+    background: #eef0f2;
+}
+
+
+/* ==========================================
+   ICON
+   ========================================== */
+
+.account-menu-icon {
+    width: 32px;
+    height: 32px;
+
+    flex: 0 0 32px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #f1f3f4;
+
+    color: #3c4043;
+
+    font-size: 16px;
+    font-weight: 600;
+
+    line-height: 1;
+}
+
+
+/* Google Account */
+
+.account-menu-item:first-of-type .account-menu-icon {
+    background: #ffffff;
+
+    color: #4285f4;
+
+    border: 1px solid #dadce0;
+
+    font-size: 17px;
+}
+
+
+/* ==========================================
+   SIGN OUT
+   ========================================== */
+
+.account-menu-signout {
+    margin-top: 4px;
+
+    border-top: 1px solid #e8eaed;
+
+    color: #d93025;
+}
+
+
+.account-menu-signout .account-menu-icon {
+    background: #fce8e6;
+
+    color: #d93025;
+}
+
+
+.account-menu-signout:hover {
+    background: #fff5f4;
+}
+/* ==========================================
+   MOBILE / SMALL SCREEN ACCOUNT MENU
+   ========================================== */
+
+@media (max-width: 600px) {
+
+    .account-menu {
+        position: fixed !important;
+
+        top: 60px !important;
+        right: 10px !important;
+        left: auto !important;
+
+        width: 310px !important;
+        max-width: calc(100vw - 20px) !important;
+
+        background: #ffffff !important;
+        color: #202124 !important;
+
+        border: 1px solid #dadce0 !important;
+        border-radius: 18px !important;
+
+        box-shadow:
+            0 4px 12px rgba(60, 64, 67, 0.18),
+            0 8px 28px rgba(60, 64, 67, 0.12) !important;
+
+        box-sizing: border-box !important;
+        overflow: hidden !important;
+
+        transform: none !important;
+    }
+
+
+    /* ==========================================
+       PROFILE
+       ========================================== */
+
+    .account-menu-profile {
+        display: flex !important;
+        align-items: center !important;
+
+        gap: 13px !important;
+
+        padding: 17px 16px !important;
+
+        box-sizing: border-box !important;
+    }
+
+
+    .account-menu-profile-pic {
+        width: 48px !important;
+        height: 48px !important;
+
+        flex: 0 0 48px !important;
+
+        border-radius: 50% !important;
+        object-fit: cover !important;
+    }
+
+
+    .account-menu-user-info {
+        min-width: 0 !important;
+        flex: 1 1 auto !important;
+
+        overflow: hidden !important;
+    }
+
+
+    .account-menu-name {
+        font-size: 15px !important;
+        font-weight: 600 !important;
+
+        line-height: 20px !important;
+
+        color: #202124 !important;
+
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+
+
+    .account-menu-email {
+        margin-top: 3px !important;
+
+        font-size: 13px !important;
+        line-height: 18px !important;
+
+        color: #5f6368 !important;
+
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+
+
+    /* ==========================================
+       DIVIDER
+       ========================================== */
+
+    .account-menu-divider {
+        height: 1px !important;
+
+        background: #e8eaed !important;
+    }
+
+
+    /* ==========================================
+       BUTTONS — SAME ALIGNMENT
+       ========================================== */
+
+    .account-menu-item {
+        width: 100% !important;
+
+        height: 50px !important;
+        min-height: 50px !important;
+
+        display: flex !important;
+        align-items: center !important;
+
+        gap: 13px !important;
+
+        padding: 0 16px !important;
+
+        margin: 0 !important;
+
+        border: none !important;
+
+        background: #ffffff !important;
+        color: #202124 !important;
+
+        font-size: 14px !important;
+        font-weight: 500 !important;
+
+        text-align: left !important;
+        white-space: nowrap !important;
+
+        box-sizing: border-box !important;
+
+        overflow: hidden !important;
+    }
+
+
+    /* ==========================================
+       ICON — EXACT SAME POSITION
+       ========================================== */
+
+    .account-menu-item .account-menu-icon {
+        width: 32px !important;
+        height: 32px !important;
+
+        min-width: 32px !important;
+        max-width: 32px !important;
+
+        flex: 0 0 32px !important;
+
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+
+        border-radius: 50% !important;
+
+        box-sizing: border-box !important;
+
+        line-height: 1 !important;
+    }
+
+
+    /* ==========================================
+       TEXT — SAME STARTING POINT
+       ========================================== */
+
+    .account-menu-item > span:last-child {
+        display: block !important;
+
+        flex: 1 1 auto !important;
+
+        min-width: 0 !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+
+        line-height: 20px !important;
+
+        text-align: left !important;
+
+        white-space: nowrap !important;
+
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+
+
+    /* ==========================================
+       SIGN OUT — SAME STRUCTURE
+       ========================================== */
+
+    .account-menu-signout {
+        display: flex !important;
+        align-items: center !important;
+
+        margin-top: 4px !important;
+
+        border-top: 1px solid #e8eaed !important;
+
+        color: #d93025 !important;
+    }
+
+
+    .account-menu-signout .account-menu-icon {
+        flex: 0 0 32px !important;
+    }
+
+
+    /* ==========================================
+       HOVER / ACTIVE
+       ========================================== */
+
+    .account-menu-item:hover {
+        background: #f6f8fa !important;
+    }
+
+
+    .account-menu-item:active {
+        background: #eef0f2 !important;
+    }
+
+
+    .account-menu-signout:hover {
+        background: #fff5f4 !important;
+    }
+
+}
