@@ -2688,16 +2688,22 @@ footer p {
 
 /* ==========================================
    LOCATION STATUS
-   FIXED
+   FIXED HEIGHT - NO LAYOUT SHIFT
 ========================================== */
 
 .location-status {
+    height: 20px;
+    min-height: 20px;
     margin: 10px 2px;
 
     flex-shrink: 0;
 
     font-size: 13px;
     color: red;
+    line-height: 20px;
+
+    overflow: hidden;
+    white-space: nowrap;
 }
 
 

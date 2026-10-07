@@ -3238,10 +3238,9 @@ function useCurrentLocation() {
 
             locationWatchId = null;
         }
-
-        if (status) {
-            status.style.display = "none";
-        }
+if (status) {
+    status.textContent = "";
+}
 
         return;
     }
