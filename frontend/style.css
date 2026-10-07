@@ -5698,3 +5698,58 @@ footer p {
     color: #e53935;
     font-weight: 700;
 }
+/* ==========================================
+   SEASHOP EDGE-TO-EDGE APP
+   ========================================== */
+
+html {
+    width: 100%;
+    min-height: 100%;
+    margin: 0;
+    padding: 0;
+    background: #f7f7f5;
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    width: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+    margin: 0;
+    padding: 0;
+    background: #f7f7f5;
+}
+
+/* MOBILE APP SCREEN */
+@media (max-width: 700px) {
+
+    body {
+        min-height: 100dvh;
+    }
+
+    /* Top area continues behind camera/notch */
+    .navbar {
+        padding-top: env(safe-area-inset-top, 0px);
+        background: rgba(255, 255, 255, 0.96);
+    }
+
+    /* Bottom area continues to screen edge */
+    .mobile-bottom-nav {
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+        height: calc(75px + env(safe-area-inset-bottom, 0px));
+    }
+
+    /*
+       Keep product/content above the bottom navigation.
+       Background itself still reaches the bottom edge.
+    */
+    main {
+        min-height: 100dvh;
+    }
+
+    /* Full-screen intro */
+    #seashopIntro {
+        height: 100dvh;
+        min-height: 100dvh;
+    }
+}
