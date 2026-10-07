@@ -1474,30 +1474,6 @@ footer p {
 
 
 /* =========================================================
-   VERY SMALL MOBILE
-========================================================= */
-
-@media (max-width: 400px) {
-
-    .hero h1 {
-        font-size: 40px;
-    }
-
-    .category-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .product-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .product-image {
-        height: 280px;
-    }
-}
-
-
-/* =========================================================
    CATEGORY LINKS
 ========================================================= */
 
@@ -4203,7 +4179,22 @@ footer p {
     font-size: 14px;
     line-height: 1.5;
     color: #555;
+    cursor: pointer;
+
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    overflow: hidden;
 }
+
+.product-description:hover,
+.product-card .product-description:hover {
+    color: blue !important;
+    cursor: pointer;
+}
+
+
 /* ==========================================
    CENTER VOICE MIC
 ========================================== */
@@ -5243,4 +5234,461 @@ footer p {
         max-height: 28px !important;
     }
 
+}
+/* ==========================================
+   PRODUCT DETAILS PAGE
+========================================== */
+
+.product-detail-page {
+    position: fixed;
+    top: 80px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    z-index: 999;
+
+    display: none;
+
+    background: #fff;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.product-detail-page.active {
+    display: block;
+}
+
+
+/* ==========================================
+   MAIN LAYOUT
+========================================== */
+
+.product-detail-inner {
+    width: 100%;
+    min-height: 100%;
+
+    display: grid;
+    grid-template-columns: 44% 56%;
+}
+
+
+/* ==========================================
+   LEFT IMAGE AREA
+========================================== */
+
+.product-detail-image-panel {
+    position: relative;
+
+    min-height: calc(100vh - 80px);
+
+    background: #f7f7f5;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 30px;
+}
+
+.product-detail-image {
+    width: 100%;
+    height: 100%;
+
+    max-width: 650px;
+    max-height: calc(100vh - 140px);
+
+    object-fit: contain;
+
+    display: block;
+}
+
+
+/* ==========================================
+   RIGHT INFORMATION AREA
+========================================== */
+
+.product-detail-info {
+    min-width: 0;
+
+    padding: 55px 7%;
+
+    overflow-y: auto;
+
+    background: #fff;
+}
+
+.product-detail-category {
+    margin: 0 0 12px;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    color: #666;
+
+    text-transform: uppercase;
+    letter-spacing: .7px;
+}
+
+.product-detail-name {
+    margin: 0 0 18px;
+
+    font-size: clamp(28px, 3vw, 46px);
+
+    line-height: 1.15;
+
+    color: #111;
+
+    font-weight: 700;
+}
+
+.product-detail-price {
+    margin-bottom: 14px;
+
+    font-size: 28px;
+    font-weight: 700;
+
+    color: #111;
+}
+
+.product-detail-stock {
+    display: inline-flex;
+    align-items: center;
+
+    min-height: 32px;
+
+    padding: 6px 12px;
+
+    border-radius: 8px;
+
+    background: #f0f7ff;
+
+    color: red;
+
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.product-detail-divider {
+    width: 100%;
+    height: 1px;
+
+    margin: 28px 0;
+    background: #e5e7eb;
+}
+
+.product-detail-heading {
+    margin: 0 0 12px;
+
+    font-size: 18px;
+
+    color: #111;
+}
+
+.product-detail-description {
+    margin: 0;
+
+    font-size: 16px;
+
+    line-height: 1.7;
+
+    color: #555;
+
+    white-space: pre-wrap;
+}
+
+
+/* ==========================================
+   EXTRA DETAILS
+========================================== */
+
+.product-detail-extra {
+    margin-top: 30px;
+
+    border-top: 1px solid #e5e7eb;
+}
+
+.product-detail-extra-row {
+    min-height: 52px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    border-bottom: 1px solid #e5e7eb;
+
+    font-size: 14px;
+}
+
+.product-detail-extra-row span {
+    color: #777;
+}
+
+.product-detail-extra-row strong {
+    color: #111;
+    text-align: right;
+}
+
+
+/* ==========================================
+   ADD TO CART
+========================================== */
+
+.product-detail-add-cart {
+    width: 100%;
+
+    min-height: 52px;
+
+    margin-top: 30px;
+
+    border: none;
+    border-radius: 12px;
+
+    background: #111;
+    color: #fff;
+
+    font-size: 16px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: .2s ease;
+}
+
+.product-detail-add-cart:hover {
+    opacity: .88;
+}
+
+.product-detail-add-cart:disabled {
+    background:#aaa;
+    cursor: not-allowed;
+}
+/* ==========================================
+   MOBILE
+   IMAGE LEFT + DETAILS RIGHT
+========================================== */
+
+@media (max-width: 700px) {
+
+.product-detail-page {
+    top: 52px;
+    bottom: 75px;
+    z-index: 9999;
+}
+
+    .product-detail-inner {
+        min-height: 100%;
+        grid-template-columns: 42% 58%;
+    }
+
+
+    /* ======================================
+       LEFT IMAGE
+    ====================================== */
+
+    .product-detail-image-panel {
+        min-height: calc(100vh - 143px);
+
+        padding: 8px;
+
+        background: #f7f7f5;
+
+        align-items: center;
+        justify-content: center;
+    }
+
+    .product-detail-image {
+        width: 100%;
+        height: auto;
+
+        max-height: calc(100vh - 180px);
+
+        object-fit: contain;
+    }
+
+
+    /* ======================================
+       RIGHT DETAILS
+    ====================================== */
+
+    .product-detail-info {
+        padding: 10px 12px 30px;
+
+        overflow-y: auto;
+    }
+
+    .product-detail-category {
+        margin: 0 0 8px;
+
+        font-size: 10px;
+
+        letter-spacing: .5px;
+    }
+
+    .product-detail-name {
+        margin: 0 0 12px;
+
+        font-size: 21px;
+
+        line-height: 1.2;
+    }
+
+    .product-detail-price {
+        margin: 0 0 10px;
+
+        font-size: 20px;
+    }
+
+    .product-detail-stock {
+        padding: 5px 8px;
+
+        font-size: 11px;
+
+        border-radius: 7px;
+    }
+
+
+    /* ======================================
+       PRODUCT DETAILS
+    ====================================== */
+
+    .product-detail-divider {
+        display: none;
+    }
+
+    .product-detail-heading {
+        margin: 8px 0 3px !important;
+
+        padding: 8px 0 0;
+
+        border-top: 1px solid #e5e7eb;
+
+        font-size: 15px;
+
+        line-height: 1.2;
+    }
+
+    .product-detail-description {
+        margin: 0 !important;
+
+        padding: 0 !important;
+
+        font-size: 13px;
+
+        line-height: 1.45;
+
+        color: #555;
+    }
+
+
+    /* ======================================
+       EXTRA DETAILS
+    ====================================== */
+
+    .product-detail-extra {
+        margin-top: 20px;
+    }
+
+    .product-detail-extra-row {
+        min-height: 42px;
+
+        font-size: 11px;
+
+        gap: 8px;
+    }
+
+
+    /* ======================================
+       ADD TO CART
+    ====================================== */
+
+    .product-detail-add-cart {
+        min-height: 46px;
+
+        margin-top: 22px;
+
+        border-radius: 10px;
+
+        font-size: 14px;
+    }
+}
+
+
+/* ==========================================
+   VERY SMALL MOBILE
+========================================== */
+
+@media (max-width: 380px) {
+
+    .product-detail-inner {
+        grid-template-columns: 40% 60%;
+    }
+
+    .product-detail-info {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .product-detail-name {
+        font-size: 18px;
+    }
+
+    .product-detail-price {
+        font-size: 18px;
+    }
+
+    .product-detail-heading {
+        margin: 6px 0 3px !important;
+
+        padding-top: 7px;
+
+        font-size: 14px;
+
+        line-height: 1.2;
+    }
+
+    .product-detail-description {
+        margin: 0 !important;
+
+        padding: 0 !important;
+
+        font-size: 12px;
+
+        line-height: 1.4;
+    }
+}
+/* ==========================================
+   KEEP HEADER ABOVE PRODUCT DETAIL PAGE
+========================================== */
+@media (max-width: 700px) {
+
+    .product-detail-page {
+        top: 53px;
+        bottom: 75px;
+        z-index: 999;
+    }
+
+}
+
+.product-detail-description {
+    white-space: normal;
+}
+
+.product-description-line {
+    min-height: 1.45em;
+    white-space: pre-wrap;
+    color: #000;
+}
+
+.product-description:hover {
+    color:blue !important;
+    font-weight: 700;
+}
+
+.product-description-red {
+    color: #e53935;
+    font-weight: 700;
 }

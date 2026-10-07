@@ -1371,10 +1371,13 @@ function createProductCard(productGrid, product) {
             }
         </p>
 
-
-        <p class="product-description">
-            ${productDescription}
-        </p>
+<p
+    class="product-description"
+    role="button"
+    tabindex="0"
+    title="View product details">
+    ${productDescription}
+</p>
 
 
         <div class="product-bottom">
@@ -1547,8 +1550,62 @@ if (shareButton) {
         );
 
     }
+// ==========================================
+// OPEN PRODUCT DETAILS
+// ==========================================
+
+const descriptionElement =
+    productCard.querySelector(
+        ".product-description"
+    );
+
+if (descriptionElement) {
+
+    // MOBILE TOUCH
+    descriptionElement.addEventListener(
+        "touchstart",
+        function() {
+
+            this.style.color = "#1677ff";
+
+        },
+        { passive: true }
+    );
 
 
+    // DESKTOP / NORMAL CLICK
+    descriptionElement.addEventListener(
+        "click",
+        function(event) {
+
+            event.stopPropagation();
+
+            openProductDetails(product);
+
+        }
+    );
+
+
+    // KEYBOARD
+    descriptionElement.addEventListener(
+        "keydown",
+        function(event) {
+
+            if (
+                event.key === "Enter" ||
+                event.key === " "
+            ) {
+
+                event.preventDefault();
+
+                openProductDetails(product);
+
+            }
+
+        }
+    );
+
+}
     // ==========================================
     // ADD CARD TO GRID
     // ==========================================
@@ -5674,4 +5731,227 @@ function clearSearch() {
     if (typeof renderProducts === "function") {
         renderProducts();
     }
+}
+
+
+
+function renderProductDescription(description) {
+
+    const container =
+        document.getElementById("productDetailDescription");
+
+    if (!container) return;
+
+    container.innerHTML = "";
+
+    const lines =
+        String(description || "").split(/\r?\n/);
+
+    lines.forEach((line) => {
+
+        const row =
+            document.createElement("div");
+
+        const trimmed =
+            line.trimStart();
+
+        if (trimmed.startsWith("#")) {
+
+            row.className =
+                "product-description-line product-description-blue";
+
+            row.textContent =
+                trimmed.slice(1).trimStart();
+
+        } else if (trimmed.startsWith("*")) {
+
+            row.className =
+                "product-description-line product-description-red";
+
+            row.textContent =
+                trimmed.slice(1).trimStart();
+
+        } else {
+
+            row.className =
+                "product-description-line product-description-normal";
+
+            row.textContent = line;
+        }
+
+        container.appendChild(row);
+    });
+}
+// ==========================================
+// OPEN PRODUCT DETAILS
+// ==========================================
+
+function openProductDetails(product) {
+    const detailPage = document.getElementById("productDetailPage");
+    if (!detailPage || !product) return;
+
+    const productName =
+        product.name ||
+        product.productName ||
+        "Product";
+
+    const productCategory =
+        product.category ||
+        "Product";
+
+    const productPrice =
+        Number(product.price ?? product.productPrice ?? 0);
+
+    const productStock =
+        Number(product.stock) || 0;
+
+    const productDescription =
+        product.description ||
+        "No description available.";
+
+    let imageURL = product.image || "";
+
+    if (
+        imageURL &&
+        !imageURL.startsWith("http://") &&
+        !imageURL.startsWith("https://")
+    ) {
+        imageURL =
+            "https://nova-backend-7i1l.onrender.com" +
+            (imageURL.startsWith("/")
+                ? imageURL
+                : "/" + imageURL);
+    }
+
+    document.getElementById("productDetailImage").src = imageURL;
+
+    document.getElementById("productDetailImage").alt =
+        productName;
+
+    document.getElementById("productDetailCategory").textContent =
+        productCategory;
+
+    document.getElementById("productDetailName").textContent =
+        productName;
+
+    document.getElementById("productDetailPrice").textContent =
+        "₹" + productPrice.toLocaleString("en-IN");
+
+     renderProductDescription(productDescription);
+
+
+    const stockElement =
+        document.getElementById("productDetailStock");
+
+    const addCartButton =
+        document.getElementById("productDetailAddCart");
+
+
+    if (productStock > 0) {
+
+        stockElement.textContent =
+            "✓ In Stock (" + productStock + ")";
+
+        addCartButton.disabled = false;
+
+    } else {
+
+        stockElement.textContent =
+            "✕ Out of Stock";
+
+        addCartButton.disabled = true;
+    }
+
+
+    addCartButton.onclick = function () {
+
+        if (productStock <= 0) return;
+
+        addToCart(
+            productName,
+            productPrice,
+            product._id,
+            product.image
+        );
+    };
+
+
+    /* OPEN PRODUCT DETAILS */
+
+    detailPage.classList.add("active");
+
+    detailPage.scrollTop = 0;
+
+
+    /* BROWSER HISTORY */
+
+    if (!detailPage.dataset.historyAdded) {
+
+        history.pushState(
+            {
+                productDetails: true
+            },
+            "",
+            window.location.href
+        );
+
+        detailPage.dataset.historyAdded = "true";
+    }
+}
+
+
+/* ==========================================
+   CLOSE PRODUCT DETAILS
+========================================== */
+
+function closeProductDetails() {
+
+    const detailPage =
+        document.getElementById("productDetailPage");
+
+    if (!detailPage) return;
+
+    detailPage.classList.remove("active");
+
+    detailPage.dataset.historyAdded = "";
+
+}
+
+
+/* ==========================================
+   BROWSER / PHONE BACK BUTTON
+========================================== */
+
+window.addEventListener("popstate", function () {
+
+    const detailPage =
+        document.getElementById("productDetailPage");
+
+    if (!detailPage) return;
+
+    if (detailPage.classList.contains("active")) {
+
+        detailPage.classList.remove("active");
+
+        detailPage.dataset.historyAdded = "";
+    }
+});
+
+// ==========================================
+// CLOSE PRODUCT DETAILS
+// ==========================================
+
+function closeProductDetails() {
+
+    const detailPage =
+        document.getElementById(
+            "productDetailPage"
+        );
+
+    if (!detailPage) {
+        return;
+    }
+
+    detailPage.classList.remove("active");
+
 }
