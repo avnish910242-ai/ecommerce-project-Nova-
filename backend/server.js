@@ -1443,6 +1443,163 @@ app.get(
 );
 
 // ==========================================
+// GET SELLER ORDERS
+// ==========================================
+
+app.get(
+    "/api/orders/seller/:email",
+    async (req, res) => {
+
+        try {
+
+            const sellerEmail =
+                req.params.email;
+
+            // ==========================================
+            // CHECK SELLER
+            // ==========================================
+
+            const seller =
+                await User.findOne({
+                    email: sellerEmail
+                });
+
+            if (!seller) {
+
+                return res.status(404).json({
+                    message: "Seller not found"
+                });
+
+            }
+
+            if (
+                !seller.roles ||
+                !seller.roles.includes("seller")
+            ) {
+
+                return res.status(403).json({
+                    message: "User is not a seller"
+                });
+
+            }
+
+            // ==========================================
+            // GET ALL ORDERS
+            // ==========================================
+
+            const orders =
+                await Order
+                    .find()
+                    .sort({
+                        createdAt: -1
+                    });
+
+            const sellerOrders = [];
+
+            // ==========================================
+            // FIND SELLER PRODUCTS INSIDE ORDERS
+            // ==========================================
+
+            for (const order of orders) {
+
+                const sellerItems = [];
+
+                for (const item of order.items) {
+
+                    const product =
+                        await Product.findById(
+                            item.productId
+                        );
+
+                    if (!product) {
+                        continue;
+                    }
+
+                    if (
+                        product.sellerEmail &&
+                        product.sellerEmail.toLowerCase() ===
+                        sellerEmail.toLowerCase()
+                    ) {
+
+                        sellerItems.push(item);
+
+                    }
+
+                }
+
+                // ==========================================
+                // ONLY ADD ORDER IF SELLER HAS PRODUCT
+                // ==========================================
+
+                if (sellerItems.length > 0) {
+
+                    const sellerTotal =
+                        sellerItems.reduce(
+                            (sum, item) =>
+                                sum +
+                                (
+                                    Number(item.price) *
+                                    Number(item.quantity)
+                                ),
+                            0
+                        );
+
+                    sellerOrders.push({
+
+                        _id: order._id,
+
+                        customerName:
+                            order.customerName,
+
+                        customerEmail:
+                            order.customerEmail,
+
+                        phone:
+                            order.phone,
+
+                        address:
+                            order.address,
+
+                        paymentMethod:
+                            order.paymentMethod,
+
+                        status:
+                            order.status,
+
+                        createdAt:
+                            order.createdAt,
+
+                        totalAmount:
+                            sellerTotal,
+
+                        items:
+                            sellerItems
+
+                    });
+
+                }
+
+            }
+
+            res.json(sellerOrders);
+
+        } catch (error) {
+
+            console.log(
+                "GET SELLER ORDERS ERROR:",
+                error
+            );
+
+            res.status(500).json({
+                message: error.message
+            });
+
+        }
+
+    }
+);
+
+// ==========================================
 // GET ALL ORDERS
 // ==========================================
 

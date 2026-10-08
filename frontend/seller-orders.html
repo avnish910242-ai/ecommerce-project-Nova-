@@ -171,11 +171,35 @@ const API_URL =
 async function loadOrders() {
 
     try {
+        const savedUser =
+    localStorage.getItem("novaUser");
 
-        const response =
-            await fetch(
-                API_URL + "/api/orders"
-            );
+const user =
+    savedUser
+        ? JSON.parse(savedUser)
+        : null;
+
+if (!user || !user.email) {
+
+    document.getElementById(
+        "ordersContainer"
+    ).innerHTML = `
+        <div class="message">
+            ❌ Seller login required.
+        </div>
+    `;
+
+    return;
+
+}
+
+const response =
+    await fetch(
+        API_URL +
+        "/api/orders/seller/" +
+        encodeURIComponent(user.email)
+    );
+
 
 
         const orders =
