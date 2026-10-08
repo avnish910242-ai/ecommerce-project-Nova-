@@ -1,184 +1,303 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+<svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 512 512">
 
-  <defs>
+    <defs>
 
-    <!-- Water drop gradient -->
-    <radialGradient id="blue" cx="28%" cy="18%" r="88%">
-      <stop offset="0" stop-color="#62D9FF"/>
-      <stop offset=".35" stop-color="#159CFF"/>
-      <stop offset=".72" stop-color="#0870E8"/>
-      <stop offset="1" stop-color="#003EBB"/>
-     
-    </radialGradient>
+        <!-- =========================
+             WATER BLUE
+        ========================== -->
 
-    <!-- White cart gradient -->
-    <linearGradient id="cartWhite" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#0000ff"/>
-      <stop offset=".55" stop-color="#0000ff"/>
-      <stop offset="1" stop-color="#0000ff"/>
-    </linearGradient>
+        <radialGradient
+            id="dropBlue"
+            cx="30%"
+            cy="18%"
+            r="90%">
 
-    <!-- Shadow -->
-    <filter
-      id="shadow"
-      x="-30%"
-      y="-30%"
-      width="160%"
-      height="160%">
+            <stop offset="0%"   stop-color="#8DEBFF"/>
+            <stop offset="25%"  stop-color="#46D1FF"/>
+            <stop offset="52%"  stop-color="#159BFF"/>
+            <stop offset="78%"  stop-color="#0870E8"/>
+            <stop offset="100%" stop-color="#003FBA"/>
 
-      <feDropShadow
-        dx="0"
-        dy="5"
-        stdDeviation="6"
-        flood-color="#003B9B"
-        flood-opacity=".30"/>
-
-    </filter>
-
-  </defs>
+        </radialGradient>
 
 
-  <!-- ========================= -->
-  <!-- WATER DROPS -->
-  <!-- ========================= -->
+        <!-- =========================
+             CART BLUE
+        ========================== -->
 
-  <g
-    fill="url(#blue)"
-    filter="url(#shadow)">
+        <linearGradient
+            id="cartBlue"
+            x1="0"
+            y1="0"
+            x2="1"
+            y2="1">
+
+            <stop offset="0%"   stop-color="#39C7FF"/>
+            <stop offset="35%"  stop-color="#1598FF"/>
+            <stop offset="68%"  stop-color="#086DE8"/>
+            <stop offset="100%" stop-color="#003DB4"/>
+
+        </linearGradient>
+
+
+        <!-- =========================
+             CART HIGHLIGHT
+        ========================== -->
+
+        <linearGradient
+            id="cartShine"
+            x1="0"
+            y1="0"
+            x2="0"
+            y2="1">
+
+            <stop offset="0%"   stop-color="#FFFFFF" stop-opacity=".72"/>
+            <stop offset="45%"  stop-color="#FFFFFF" stop-opacity=".18"/>
+            <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+
+        </linearGradient>
+
+
+        <!-- =========================
+             SOFT SHADOW
+        ========================== -->
+
+        <filter
+            id="softShadow"
+            x="-40%"
+            y="-40%"
+            width="180%"
+            height="180%">
+
+            <feDropShadow
+                dx="0"
+                dy="6"
+                stdDeviation="7"
+                flood-color="#003A9D"
+                flood-opacity=".24"/>
+
+        </filter>
+
+
+        <!-- =========================
+             DROP
+        ========================== -->
+
+        <g id="drop">
+
+            <path
+                d="
+                    M0 -244
+                    C -13 -224 -28 -201 -28 -183
+                    C -28 -164 -16 -150 0 -150
+                    C 16 -150 28 -164 28 -183
+                    C 28 -201 13 -224 0 -244
+                    Z
+                "
+                fill="url(#dropBlue)"
+                filter="url(#softShadow)"
+            />
+
+            <!-- glossy reflection -->
+
+            <ellipse
+                cx="-9"
+                cy="-192"
+                rx="7"
+                ry="18"
+                fill="#FFFFFF"
+                opacity=".42"
+                transform="rotate(-18 -9 -192)"
+            />
+
+            <ellipse
+                cx="-14"
+                cy="-166"
+                rx="3"
+                ry="6"
+                fill="#FFFFFF"
+                opacity=".22"
+            />
+
+        </g>
+
+    </defs>
+
+
+
+
+
+    <!-- =========================
+         WATER DROP RING
+    ========================== -->
 
     <g transform="translate(256 256)">
 
-      <path
-        id="drop"
-        d="
-          M0-244
-          C-15-221-27-205-27-187
-          A27 27 0 0 0 27-187
-          C27-205 15-221 0-244Z
-        "
-      />
+        <use href="#drop"/>
 
-      <use href="#drop" transform="rotate(30)"/>
-      <use href="#drop" transform="rotate(60)"/>
-      <use href="#drop" transform="rotate(90)"/>
-      <use href="#drop" transform="rotate(120)"/>
-      <use href="#drop" transform="rotate(150)"/>
-      <use href="#drop" transform="rotate(180)"/>
-      <use href="#drop" transform="rotate(210)"/>
-      <use href="#drop" transform="rotate(240)"/>
-      <use href="#drop" transform="rotate(270)"/>
-      <use href="#drop" transform="rotate(300)"/>
-      <use href="#drop" transform="rotate(330)"/>
+        <use href="#drop" transform="rotate(30)"/>
+        <use href="#drop" transform="rotate(60)"/>
+        <use href="#drop" transform="rotate(90)"/>
+        <use href="#drop" transform="rotate(120)"/>
+        <use href="#drop" transform="rotate(150)"/>
+        <use href="#drop" transform="rotate(180)"/>
+        <use href="#drop" transform="rotate(210)"/>
+        <use href="#drop" transform="rotate(240)"/>
+        <use href="#drop" transform="rotate(270)"/>
+        <use href="#drop" transform="rotate(300)"/>
+        <use href="#drop" transform="rotate(330)"/>
 
     </g>
 
-  </g>
 
-
-  <!-- ========================= -->
-  <!-- CENTER WHITE CART -->
-  <!-- ========================= -->
-
-  <g
-    transform="
-      translate(67 67)
-      scale(.735)
-    ">
-
-
-    <!-- White cart outline -->
+    <!-- =========================
+         CENTER CART
+    ========================== -->
 
     <g
-      fill="none"
-      stroke="url(#cartWhite)"
-      stroke-width="19"
-      stroke-linecap="round"
-      stroke-linejoin="round">
+        transform="translate(67 67) scale(.735)"
+        filter="url(#softShadow)">
 
-      <!-- Handle + frame -->
 
-      <path
-        d="
-          M151 202
-          H181
-          L204 318
-          Q207 331 220 331
-          H355
-        "
-      />
+        <!-- HANDLE + FRAME -->
 
-      <!-- Basket -->
+        <path
+            d="
+                M151 202
+                H181
+                L204 318
+                Q207 331 220 331
+                H355
+            "
+            fill="none"
+            stroke="url(#cartBlue)"
+            stroke-width="21"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+        />
 
-      <path
-        d="
-          M195 226
-          H388
-          L366 302
-          H210
-        "
-      />
 
-      <!-- Lower support -->
+        <!-- BASKET -->
 
-      <path
-        d="
-          M224 350
-          H353
-        "
-      />
+        <path
+            d="
+                M195 226
+                H388
+                L366 302
+                H210
+                Z
+            "
+            fill="url(#cartBlue)"
+            stroke="#034FBF"
+            stroke-width="7"
+            stroke-linejoin="round"
+        />
+
+
+        <!-- BASKET GLOSS -->
+
+        <path
+            d="
+                M207 236
+                H376
+                L366 271
+                H214
+                Z
+            "
+            fill="url(#cartShine)"
+        />
+
+
+        <!-- BASKET LIGHT LINE -->
+
+        <path
+            d="
+                M216 285
+                H365
+            "
+            fill="none"
+            stroke="#FFFFFF"
+            stroke-width="5"
+            stroke-linecap="round"
+            opacity=".20"
+        />
+
+
+        <!-- LOWER SUPPORT -->
+
+        <path
+            d="
+                M224 350
+                H353
+            "
+            fill="none"
+            stroke="url(#cartBlue)"
+            stroke-width="20"
+            stroke-linecap="round"
+        />
+
+
+        <!-- LEFT WHEEL -->
+
+        <circle
+            cx="244"
+            cy="369"
+            r="19"
+            fill="url(#cartBlue)"
+            stroke="#034FBF"
+            stroke-width="3"
+        />
+
+        <circle
+            cx="244"
+            cy="369"
+            r="7"
+            fill="#FFFFFF"
+            opacity=".28"
+        />
+
+
+        <!-- RIGHT WHEEL -->
+
+        <circle
+            cx="342"
+            cy="369"
+            r="19"
+            fill="url(#cartBlue)"
+            stroke="#034FBF"
+            stroke-width="3"
+        />
+
+        <circle
+            cx="342"
+            cy="369"
+            r="7"
+            fill="#FFFFFF"
+            opacity=".28"
+        />
+
+
+        <!-- HANDLE END -->
+
+        <circle
+            cx="151"
+            cy="202"
+            r="11"
+            fill="url(#cartBlue)"
+            stroke="#034FBF"
+            stroke-width="3"
+        />
+
+        <circle
+            cx="148"
+            cy="198"
+            r="3.5"
+            fill="#FFFFFF"
+            opacity=".65"
+        />
 
     </g>
-
-
-    <!-- White basket -->
-
-
-    <!-- Light gray basket shine -->
-
-
-    <!-- Left wheel -->
-
-    <circle
-      cx="244"
-      cy="369"
-      r="17"
-      fill="#0000ff"
-    />
-
-    <circle
-      cx="244"
-      cy="369"
-      r="7"
-      fill="#0000ff"
-    />
-
-
-    <!-- Right wheel -->
-
-    <circle
-      cx="342"
-      cy="369"
-      r="17"
-      fill="#0000ff"
-    />
-
-    <circle
-      cx="342"
-      cy="369"
-      r="7"
-      fill="#0000ff"
-    />
-
-
-    <!-- White handle end -->
-
-    <circle
-      cx="151"
-      cy="202"
-      r="10"
-      fill="#0000ff"
-    />
-
-  </g>
 
 </svg>
