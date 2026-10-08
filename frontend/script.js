@@ -3214,11 +3214,11 @@ async function saveDeliveryAddress() {
 }
 let locationActive = false;
 let locationWatchId = null;
-
 function useCurrentLocation() {
 
     const status =
         document.getElementById("locationStatus");
+
 
     // ==========================================
     // SECOND CLICK → CLOSE
@@ -3228,260 +3228,435 @@ function useCurrentLocation() {
 
         locationActive = false;
 
-        if (
-            locationWatchId !== null &&
-            navigator.geolocation.clearWatch
-        ) {
+        if (locationWatchId !== null) {
+
             navigator.geolocation.clearWatch(
                 locationWatchId
             );
 
             locationWatchId = null;
         }
-if (status) {
-    status.textContent = "";
-}
+
+        if (status) {
+            status.textContent = "";
+        }
 
         return;
     }
 
 
     // ==========================================
-    // FIRST CLICK → OPEN / START
+    // FIRST CLICK → START
     // ==========================================
 
     if (!navigator.geolocation) {
 
         alert(
-            "Browser location dosenot support."
+            "Browser location does not support."
         );
 
         return;
     }
 
+
     locationActive = true;
+
 
     if (status) {
 
         status.style.display = "block";
 
         status.textContent =
-            "📍 Location  is loading...";
-
+            "📍 Finding accurate location...";
     }
 
 
-    navigator.geolocation.getCurrentPosition(
+    let bestPosition = null;
 
-        async function(position) {
+    let bestAccuracy = Infinity;
 
-            // Agar second click karke already close
-            // kar diya gaya hai to kuch mat karo
-
-            if (!locationActive) {
-                return;
-            }
+    let finished = false;
 
 
-            const latitude =
-                position.coords.latitude;
+    // ==========================================
+    // FINISH LOCATION
+    // ==========================================
 
-            const longitude =
-                position.coords.longitude;
+    async function finishLocation(position) {
+
+        if (finished) {
+            return;
+        }
+
+        finished = true;
 
 
-            // ==========================================
-            // LATITUDE
-            // ==========================================
+        if (locationWatchId !== null) {
 
-            const latitudeInput =
-                document.getElementById(
-                    "deliveryLatitude"
+            navigator.geolocation.clearWatch(
+                locationWatchId
+            );
+
+            locationWatchId = null;
+        }
+
+
+        if (!locationActive) {
+            return;
+        }
+
+
+        const latitude =
+            position.coords.latitude;
+
+        const longitude =
+            position.coords.longitude;
+
+
+        // ==========================================
+        // LATITUDE
+        // ==========================================
+
+        const latitudeInput =
+            document.getElementById(
+                "deliveryLatitude"
+            );
+
+        if (latitudeInput) {
+
+            latitudeInput.value =
+                latitude;
+        }
+
+
+        // ==========================================
+        // LONGITUDE
+        // ==========================================
+
+        const longitudeInput =
+            document.getElementById(
+                "deliveryLongitude"
+            );
+
+        if (longitudeInput) {
+
+            longitudeInput.value =
+                longitude;
+        }
+
+
+        console.log(
+            "Latitude:",
+            latitude
+        );
+
+        console.log(
+            "Longitude:",
+            longitude
+        );
+
+        console.log(
+            "GPS Accuracy:",
+            position.coords.accuracy,
+            "meters"
+        );
+
+
+        if (status) {
+
+            status.textContent =
+                "📍 Address is finding...";
+        }
+
+
+        // ==========================================
+        // REVERSE GEOCODING
+        // ==========================================
+
+        try {
+
+            const response =
+                await fetch(
+                    `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1`,
+                    {
+                        headers: {
+                            "Accept":
+                                "application/json"
+                        }
+                    }
                 );
 
-            if (latitudeInput) {
-                latitudeInput.value = latitude;
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Address request failed"
+                );
             }
 
 
+            const data =
+                await response.json();
+
+
+            console.log(
+                "Location address:",
+                data
+            );
+
+
+            if (!data.address) {
+
+                throw new Error(
+                    "Address nahi mila"
+                );
+            }
+
+
+            const address =
+                data.address;
+
+
             // ==========================================
-            // LONGITUDE
+            // HOUSE
             // ==========================================
 
-            const longitudeInput =
+            const house =
                 document.getElementById(
-                    "deliveryLongitude"
+                    "deliveryHouse"
                 );
 
-            if (longitudeInput) {
-                longitudeInput.value = longitude;
+            if (house) {
+
+                house.value =
+                    [
+                        address.house_number,
+                        address.building
+                    ]
+                    .filter(Boolean)
+                    .join(", ");
             }
+
+
+            // ==========================================
+            // AREA
+            // ==========================================
+
+            const area =
+                document.getElementById(
+                    "deliveryArea"
+                );
+
+            if (area) {
+
+                area.value =
+                    [
+                        address.road,
+                        address.neighbourhood,
+                        address.suburb
+                    ]
+                    .filter(Boolean)
+                    .join(", ");
+            }
+
+
+            // ==========================================
+            // CITY
+            // ==========================================
+
+            const city =
+                document.getElementById(
+                    "deliveryCity"
+                );
+
+            if (city) {
+
+                city.value =
+                    address.city ||
+                    address.town ||
+                    address.municipality ||
+                    address.village ||
+                    "";
+            }
+
+
+            // ==========================================
+            // PIN
+            // ==========================================
+
+            const pin =
+                document.getElementById(
+                    "deliveryPin"
+                );
+
+            if (pin) {
+
+                pin.value =
+                    address.postcode || "";
+            }
+
+
+            // ==========================================
+            // STATE
+            // ==========================================
+
+            const state =
+                document.getElementById(
+                    "deliveryState"
+                );
+
+            if (state) {
+
+                const stateName =
+                    address.state || "";
+
+
+                for (
+                    let i = 0;
+                    i < state.options.length;
+                    i++
+                ) {
+
+                    if (
+                        state.options[i]
+                            .text
+                            .toLowerCase()
+                            .includes(
+                                stateName.toLowerCase()
+                            )
+                    ) {
+
+                        state.selectedIndex = i;
+
+                        break;
+                    }
+                }
+            }
+
+
+            // ==========================================
+            // SUCCESS
+            // ==========================================
+
+            if (status) {
+
+                status.style.display =
+                    "block";
+
+                status.textContent =
+                    "✅ Address filled using Current Location.";
+            }
+
+
+        } catch (error) {
+
+            console.error(
+                "Address error:",
+                error
+            );
 
 
             if (status) {
 
                 status.textContent =
-                    "📍 Address is finding...";
-
+                    "⚠️ Location found, but address was not found.";
             }
+        }
+
+    }
 
 
-            try {
+    // ==========================================
+    // START GPS WATCH
+    // ==========================================
 
-                const response =
-                    await fetch(
-                        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1`
-                    );
+    locationWatchId =
+        navigator.geolocation.watchPosition(
 
+            function(position) {
 
-                if (!response.ok) {
-                    throw new Error(
-                        "Address request failed"
-                    );
+                if (!locationActive || finished) {
+                    return;
                 }
 
 
-                const data =
-                    await response.json();
+                const accuracy =
+                    position.coords.accuracy;
 
 
                 console.log(
-                    "Location address:",
-                    data
+                    "GPS Reading Accuracy:",
+                    accuracy,
+                    "meters"
                 );
 
 
-                if (!data.address) {
-
-                    throw new Error(
-                        "Address nahi mila"
-                    );
-
-                }
-
-
-                const address =
-                    data.address;
-
-
                 // ==========================================
-                // HOUSE
+                // BEST READING SAVE
                 // ==========================================
 
-                const house =
-                    document.getElementById(
-                        "deliveryHouse"
-                    );
+                if (
+                    accuracy < bestAccuracy
+                ) {
 
-                if (house) {
+                    bestAccuracy =
+                        accuracy;
 
-                    house.value =
-                        [
-                            address.house_number,
-                            address.building
-                        ]
-                        .filter(Boolean)
-                        .join(", ");
-
-                }
+                    bestPosition =
+                        position;
 
 
-                // ==========================================
-                // AREA
-                // ==========================================
+                    if (status) {
 
-                const area =
-                    document.getElementById(
-                        "deliveryArea"
-                    );
-
-                if (area) {
-
-                    area.value =
-                        [
-                            address.road,
-                            address.neighbourhood,
-                            address.suburb
-                        ]
-                        .filter(Boolean)
-                        .join(", ");
-
-                }
-
-
-                // ==========================================
-                // CITY
-                // ==========================================
-
-                const city =
-                    document.getElementById(
-                        "deliveryCity"
-                    );
-
-                if (city) {
-
-                    city.value =
-                        address.city ||
-                        address.town ||
-                        address.municipality ||
-                        "";
-
-                }
-
-
-                // ==========================================
-                // PIN
-                // ==========================================
-
-                const pin =
-                    document.getElementById(
-                        "deliveryPin"
-                    );
-
-                if (pin) {
-
-                    pin.value =
-                        address.postcode || "";
-
-                }
-
-
-                // ==========================================
-                // STATE
-                // ==========================================
-
-                const state =
-                    document.getElementById(
-                        "deliveryState"
-                    );
-
-                if (state) {
-
-                    const stateName =
-                        address.state || "";
-
-                    for (
-                        let i = 0;
-                        i < state.options.length;
-                        i++
-                    ) {
-
-                        if (
-                            state.options[i]
-                                .text
-                                .toLowerCase()
-                                .includes(
-                                    stateName.toLowerCase()
-                                )
-                        ) {
-
-                            state.selectedIndex = i;
-
-                            break;
-                        }
-
+                        status.textContent =
+                            "📍 GPS accuracy: " +
+                            Math.round(accuracy) +
+                            " meters...";
                     }
+                }
 
+
+                // ==========================================
+                // VERY GOOD ACCURACY
+                // ==========================================
+
+                if (
+                    accuracy <= 30
+                ) {
+
+                    finishLocation(
+                        position
+                    );
+                }
+
+            },
+
+
+            function(error) {
+
+                if (!locationActive || finished) {
+                    return;
+                }
+
+
+                console.log(
+                    "Location error:",
+                    error
+                );
+
+
+                locationActive = false;
+
+
+                if (
+                    locationWatchId !== null
+                ) {
+
+                    navigator.geolocation.clearWatch(
+                        locationWatchId
+                    );
+
+                    locationWatchId = null;
                 }
 
 
@@ -3491,90 +3666,75 @@ if (status) {
                         "block";
 
                     status.textContent =
-                        "✅ address is fill using Current location.";
-
+                        "❌ Location is not detected.";
                 }
 
 
-                console.log(
-                    "Latitude:",
-                    latitude
+                alert(
+                    "Location permission not found. Please enter address manually."
                 );
+            },
 
-                console.log(
-                    "Longitude:",
-                    longitude
-                );
-                console.log(
-    "GPS Accuracy:",
-    position.coords.accuracy,
-    "meters"
-);      
-  }
-       catch (error) {
 
-                console.error(
-                    "Address error:",
-                    error
-                );
-
-                if (status) {
-
-                    status.textContent =
-                        "⚠️ location is not found";
-
-                }
-
+            {
+                enableHighAccuracy: true,
+                timeout: 20000,
+                maximumAge: 0
             }
+        );
 
-        },
 
+    // ==========================================
+    // WAIT FOR BETTER READING
+    // ==========================================
 
-        function(error) {
+    setTimeout(
+        function() {
 
-            // Agar second click se close ho chuka hai
-            if (!locationActive) {
+            if (
+                finished ||
+                !locationActive
+            ) {
                 return;
             }
 
 
-            console.log(
-                "Location error:",
-                error
-            );
+            if (bestPosition) {
+
+                finishLocation(
+                    bestPosition
+                );
+
+            } else {
+
+                locationActive = false;
+
+                if (
+                    locationWatchId !== null
+                ) {
+
+                    navigator.geolocation.clearWatch(
+                        locationWatchId
+                    );
+
+                    locationWatchId = null;
+                }
 
 
-            locationActive = false;
+                if (status) {
 
-
-            if (status) {
-
-                status.style.display =
-                    "block";
-
-                status.textContent =
-                    "❌ Location is not detect.";
+                    status.textContent =
+                        "❌ Location could not be detected.";
+                }
 
             }
 
-
-            alert(
-                "Location permission not found.please enter Address manually ."
-            );
-
         },
-
-
-        {
-            enableHighAccuracy: true,
-            timeout: 20000,
-            maximumAge: 0
-        }
-        
-
+        20000
     );
 
 }
+
 let addressSavedForCheckout = false;
 
 let locationOpenedFrom = "cart";
