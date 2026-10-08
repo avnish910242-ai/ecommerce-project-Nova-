@@ -3509,11 +3509,8 @@ if (status) {
     "GPS Accuracy:",
     position.coords.accuracy,
     "meters"
-);
-console.log("GPS Accuracy:", position.coords.accuracy, "meters");
-
-            }
-
+);      
+  }
             catch (error) {
 
                 console.error(
@@ -3577,7 +3574,6 @@ console.log("GPS Accuracy:", position.coords.accuracy, "meters");
 
     );
 
-console.log("GPS Accuracy:", position.coords.accuracy, "meters");
 }
 let addressSavedForCheckout = false;
 
@@ -5954,3 +5950,4 @@ function closeProductDetails() {
     detailPage.classList.remove("active");
 
 }
+// Git test
