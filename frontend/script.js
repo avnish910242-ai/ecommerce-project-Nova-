@@ -3511,7 +3511,7 @@ if (status) {
     "meters"
 );      
   }
-            catch (error) {
+       catch (error) {
 
                 console.error(
                     "Address error:",
@@ -5950,4 +5950,4 @@ function closeProductDetails() {
     detailPage.classList.remove("active");
 
 }
-// Git test
+
