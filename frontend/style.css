@@ -5829,3 +5829,19 @@ body {
     z-index: 99999 !important;
     padding-bottom: env(safe-area-inset-bottom, 0px) !important;
 }
+html, body {
+    background: #ffffff !important;
+    min-height: 100%;
+}
+
+@media (max-width: 700px) {
+    body {
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    .mobile-bottom-nav {
+        background-color: #ffffff !important;
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+        box-sizing: border-box;
+    }
+}
