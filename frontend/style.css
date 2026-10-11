@@ -5753,3 +5753,54 @@ body {
         min-height: 100dvh;
     }
 }
+/* ==========================================
+   SEASHOP INSTALLED APP - SAFE AREA FIX
+========================================== */
+
+html {
+    min-height: 100%;
+    -webkit-text-size-adjust: 100%;
+}
+
+@media (max-width: 700px) {
+
+    html,
+    body {
+        width: 100%;
+        min-height: 100%;
+        margin: 0;
+    }
+
+    body {
+        min-height: 100vh;
+        min-height: 100dvh;
+        padding-top: 0;
+        padding-bottom: 0;
+        overflow-x: hidden;
+    }
+
+    /* Header camera/status area ke neeche */
+    .navbar {
+        top: 0;
+        padding-top: env(safe-area-inset-top, 0px);
+        height: auto;
+        min-height: calc(70px + env(safe-area-inset-top, 0px));
+        box-sizing: border-box;
+    }
+
+    /* Bottom navigation ke liye safe space */
+    .mobile-bottom-nav {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 1000;
+        box-sizing: border-box;
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    /* Page content bottom navigation ke peeche na chhupe */
+    main {
+        padding-bottom: calc(75px + env(safe-area-inset-bottom, 0px));
+    }
+}
