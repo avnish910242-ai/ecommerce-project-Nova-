@@ -5792,3 +5792,28 @@ body {
         background: #ffffff;
     }
 }
+/* Keep the page background white in the installed PWA */
+html,
+body {
+    background-color: #ffffff;
+    min-height: 100%;
+}
+
+@media (display-mode: standalone) {
+    html,
+    body {
+        background-color: #ffffff;
+    }
+
+    body::after {
+        content: "";
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: env(safe-area-inset-bottom, 0px);
+        background-color: #ffffff;
+        pointer-events: none;
+        z-index: 99999;
+    }
+}
