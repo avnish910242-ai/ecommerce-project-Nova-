@@ -1,5 +1,5 @@
 
-const CACHE_NAME = "nova-v3";
+const CACHE_NAME = "nova-v4";
 
 // ==========================================
 // BASE PATH
