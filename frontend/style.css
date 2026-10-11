@@ -5769,3 +5769,15 @@ body {
         background-color: #ffffff;
     }
 }
+/* Mobile Android navigation bar ko white karne ke liye */
+html {
+    background-color: #ffffff;
+}
+
+body {
+    background-color: #ffffff;
+}
+
+:root {
+    color-scheme: light;
+}
