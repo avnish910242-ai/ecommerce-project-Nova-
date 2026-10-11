@@ -6117,7 +6117,7 @@ function closeProductDetails() {
 
 async function openProductFromNotification() {
     const params = new URLSearchParams(window.location.search);
-    const productId = params.get("productId");
+   const productId = params.get("product") || params.get("productId");
 
     if (!productId) return;
 
