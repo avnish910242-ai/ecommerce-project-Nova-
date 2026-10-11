@@ -1,4 +1,20 @@
-const CACHE_NAME = "nova-v2";
+
+const CACHE_NAME = "nova-v3";
+
+// ==========================================
+// BASE PATH
+// Local:   /frontend/
+// Deployed: /
+// ==========================================
+
+const BASE_PATH = new URL(".", self.location.href).pathname;
+
+const FILES_TO_CACHE = [
+    BASE_PATH,
+    `${BASE_PATH}index.html`,
+    `${BASE_PATH}style.css`,
+    `${BASE_PATH}script.js`
+];
 
 // ==========================================
 // FIREBASE MESSAGING
@@ -25,25 +41,23 @@ const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage(function(payload) {
 
-    console.log(
-        "Background notification received:",
-        payload
-    );
+    console.log("Background notification received:", payload);
 
-    const notificationTitle =
-        payload.notification?.title ||
-        "SEASHOP";
+    // Notification payload ko Firebase SDK handle karne de.
+    if (payload.notification) {
+        return;
+    }
 
-    const notificationOptions = {
+    // Data-only payload ke liye notification.
+    const data = payload.data || {};
 
-        body:
-            payload.notification?.body ||
-            "New order received",
-
-        icon: "/images/log.png",
-
-        badge: "/images/log.png"
-    };
+    const notificationTitle = data.title || "SEASHOP";
+const notificationOptions = {
+    body: data.body || "New order received",
+    icon: "/frontend/svg/seashop.svg",
+    badge: "/frontend/svg/seashop.svg"
+};
+   
 
     self.registration.showNotification(
         notificationTitle,
@@ -52,111 +66,108 @@ messaging.onBackgroundMessage(function(payload) {
 });
 
 // ==========================================
-// NOVA CACHE
+// INSTALL AND CACHE
 // ==========================================
-
-const FILES_TO_CACHE = [
-    "/",
-    "/index.html",
-    "/style.css",
-    "/script.js",
-    "/images/log.png"
-];
 
 self.addEventListener("install", event => {
 
     event.waitUntil(
-
         caches.open(CACHE_NAME)
-            .then(cache =>
-                cache.addAll(FILES_TO_CACHE)
-            )
-            .then(() =>
-                self.skipWaiting()
-            )
-
+            .then(cache => cache.addAll(FILES_TO_CACHE))
+            .then(() => self.skipWaiting())
     );
 
 });
+
+// ==========================================
+// ACTIVATE
+// ==========================================
 
 self.addEventListener("activate", event => {
 
     event.waitUntil(
-
         caches.keys()
-            .then(keys => {
-
-                return Promise.all(
-
-                    keys.map(key => {
-
-                        if (key !== CACHE_NAME) {
-
-                            return caches.delete(key);
-
-                        }
-
-                    })
-
-                );
-
-            })
-            .then(() =>
-                self.clients.claim()
-            )
-
+            .then(keys => Promise.all(
+                keys.map(key => {
+                    // Sirf NOVA ke purane caches delete karo.
+                    if (
+                        key.startsWith("nova-") &&
+                        key !== CACHE_NAME
+                    ) {
+                        return caches.delete(key);
+                    }
+                })
+            ))
+            .then(() => self.clients.claim())
     );
 
 });
 
+// ==========================================
+// NETWORK + OFFLINE CACHE
+// ==========================================
+
 self.addEventListener("fetch", event => {
 
-    if (event.request.method !== "GET") {
+    const request = event.request;
+
+    if (request.method !== "GET") {
+        return;
+    }
+
+    const requestURL = new URL(request.url);
+
+    // Sirf isi website ki requests handle karo.
+    if (requestURL.origin !== self.location.origin) {
         return;
     }
 
     event.respondWith(
-
-        fetch(event.request)
-
+        fetch(request)
             .then(response => {
 
-                const responseClone =
-                    response.clone();
+                // Sirf successful responses cache karo.
+                if (response.ok) {
+                    const responseClone = response.clone();
 
-                caches.open(CACHE_NAME)
-                    .then(cache => {
-
-                        cache.put(
-                            event.request,
-                            responseClone
-                        );
-
-                    });
+                    caches.open(CACHE_NAME)
+                        .then(cache => cache.put(request, responseClone))
+                        .catch(error => {
+                            console.error("Cache save failed:", error);
+                        });
+                }
 
                 return response;
-
             })
+            .catch(async () => {
 
-            .catch(() => {
+                const cachedResponse = await caches.match(request);
 
-                return caches.match(
-                    event.request
-                )
-                .then(cachedResponse => {
+                if (cachedResponse) {
+                    return cachedResponse;
+                }
 
-                    if (cachedResponse) {
-                        return cachedResponse;
-                    }
-
-                    return caches.match(
-                        "/index.html"
+                // Offline page fallback.
+                if (request.mode === "navigate") {
+                    const offlinePage = await caches.match(
+                        `${BASE_PATH}index.html`
                     );
 
-                });
+                    if (offlinePage) {
+                        return offlinePage;
+                    }
+                }
 
+                return new Response(
+                    "Internet connection nahi hai aur yeh file offline available nahi hai.",
+                    {
+                        status: 503,
+                        headers: {
+                            "Content-Type": "text/plain; charset=utf-8"
+                        }
+                    }
+                );
             })
-
     );
 
 });

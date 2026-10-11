@@ -6111,3 +6111,39 @@ function closeProductDetails() {
 
 }
 
+/* ==========================================
+   OPEN PRODUCT FROM PUSH NOTIFICATION
+========================================== */
+
+async function openProductFromNotification() {
+    const params = new URLSearchParams(window.location.search);
+    const productId = params.get("productId");
+
+    if (!productId) return;
+
+    try {
+        const response = await fetch(
+            "https://nova-backend-7i1l.onrender.com/api/products/" +
+            encodeURIComponent(productId)
+        );
+
+        if (!response.ok) {
+            throw new Error("Product not found");
+        }
+
+        const product = await response.json();
+
+        if (product && product._id) {
+            openProductDetails(product);
+        }
+    } catch (error) {
+        console.error(
+            "Notification product loading error:",
+            error
+        );
+    }
+}
+
+window.addEventListener("DOMContentLoaded", function() {
+    openProductFromNotification();
+});

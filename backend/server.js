@@ -1175,6 +1175,227 @@ app.post("/api/seller/fcm-token", async (req, res) => {
 });
 
 
+/* ==========================================
+   SAVE CUSTOMER FCM TOKEN
+========================================== */
+
+app.post("/api/customer/fcm-token", async (req, res) => {
+    try {
+        const { email, token } = req.body;
+
+        if (!email || !token) {
+            return res.status(400).json({
+                message: "Email and token are required"
+            });
+        }
+
+        const user = await User.findOne({
+            email: email.toLowerCase().trim()
+        });
+
+        if (!user) {
+            return res.status(404).json({
+                message: "User not found"
+            });
+        }
+
+        // Seller-only accounts ko customer token ke roop mein register na karein.
+        if (!user.roles.includes("customer")) {
+            return res.status(403).json({
+                message: "Customer account required"
+            });
+        }
+
+        if (!user.fcmTokens.includes(token)) {
+            user.fcmTokens.push(token);
+            await user.save();
+        }
+
+        return res.json({
+            message: "Customer notification token saved"
+        });
+
+    } catch (error) {
+        console.error("Customer FCM token error:", error);
+
+        return res.status(500).json({
+            message: "Could not save notification token"
+        });
+    }
+});
+
+/* ==========================================
+   SEASHOP ADMIN PRODUCT PUSH NOTIFICATION
+========================================== */
+
+
+app.post("/api/admin/send-product-notification", async (req, res) => {
+    try {
+        const adminEmail = String(req.body.adminEmail || "")
+            .trim()
+            .toLowerCase();
+
+        const adminKey = String(req.body.adminKey || "");
+        const productId = String(req.body.productId || "");
+
+        // ADMIN VERIFICATION
+        if (
+            !process.env.ADMIN_EMAIL ||
+            !process.env.ADMIN_NOTIFICATION_KEY ||
+            adminEmail !== process.env.ADMIN_EMAIL.trim().toLowerCase() ||
+            adminKey !== process.env.ADMIN_NOTIFICATION_KEY
+        ) {
+            return res.status(403).json({
+                message: "Admin verification failed"
+            });
+        }
+
+        // VALIDATE PRODUCT ID
+        if (!mongoose.isValidObjectId(productId)) {
+            return res.status(400).json({
+                message: "Valid productId is required"
+            });
+        }
+
+        const product = await Product.findById(productId);
+
+        if (!product) {
+            return res.status(404).json({
+                message: "Product not found"
+            });
+        }
+
+        // FIND REGISTERED NOTIFICATION TOKENS
+        const users = await User.find({
+            fcmTokens: { $exists: true, $ne: [] }
+        }).select("fcmTokens");
+
+        const tokens = [
+            ...new Set(
+                users.flatMap(user => user.fcmTokens || [])
+            )
+        ];
+
+        if (tokens.length === 0) {
+            return res.status(200).json({
+                message: "No registered notification devices found",
+                sent: 0,
+                failed: 0
+            });
+        }
+
+        const messaging = getMessaging();
+
+        let sent = 0;
+        let failed = 0;
+
+        // PRODUCT DETAIL URL
+        const productUrl =
+            "https://nova-frontend-7gu7.onrender.com/?productId=" +
+            encodeURIComponent(String(product._id));
+
+        // MAKE IMAGE URL ABSOLUTE
+        const productImage = product.image
+            ? (
+                product.image.startsWith("http://") ||
+                product.image.startsWith("https://")
+                    ? product.image
+                    : "https://nova-backend-7i1l.onrender.com" +
+                      (
+                          product.image.startsWith("/")
+                              ? product.image
+                              : "/" + product.image
+                      )
+            )
+            : "";
+
+        // SEND IN BATCHES OF 500
+        for (let i = 0; i < tokens.length; i += 500) {
+            const batch = tokens.slice(i, i + 500);
+
+            const result = await messaging.sendEachForMulticast({
+                tokens: batch,
+
+                notification: {
+                    title: "SEASHOP: " + product.name,
+                    body: "Price: ₹" + product.price
+                },
+
+                data: {
+                    productId: String(product._id),
+                    productName: String(product.name),
+                    productPrice: String(product.price),
+                    productImage: productImage,
+                    productUrl: productUrl
+                },
+
+                webpush: {
+                    notification: {
+                        icon: "https://nova-frontend-7gu7.onrender.com/images/log.png",
+                        image: productImage || undefined,
+                        tag: "seashop-product-" + String(product._id),
+                        data: {
+                            productUrl: productUrl
+                        }
+                    },
+
+                    fcmOptions: {
+                        link: productUrl
+                    }
+                }
+            });
+
+            sent += result.successCount;
+            failed += result.failureCount;
+
+            // REMOVE INVALID/EXPIRED TOKENS
+            const invalidTokens = [];
+
+            result.responses.forEach((response, index) => {
+                if (
+                    !response.success &&
+                    (
+                        response.error?.code ===
+                            "messaging/registration-token-not-registered" ||
+                        response.error?.code ===
+                            "messaging/invalid-registration-token"
+                    )
+                ) {
+                    invalidTokens.push(batch[index]);
+                }
+            });
+
+            if (invalidTokens.length > 0) {
+                await User.updateMany(
+                    {},
+                    {
+                        $pull: {
+                            fcmTokens: { $in: invalidTokens }
+                        }
+                    }
+                );
+            }
+        }
+
+        return res.json({
+            message: "Product notification sending finished",
+            sent,
+            failed
+        });
+
+    } catch (error) {
+        console.error(
+            "Product push notification error:",
+            error
+        );
+
+        return res.status(500).json({
+            message: "Could not send product notifications"
+        });
+    }
+});
+
+
 // ==========================================
 // CREATE ORDER
 // ==========================================

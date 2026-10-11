@@ -1,10 +1,6 @@
-importScripts(
-    "https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"
-);
 
-importScripts(
-    "https://www.gstatic.com/firebasejs/10.13.2/firebase-messaging-compat.js"
-);
+importScripts("https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js");
+importScripts("https://www.gstatic.com/firebasejs/10.13.2/firebase-messaging-compat.js");
 
 const firebaseConfig = {
     apiKey: "AIzaSyAV2BH5auPh4RJeyU_dqp-YOG_2JtXKaxo",
@@ -20,29 +16,32 @@ firebase.initializeApp(firebaseConfig);
 const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage(function(payload) {
+    const data = payload.data || {};
 
-    console.log(
-        "Background notification received:",
-        payload
-    );
+    const title = payload.notification?.title || "SEASHOP";
 
-    const notificationTitle =
-        payload.notification?.title ||
-        "NOVA";
-
-    const notificationOptions = {
-
-        body:
-            payload.notification?.body ||
-            "New order received",
-
+    const options = {
+        body: payload.notification?.body ||
+            (data.productPrice ? "Price: ₹" + data.productPrice : "New product available!"),
         icon: "/images/log.png",
-
-        badge: "/images/log.png"
+        badge: "/images/log.png",
+        image: data.productImage || undefined,
+        data: {
+            productUrl: data.productUrl || "/"
+        }
     };
 
-    self.registration.showNotification(
-        notificationTitle,
-        notificationOptions
+    if (!payload.notification) {
+        return self.registration.showNotification(title, options);
+    }
+});
+
+self.addEventListener("notificationclick", function(event) {
+    event.notification.close();
+
+    const productUrl = event.notification.data?.productUrl || "/";
+
+    event.waitUntil(
+        clients.openWindow(productUrl)
     );
 });

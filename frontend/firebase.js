@@ -84,6 +84,100 @@ const registration = await navigator.serviceWorker.ready;
     }
 }
 
+/* ==========================================
+   SEASHOP CUSTOMER PUSH NOTIFICATIONS
+   Browser + Installed PWA
+========================================== */
+
+async function enableCustomerPushNotifications() {
+    try {
+        const savedUser = localStorage.getItem("novaUser");
+
+        if (!savedUser) {
+            alert("Please login to SEASHOP first.");
+            return;
+        }
+
+        const user = JSON.parse(savedUser);
+
+        if (!user.email) {
+            alert("User email not found. Please login again.");
+            return;
+        }
+
+        if (
+            !Array.isArray(user.roles) ||
+            !user.roles.includes("customer")
+        ) {
+            alert("A customer account is required.");
+            return;
+        }
+
+        if (!("Notification" in window)) {
+            alert("This browser does not support notifications.");
+            return;
+        }
+
+        if (!("serviceWorker" in navigator)) {
+            alert("Service workers are not supported.");
+            return;
+        }
+
+        const permission = await Notification.requestPermission();
+
+        if (permission !== "granted") {
+            alert("Notification permission was not granted.");
+            return;
+        }
+
+        const registration = await navigator.serviceWorker.ready;
+
+        const token = await messaging.getToken({
+            vapidKey:
+                "BGHzGmyuOqEbzfeddcNAx1fa38qlGkXOM_FUdQEK1q4GPI78pkl1M6lxMot50FQLzYiczphVwY5mXQlHIUURrl0",
+            serviceWorkerRegistration: registration
+        });
+
+        if (!token) {
+            alert("Could not get the notification token.");
+            return;
+        }
+
+        const response = await fetch(
+            "https://nova-backend-7i1l.onrender.com/api/customer/fcm-token",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    email: user.email,
+                    token: token
+                })
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(
+                data.message || "Could not register notifications."
+            );
+        }
+
+        alert("SEASHOP notifications enabled successfully!");
+
+    } catch (error) {
+        console.error(
+            "Customer notification setup error:",
+            error
+        );
+
+        alert("Could not enable notifications. Please try again.");
+    }
+}
+
+
 setupSellerPushNotifications();
 messaging.onMessage((payload) => {
 

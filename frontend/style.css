@@ -5753,3 +5753,11 @@ body {
         min-height: 100dvh;
     }
 }
+
+/* Mobile camera notch and bottom navigation safe area */
+@supports (padding: env(safe-area-inset-top)) {
+    body {
+        padding-top: env(safe-area-inset-top);
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+}
