@@ -3,15 +3,17 @@
   "short_name": "SEASHOP",
   "description": "SEASHOP online shopping store",
   "start_url": "/",
-  "display_override": ["standalone"],
+  "scope": "/",
+  "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#ffffff",
-  "orientation": "portrait-primary",
+  "orientation": "portrait",
   "icons": [
     {
       "src": "svg/seashop.svg",
       "sizes": "any",
-      "type": "image/svg+xml"
+      "type": "image/svg+xml",
+      "purpose": "any"
     }
   ]
 }
