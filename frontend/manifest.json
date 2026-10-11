@@ -1,6 +1,7 @@
 {
   "name": "SEASHOP",
   "short_name": "SEASHOP",
+  "id": "/",
   "description": "SEASHOP online shopping store",
   "start_url": "/",
   "scope": "/",
