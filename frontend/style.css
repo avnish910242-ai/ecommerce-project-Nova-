@@ -5757,3 +5757,15 @@ body {
 body > #seashopIntro + #extraSeashopTitle {
     display: none !important;
 }
+/* White background for mobile browser/system UI */
+html,
+body {
+    background-color: #ffffff;
+}
+
+@media (display-mode: standalone) {
+    html,
+    body {
+        background-color: #ffffff;
+    }
+}
