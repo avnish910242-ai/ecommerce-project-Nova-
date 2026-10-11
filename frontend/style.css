@@ -5781,3 +5781,14 @@ body {
 :root {
     color-scheme: light;
 }
+html,
+body {
+    background: #ffffff;
+}
+
+@media (display-mode: standalone) {
+    html,
+    body {
+        background: #ffffff;
+    }
+}
