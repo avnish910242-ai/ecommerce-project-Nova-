@@ -300,27 +300,21 @@
    ========================= */
 
 @media (max-width: 700px) {
-
     .cart-sidebar {
-        width: 100%;
-        max-width: none;
+    width: 100%;
+    max-width: none;
 
-        top: 0;
-        right: -100%;
+    position: fixed !important;
+    top: 0 !important;
+    bottom: 0 !important;
 
-      height: 100vh;
-min-height: 100vh;
-bottom: 0;
+    right: -100%;
+    height: auto !important;
+    min-height: 100vh !important;
 
-        border-radius: 0;
-
-        z-index: 100000;
-    }
-
-    .cart-sidebar.active {
-        right: 0;
-    }
-
+    border-radius: 0;
+    z-index: 100000;
+  }
 }
 /* SEA SHOP: white background at the bottom */
 html,
