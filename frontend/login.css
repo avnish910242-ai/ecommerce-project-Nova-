@@ -516,3 +516,28 @@ html.seashop-android-app .login-card {
     margin: 0;
     flex-shrink: 0;
 }
+
+/* Android WebView: center login card */
+html.seashop-android-app body {
+    min-height: 100vh !important;
+    min-height: 100dvh !important;
+}
+
+html.seashop-android-app .login-page {
+    min-height: 100vh !important;
+    min-height: 100dvh !important;
+    height: auto !important;
+
+    display: flex !important;
+    flex-direction: column;
+    align-items: center !important;
+    justify-content: center !important;
+
+    padding: 18px !important;
+    box-sizing: border-box;
+}
+
+html.seashop-android-app .login-card {
+    margin: auto !important;
+    flex-shrink: 0;
+}
