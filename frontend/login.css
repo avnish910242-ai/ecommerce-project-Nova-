@@ -516,28 +516,30 @@ html.seashop-android-app .login-card {
     margin: 0;
     flex-shrink: 0;
 }
+/* Fix login centering in Android WebView */
+html,
+body {
+    min-height: 100% !important;
+}
 
-/* Android WebView: center login card */
-html.seashop-android-app body {
+body:has(.login-page) {
     min-height: 100vh !important;
     min-height: 100dvh !important;
 }
 
-html.seashop-android-app .login-page {
+.login-page {
     min-height: 100vh !important;
     min-height: 100dvh !important;
-    height: auto !important;
+    width: 100%;
 
     display: flex !important;
-    flex-direction: column;
     align-items: center !important;
     justify-content: center !important;
 
-    padding: 18px !important;
+    padding: 18px;
     box-sizing: border-box;
 }
 
-html.seashop-android-app .login-card {
+.login-card {
     margin: auto !important;
-    flex-shrink: 0;
 }
