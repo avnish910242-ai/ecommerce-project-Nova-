@@ -3566,7 +3566,7 @@ footer p {
     .mobile-bottom-nav {
         position: fixed;
         left: 0;
-        bottom: 0;
+       bottom: var(--keyboard-height, 0px);
 
         width: 100%;
         height: 75px;
@@ -5830,7 +5830,7 @@ body {
 /* SEA SHOP mobile bottom menu */
 .mobile-bottom-nav {
     position: fixed !important;
-    bottom: 0 !important;
+  bottom: var(--keyboard-height, 0px) !important;
     left: 0 !important;
     right: 0 !important;
     width: 100% !important;
