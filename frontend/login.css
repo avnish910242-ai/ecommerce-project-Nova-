@@ -493,3 +493,12 @@ body {
         height: 32px;
     }
 }
+/* Android WebView: login card positioning */
+@media (max-width: 600px) {
+    .login-page {
+        min-height: 100vh;
+        min-height: 100dvh;
+        padding-top: 48px;
+        padding-bottom: 24px;
+    }
+}
