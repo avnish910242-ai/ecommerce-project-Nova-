@@ -5845,3 +5845,9 @@ html, body {
         box-sizing: border-box;
     }
 }
+/* Keep SEASHOP content below the phone camera notch */
+@supports (padding-top: env(safe-area-inset-top)) {
+    body {
+        padding-top: env(safe-area-inset-top);
+    }
+}
