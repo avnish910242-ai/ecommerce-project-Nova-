@@ -517,3 +517,26 @@ body {
         margin: auto;
     }
 }
+/* Center login card on mobile */
+@media (max-width: 600px) {
+    html,
+    body {
+        min-height: 100%;
+        margin: 0;
+    }
+
+    .login-page {
+        min-height: 100vh;
+        min-height: 100dvh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 18px;
+    }
+
+    .login-card {
+        width: 100%;
+        max-width: 390px;
+        margin: 0 auto;
+    }
+}
