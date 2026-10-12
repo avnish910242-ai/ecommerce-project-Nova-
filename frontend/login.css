@@ -517,26 +517,26 @@ body {
         margin: auto;
     }
 }
-/* Center login card on mobile */
-@media (max-width: 600px) {
-    html,
-    body {
-        min-height: 100%;
-        margin: 0;
-    }
 
-    .login-page {
-        min-height: 100vh;
-        min-height: 100dvh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 18px;
-    }
+/* Center login form only inside SEASHOP Android app */
+html.seashop-android-app,
+html.seashop-android-app body {
+    min-height: 100%;
+}
 
-    .login-card {
-        width: 100%;
-        max-width: 390px;
-        margin: 0 auto;
-    }
+html.seashop-android-app .login-page {
+    min-height: 100vh;
+    min-height: 100dvh;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 18px;
+}
+
+html.seashop-android-app .login-card {
+    width: 100%;
+    max-width: 390px;
+    margin: auto;
+    box-sizing: border-box;
 }
