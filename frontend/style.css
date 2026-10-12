@@ -5879,14 +5879,3 @@ html.seashop-android-app nav.navbar {
     right: 0;
     z-index: 1000;
 }
-
-/* Android WebView: keep page content below the fixed header */
-html.seashop-android-app body {
-    padding-top: 0 !important;
-}
-
-html.seashop-android-app header.navbar {
-    top: 24px !important;
-    padding-top: 0 !important;
-    box-sizing: border-box;
-}
