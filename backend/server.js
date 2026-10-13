@@ -8,6 +8,7 @@ initializeApp({
 
 const { getMessaging } = require("firebase-admin/messaging");
 const express = require("express");
+
 const mongoose = require("mongoose");
 require("dotenv").config();
 const cors = require("cors");
@@ -2110,6 +2111,55 @@ app.put(
 
     }
 );
+
+const { GoogleGenAI } = require("@google/genai");
+
+const geminiAI = new GoogleGenAI({
+    apiKey: process.env.GEMINI_API_KEY
+});
+
+app.post("/api/ai-chat", async (req, res) => {
+    try {
+        const message = req.body?.message;
+
+        if (typeof message !== "string" || !message.trim()) {
+            return res.status(400).json({
+                message: "Please enter a message."
+            });
+        }
+
+        const products = await Product.find()
+            .select("name category price stock description")
+            .limit(30)
+            .lean();
+
+        const response = await geminiAI.models.generateContent({
+            model: "gemini-3.5-flash-lite",
+            contents: [
+                "You are SEASHOP's shopping assistant.",
+                "Reply in simple Hinglish when the customer uses Hindi or Hinglish.",
+                "Use the supplied product data to answer product questions.",
+                "Never invent product prices, stock, or product details.",
+                "Never claim that you placed an order or completed a payment.",
+                "Product data:",
+                JSON.stringify(products),
+                "Customer message:",
+                message.trim()
+            ].join("\n\n")
+        });
+
+        return res.json({
+            reply: response.text || "Sorry, abhi jawab nahi mil paya."
+        });
+
+    } catch (error) {
+       console.error("SEASHOP AI error:", error);
+
+        return res.status(500).json({
+            message: "AI assistant abhi available nahi hai. Please try again."
+        });
+    }
+});
 
 
 // ==========================================

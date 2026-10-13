@@ -6147,3 +6147,21 @@ async function openProductFromNotification() {
 window.addEventListener("DOMContentLoaded", function() {
     openProductFromNotification();
 });
+
+// SEASHOP AI CHAT
+const aiChatToggle = document.getElementById("aiChatToggle");
+const aiChatPanel = document.getElementById("aiChatPanel");
+const aiChatClose = document.getElementById("aiChatClose");
+const aiChatForm = document.getElementById("aiChatForm");
+const aiChatInput = document.getElementById("aiChatInput");
+const aiChatMessages = document.getElementById("aiChatMessages");
+
+function toggleAIChat() {
+    const isOpen = aiChatPanel.style.display === "flex";
+
+    aiChatPanel.style.display = isOpen ? "none" : "flex";
+
+    if (!isOpen) {
+        aiChatInput.focus();
+    }
+}
