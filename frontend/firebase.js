@@ -179,23 +179,74 @@ async function enableCustomerPushNotifications() {
 
 
 setupSellerPushNotifications();
-messaging.onMessage((payload) => {
 
-    console.log("FCM foreground message received:", payload);
 
-    const title =
-        payload.notification?.title || "SEASHOP";
+messaging.onMessage(async (payload) => {
+    console.log("SEASHOP foreground notification:", payload);
 
-    const body =
-        payload.notification?.body || "New notification";
+    try {
+        const data = payload.data || {};
+        const notification = payload.notification || {};
 
-    if (Notification.permission === "granted") {
+        const title =
+            data.title ||
+            notification.title ||
+            "SEASHOP";
 
-        new Notification(title, {
+        const body =
+            data.body ||
+            notification.body ||
+            "New notification";
+
+        // Notification permission check
+        if (Notification.permission !== "granted") {
+            console.log("Notification permission not granted");
+            return;
+        }
+
+        // Service Worker registration
+        const registration = await navigator.serviceWorker.ready;
+
+        // Product image (optional)
+        const image =
+            data.image ||
+            notification.image ||
+            undefined;
+
+        // Click karne par khulne wala URL
+        const targetUrl =
+            data.url ||
+            "/";
+
+        // Show notification
+        await registration.showNotification(title, {
             body: body,
-            icon: "/favicon.ico"
+
+            // SEASHOP logo
+            icon: "/svg/seashop.svg",
+
+            // Optional small status-bar icon
+            badge: "/seashop-badge.png",
+
+            // Product/banner image
+            image: image,
+
+            // Notification click data
+            data: {
+                url: targetUrl
+            },
+
+            // Android par notification ko group karne ke liye
+            tag: "seashop-notification",
+
+            // Nayi notification aane par purani ko replace na kare
+            renotify: false
         });
 
-    }
+        console.log("SEASHOP notification displayed");
 
+    } catch (error) {
+        console.error("SEASHOP notification error:", error);
+    }
 });
+
