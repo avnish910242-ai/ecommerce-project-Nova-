@@ -1308,6 +1308,15 @@ app.post("/api/admin/send-product-notification", async (req, res) => {
                       )
             )
             : "";
+                    // RESIZE PRODUCT IMAGE FOR PUSH NOTIFICATION
+        const notificationImage = productImage
+            ? productImage.replace(
+                "/upload/",
+                "/upload/w_400,h_300,c_limit,f_auto,q_auto/"
+              )
+            : "";
+
+            
 
         // SEND IN BATCHES OF 500
         for (let i = 0; i < tokens.length; i += 500) {
@@ -1333,7 +1342,7 @@ app.post("/api/admin/send-product-notification", async (req, res) => {
 webpush: {
     notification: {
         icon: "https://nova-frontend-7gu7.onrender.com/svg/seashop.svg",
-        image: productImage || undefined,
+       image: notificationImage || undefined,
         title: "SEASHOP: " + product.name,
         body: "Price: ₹" + product.price,
         tag: "seashop-product-" + String(product._id),
