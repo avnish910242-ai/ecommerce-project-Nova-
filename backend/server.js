@@ -1576,14 +1576,23 @@ for (const sellerEmail of sellerEmails) {
 
             try {
 
-                await messaging.send({
-                    token: token,
+await messaging.send({
+    token: token,
 
-                    notification: {
-                        title: "🔔 New Order",
-                        body: `${customerName} ordered ${items.length} item(s)`
-                    }
-                });
+    notification: {
+        title: "New Order",
+        body: `${customerName} ordered ${items.length} item(s)`
+    },
+
+    webpush: {
+        notification: {
+            icon: "https://nova-frontend-7gu7.onrender.com/svg/seashop.svg",
+            badge: "https://nova-frontend-7gu7.onrender.com/svg/seashop.svg"
+        }
+    }
+});
+
+             
 
                 console.log(
                     "FCM notification sent to:",
