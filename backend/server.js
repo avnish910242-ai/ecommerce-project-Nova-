@@ -1316,7 +1316,8 @@ const notificationImage = productImage
       "/upload/w_1200,h_900,c_limit,f_auto,q_90/"
     )
   : "";
-
+console.log("Original product image:", productImage);
+console.log("Notification image:", notificationImage);
 
             
 
