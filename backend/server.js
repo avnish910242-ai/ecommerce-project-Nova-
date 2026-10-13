@@ -1574,39 +1574,34 @@ for (const sellerEmail of sellerEmails) {
 
         for (const token of seller.fcmTokens) {
 
-            try {
+           
+try {
+    await messaging.send({
+        token: token,
 
-await messaging.send({
-    token: token,
-
-    notification: {
-        title: "New Order",
-        body: `${customerName} ordered ${items.length} item(s)`
-    },
-
-    webpush: {
         notification: {
-            icon: "https://nova-frontend-7gu7.onrender.com/svg/seashop.svg",
-            badge: "https://nova-frontend-7gu7.onrender.com/svg/seashop.svg"
-        }
-    }
-});
+            title: "New Order",
+            body: `${customerName} ordered ${items.length} item(s)`
+        },
 
-             
+        webpush: {
+            notification: {
+                icon: "https://nova-frontend-7gu7.onrender.com/svg/seashop.svg",
+                badge: "https://nova-frontend-7gu7.onrender.com/svg/seashop.svg"
+            },
 
-                console.log(
-                    "FCM notification sent to:",
-                    sellerEmail
-                );
-
-            } catch (error) {
-
-                console.log(
-                    "FCM notification error:",
-                    error.message
-                );
-
+            fcmOptions: {
+                link: "https://nova-frontend-7gu7.onrender.com/"
             }
+        }
+    });
+
+    console.log("FCM notification sent to:", seller.email);
+
+} catch (error) {
+    console.error("FCM notification error:", error);
+}
+
         }
     }
 }
