@@ -1318,6 +1318,7 @@ const notificationImage = productImage
     )
   : "";
 
+
 console.log("Original product image:", productImage);
 console.log("Notification image:", notificationImage);
 
