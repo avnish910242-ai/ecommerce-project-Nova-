@@ -1338,14 +1338,18 @@ app.post("/api/admin/send-product-notification", async (req, res) => {
                     productUrl: productUrl
                 },
 
-              
+
 webpush: {
     notification: {
         icon: "https://nova-frontend-7gu7.onrender.com/svg/seashop.svg",
-       image: notificationImage || undefined,
+        badge: "https://nova-frontend-7gu7.onrender.com/svg/seashop.svg",
+        image: notificationImage || undefined,
+
         title: "SEASHOP: " + product.name,
         body: "Price: ₹" + product.price,
+
         tag: "seashop-product-" + String(product._id),
+
         data: {
             productUrl: productUrl
         }
@@ -1355,6 +1359,7 @@ webpush: {
         link: productUrl
     }
 }
+
 
             });
 
