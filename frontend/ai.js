@@ -576,11 +576,32 @@ chatForm?.addEventListener("submit", async event => {
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({
-                message,
-                requestedProductCount:
-                    Number(window.aiRequestedProductCount) || 0
-            })
+         
+body: JSON.stringify({
+    message,
+    userName: (() => {
+    try {
+        return JSON.parse(localStorage.getItem("novaUser") || "{}").name || "";
+    } catch {
+        return "";
+    }
+})(),
+    history: Array.from(
+        chatMessages?.querySelectorAll(
+            ".chat-message.user-message, .chat-message.bot-message"
+        ) || []
+    )
+        .filter(el => !el.dataset.temporary)
+        .slice(-13, -1)
+        .map(el => ({
+            role: el.classList.contains("user-message")
+                ? "user"
+                : "assistant",
+            text: el.textContent.trim()
+        })),
+    requestedProductCount: Number(window.aiRequestedProductCount) || 0
+})
+
         });
 
         const responseText = await response.text();

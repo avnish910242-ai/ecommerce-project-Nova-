@@ -2122,6 +2122,22 @@ const geminiAI = new GoogleGenAI({
 app.post("/api/ai-chat", async (req, res) => {
     try {
         const message = req.body?.message?.trim();
+        const userName = String(req.body?.userName || "").trim().slice(0, 100);
+        
+const history = Array.isArray(req.body?.history)
+    ? req.body.history
+        .filter(item =>
+            item &&
+            ["user", "assistant"].includes(item.role) &&
+            typeof item.text === "string"
+        )
+        .slice(-12)
+        .map(item => ({
+            role: item.role,
+            text: item.text.slice(0, 2000)
+        }))
+    : [];
+
 
         if (!message) {
             return res.status(400).json({
@@ -2139,6 +2155,9 @@ app.post("/api/ai-chat", async (req, res) => {
             model: "gemini-3.5-flash-lite",
           
 contents: [
+    "LOGGED-IN USER:",
+`The logged-in user's name is: ${userName || "not provided"}.`,
+"Use this name when the customer asks what their name is. Never guess a name if it is not provided.",
 "You are SEASHOP's helpful, polite, and natural AI assistant.",
 "Write ordinal numbers in the correct form for the user's language: English uses 7th, Hindi uses सातवाँ, and Hinglish uses saatvaan. Do not translate English ordinal numbers into Hindi when the user is speaking English.",
 
@@ -2164,10 +2183,21 @@ contents: [
 "Never invent product names, prices, stock, or descriptions.",
 "Never claim that an order or payment was completed.",
 
- "Database products:",
-    JSON.stringify(products),
-    "Customer message:",
-    message
+
+"Database products:",
+JSON.stringify(products),
+
+"Previous conversation history:",
+JSON.stringify(history),
+
+"IMPORTANT MEMORY RULE:",
+"Use the previous conversation history to understand references and remember facts the customer shared, such as their name.",
+"Treat history entries with role user as messages from the customer and role assistant as your previous replies.",
+"Do not claim to know a personal fact unless it appears in the supplied history or latest message.",
+
+"Customer's latest message:",
+message
+
 ].join("\n\n")
 
         });
