@@ -154,6 +154,94 @@ function addMessage(text, type, shouldSave = true) {
     return message;
 }
 
+/* ========================================
+   CHAT OPTIONS MENU
+======================================== */
+
+const aiMenuButton = document.getElementById("aiMenuButton");
+const aiOptionsMenu = document.getElementById("aiOptionsMenu");
+const aiNewChatButton = document.getElementById("aiNewChatButton");
+const aiClearChatButton = document.getElementById("aiClearChatButton");
+
+function closeAIOptionsMenu() {
+    if (!aiMenuButton || !aiOptionsMenu) return;
+
+    aiOptionsMenu.hidden = true;
+    aiMenuButton.setAttribute("aria-expanded", "false");
+}
+
+function clearCurrentAIChat() {
+    if (isSending) {
+        alert("Pehle current response complete hone do.");
+        return;
+    }
+
+    if (!chatMessages) return;
+
+    chatMessages.replaceChildren();
+
+    if (welcomeScreen) {
+        welcomeScreen.style.display = "";
+    }
+
+    if (chatInput) {
+        chatInput.value = "";
+        resizeMessageInput();
+    }
+
+    // Save an empty history for this logged-in account.
+    saveChatHistory();
+    scrollChatToBottom();
+}
+
+aiMenuButton?.addEventListener("click", (event) => {
+    event.stopPropagation();
+
+    if (!aiOptionsMenu) return;
+
+    const shouldOpen = aiOptionsMenu.hidden;
+
+    aiOptionsMenu.hidden = !shouldOpen;
+    aiMenuButton.setAttribute("aria-expanded", String(shouldOpen));
+});
+
+aiOptionsMenu?.addEventListener("click", (event) => {
+    event.stopPropagation();
+});
+
+document.addEventListener("click", (event) => {
+    if (
+        aiOptionsMenu &&
+        !aiOptionsMenu.hidden &&
+        !event.target.closest(".ai-menu-wrapper")
+    ) {
+        closeAIOptionsMenu();
+    }
+});
+
+aiNewChatButton?.addEventListener("click", () => {
+    closeAIOptionsMenu();
+    clearCurrentAIChat();
+});
+
+aiClearChatButton?.addEventListener("click", () => {
+    closeAIOptionsMenu();
+
+    if (isSending) {
+        alert("Pehle current response complete hone do.");
+        return;
+    }
+
+    const confirmed = window.confirm(
+        "Kya tum is account ki saved AI chat history clear karna chahte ho?"
+    );
+
+    if (confirmed) {
+        clearCurrentAIChat();
+    }
+});
+
+
 // ========================================
 // LOAD SAVED CHAT HISTORY
 // ========================================

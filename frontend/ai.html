@@ -24,6 +24,42 @@
 
         <img src="svg/seashop.svg" alt="SEASHOP" class="header-logo">
         <strong>SEASHOP AI</strong>
+
+        <div class="ai-menu-wrapper">
+            <button
+                type="button"
+                id="aiMenuButton"
+                class="ai-menu-button"
+                aria-label="Chat options"
+                aria-haspopup="true"
+                aria-expanded="false"
+                aria-controls="aiOptionsMenu"
+            >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="12" cy="5" r="1.5"></circle>
+                    <circle cx="12" cy="12" r="1.5"></circle>
+                    <circle cx="12" cy="19" r="1.5"></circle>
+                </svg>
+            </button>
+
+            <div id="aiOptionsMenu" class="ai-options-menu" hidden>
+                <button type="button" id="aiNewChatButton">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 20H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v5"></path>
+                        <path d="M8 9h6M8 13h4M16 19h6M19 16v6"></path>
+                    </svg>
+                    <span>New Chat</span>
+                </button>
+
+                <button type="button" id="aiClearChatButton" class="ai-clear-chat">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"></path>
+                        <path d="M10 10v6M14 10v6"></path>
+                    </svg>
+                    <span>Clear Chat</span>
+                </button>
+            </div>
+        </div>
     </header>
 
     <main class="ai-main">
