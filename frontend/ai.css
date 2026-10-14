@@ -1,6 +1,6 @@
 
 /* =========================================
-   SEASHOP AI CHAT — CLEAN RESPONSIVE CSS
+   SEASHOP AI CHAT — RESPONSIVE CSS
    ========================================= */
 
 * {
@@ -28,10 +28,11 @@ body {
     flex-direction: column;
 
     width: 100%;
-    height: 100%;
-   height: 100dvh;
+    height: 100vh;
+    height: 100dvh;
     min-width: 0;
     min-height: 0;
+
     margin: 0;
     padding: 0;
 
@@ -42,7 +43,7 @@ body {
 }
 
 /* =========================================
-   HEADER
+   HEADER — STAYS IN PLACE
    ========================================= */
 
 .ai-header {
@@ -57,6 +58,7 @@ body {
     width: 100%;
     height: var(--ai-header-height);
     min-height: var(--ai-header-height);
+
     padding: 0 12px;
 
     background: #fff;
@@ -101,7 +103,7 @@ body {
 }
 
 /* =========================================
-   MAIN — ONLY CHAT AREA SCROLLS
+   MAIN CHAT AREA — ONLY THIS AREA SCROLLS
    ========================================= */
 
 .ai-main {
@@ -119,6 +121,7 @@ body {
 
     overflow-x: hidden;
     overflow-y: auto;
+
     overscroll-behavior-y: contain;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: thin;
@@ -137,20 +140,24 @@ body {
 
 .welcome-logo {
     display: block;
+
     width: 94px;
     height: 94px;
+
     margin: 0 auto 20px;
     object-fit: contain;
 }
 
 .welcome-screen h1 {
     margin: 0 0 10px;
+
     font-size: clamp(25px, 5vw, 34px);
     font-weight: 500;
 }
 
 .welcome-screen p {
     margin: 0 0 26px;
+
     color: #686868;
     font-size: 16px;
     line-height: 1.5;
@@ -166,6 +173,7 @@ body {
 
     width: 100%;
     max-width: 650px;
+
     margin: 0 auto;
 }
 
@@ -178,6 +186,7 @@ body {
 
     background: #fff;
     color: #202020;
+
     text-align: left;
     font-size: 15px;
     cursor: pointer;
@@ -198,6 +207,7 @@ body {
 
     width: 100%;
     min-width: 0;
+
     padding: 14px 12px;
 }
 
@@ -219,6 +229,7 @@ body {
 
 .bot-message {
     align-self: flex-start;
+
     border: 1px solid #eeeae3;
     background: #fff;
 }
@@ -229,7 +240,7 @@ body {
 }
 
 /* =========================================
-   MESSAGE FORM
+   MESSAGE FORM — STAYS BELOW CHAT
    ========================================= */
 
 .message-form {
@@ -243,6 +254,7 @@ body {
 
     width: 100%;
     min-width: 0;
+
     margin: 0;
     padding: 10px 12px;
     padding-bottom: calc(
@@ -283,6 +295,13 @@ body {
     font-family: inherit;
     font-size: 16px;
     line-height: 20px;
+
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.message-form textarea::-webkit-scrollbar {
+    display: none;
 }
 
 .message-form textarea:focus {
@@ -340,7 +359,6 @@ body {
 
 /* =========================================
    EMOJI PICKER
-   Matches the "emoji-picker" class in ai.js
    ========================================= */
 
 .emoji-picker {
@@ -355,6 +373,7 @@ body {
 
     max-width: calc(100vw - 24px);
     max-height: 45vh;
+
     overflow-x: hidden;
     overflow-y: auto;
 
@@ -421,13 +440,4 @@ body {
         padding-top: 6px;
         padding-bottom: 6px;
     }
-}
-/* Hide textarea scrollbar but keep scrolling */
-.message-form textarea {
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-}
-
-.message-form textarea::-webkit-scrollbar {
-    display: none;
 }
