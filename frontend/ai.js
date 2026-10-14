@@ -1,4 +1,72 @@
 
+function addProductCards(products) {
+    if (!Array.isArray(products) || products.length === 0) return;
+
+    const section = document.createElement("div");
+    section.className = "ai-product-results";
+
+    products.forEach(product => {
+        if (!product.image) return;
+
+        const card = document.createElement("article");
+        card.className = "ai-product-card";
+
+        const image = document.createElement("img");
+        image.src = product.image;
+        image.alt = product.name || "SEASHOP product";
+        image.loading = "lazy";
+
+        image.onerror = () => {
+            image.style.display = "none";
+        };
+
+        const details = document.createElement("div");
+        details.className = "ai-product-info";
+
+        const name = document.createElement("h3");
+        name.textContent = product.name || "Product";
+
+        const price = document.createElement("p");
+        price.textContent = product.price != null
+            ? `₹${product.price}`
+            : "Price unavailable";
+
+        const stock = document.createElement("p");
+        stock.textContent = product.stock != null
+            ? `Stock: ${product.stock}`
+            : "Stock information unavailable";
+
+        const description = document.createElement("p");
+        description.textContent = product.description || "";
+
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "ai-view-product";
+        button.textContent = "View Product";
+
+        button.addEventListener("click", () => {
+            if (!product.id) {
+                alert("Product ID available nahi hai.");
+                return;
+            }
+
+            window.location.href =
+                `index.html?productId=${encodeURIComponent(product.id)}`;
+        });
+
+        details.append(name, price, stock, description, button);
+        card.append(image, details);
+        section.appendChild(card);
+    });
+
+    if (section.children.length > 0) {
+        chatMessages.appendChild(section);
+
+        const main = document.querySelector(".ai-main");
+        main.scrollTop = main.scrollHeight;
+    }
+}
+
 const backButton = document.getElementById("aiBackButton");
 const welcomeScreen = document.getElementById("welcomeScreen");
 const chatMessages = document.getElementById("chatMessages");
@@ -15,7 +83,7 @@ function addMessage(text, type) {
     message.textContent = text;
     chatMessages.appendChild(message);
 
-    document.getElementById("welcomeScreen").style.display = "none";
+    welcomeScreen.style.display = "none";
 
     const main = document.querySelector(".ai-main");
     main.scrollTop = main.scrollHeight;
@@ -40,7 +108,10 @@ chatForm.addEventListener("submit", async event => {
     chatInput.value = "";
     chatInput.disabled = true;
 
-    const loading = addMessage("SEASHOP AI is thinking...", "bot-message");
+    const loading = addMessage(
+        "SEASHOP AI is thinking...",
+        "bot-message"
+    );
 
     try {
         const response = await fetch(
@@ -54,23 +125,28 @@ chatForm.addEventListener("submit", async event => {
             }
         );
 
-       const rawResponse = await response.text();
+        const rawResponse = await response.text();
 
-let data;
+        let data;
 
-try {
-    data = JSON.parse(rawResponse);
-} catch {
-    throw new Error(
-        "Backend se JSON nahi mila. Server ya API route check karna hoga."
-    );
-}
+        try {
+            data = JSON.parse(rawResponse);
+        } catch {
+            throw new Error(
+                "Backend se valid JSON nahi mila. Server ya API route check karein."
+            );
+        }
 
         if (!response.ok) {
-            throw new Error(data.message || "AI abhi available nahi hai.");
+            throw new Error(
+                data.message || "AI abhi available nahi hai."
+            );
         }
 
         loading.textContent = data.reply || "Abhi jawab nahi mila.";
+
+        // Show product cards returned by the backend.
+        addProductCards(data.products);
 
     } catch (error) {
         loading.textContent =

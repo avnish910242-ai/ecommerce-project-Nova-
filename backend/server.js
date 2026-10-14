@@ -2118,18 +2118,20 @@ const geminiAI = new GoogleGenAI({
     apiKey: process.env.GEMINI_API_KEY
 });
 
+
 app.post("/api/ai-chat", async (req, res) => {
     try {
-        const message = req.body?.message;
+        const message = req.body?.message?.trim();
 
-        if (typeof message !== "string" || !message.trim()) {
+        if (!message) {
             return res.status(400).json({
                 message: "Please enter a message."
             });
         }
 
+        // Actual products from SEASHOP database
         const products = await Product.find()
-            .select("name category price stock description")
+            .select("_id name category price stock description image")
             .limit(30)
             .lean();
 
@@ -2138,22 +2140,33 @@ app.post("/api/ai-chat", async (req, res) => {
             contents: [
                 "You are SEASHOP's shopping assistant.",
                 "Reply in simple Hinglish when the customer uses Hindi or Hinglish.",
-                "Use the supplied product data to answer product questions.",
-                "Never invent product prices, stock, or product details.",
-                "Never claim that you placed an order or completed a payment.",
-                "Product data:",
+                "Answer product questions using only the supplied database products.",
+                "Never invent product names, prices, stock, or descriptions.",
+                "If no matching product exists, say so honestly.",
+                "Never claim that an order or payment was completed.",
+                "Database products:",
                 JSON.stringify(products),
                 "Customer message:",
-                message.trim()
+                message
             ].join("\n\n")
         });
 
+        // Return database products to frontend for real product cards
         return res.json({
-            reply: response.text || "Sorry, abhi jawab nahi mil paya."
+            reply: response.text || "Sorry, abhi jawab nahi mil paya.",
+            products: products.map(product => ({
+                id: String(product._id),
+                name: product.name,
+                category: product.category,
+                price: product.price,
+                stock: product.stock,
+                description: product.description,
+                image: product.image
+            }))
         });
 
     } catch (error) {
-       console.error("SEASHOP AI error:", error);
+        console.error("SEASHOP AI error:", error);
 
         return res.status(500).json({
             message: "AI assistant abhi available nahi hai. Please try again."
