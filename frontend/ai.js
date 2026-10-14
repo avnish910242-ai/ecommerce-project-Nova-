@@ -151,6 +151,7 @@ function scrollChatToBottom() {
 // MOBILE KEYBOARD VIEWPORT
 // ========================================
 
+
 function adjustChatViewport() {
     const viewport = window.visualViewport;
 
@@ -158,14 +159,42 @@ function adjustChatViewport() {
 
     const keyboardHeight = Math.max(
         0,
-        window.innerHeight - viewport.height - viewport.offsetTop
+        window.innerHeight -
+        viewport.height -
+        viewport.offsetTop
     );
 
     document.documentElement.style.setProperty(
         "--ai-keyboard-height",
         `${keyboardHeight}px`
     );
+
+    // Keyboard khulne par chat ka latest message dikhana.
+    requestAnimationFrame(() => {
+        const main = document.querySelector(".ai-main");
+
+        if (main) {
+            main.scrollTop = main.scrollHeight;
+        }
+    });
 }
+
+if (window.visualViewport) {
+    window.visualViewport.addEventListener(
+        "resize",
+        adjustChatViewport
+    );
+
+    window.visualViewport.addEventListener(
+        "scroll",
+        adjustChatViewport
+    );
+}
+
+window.addEventListener("resize", adjustChatViewport);
+
+adjustChatViewport();
+
 
 if (window.visualViewport) {
     window.visualViewport.addEventListener(
@@ -454,7 +483,11 @@ if (
 
         // Keyboard ko wapas kholne ki koshish.
         // Mobile browser ise hamesha allow nahi karta.
-        chatInput?.focus({ preventScroll: true });
+        if (chatInput && !isSending) {
+    requestAnimationFrame(() => {
+        chatInput.focus({ preventScroll: true });
+    });
+}
     }
 });
 
