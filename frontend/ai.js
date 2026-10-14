@@ -14,6 +14,33 @@ const emojiButton = document.getElementById("aiEmojiButton");
 const sendButton = chatForm?.querySelector('[type="submit"]');
 
 const AI_CHAT_STORAGE_KEY = "seashop_ai_chat_history";
+// ========================================
+// ACCOUNT-SPECIFIC CHAT STORAGE
+// ========================================
+
+function getAIChatStorageKey() {
+    try {
+        const savedUser = localStorage.getItem("novaUser");
+
+        if (!savedUser) {
+            return null;
+        }
+
+        const user = JSON.parse(savedUser);
+        const email = String(user?.email || "")
+            .trim()
+            .toLowerCase();
+
+        if (!email) {
+            return null;
+        }
+
+        return `${AI_CHAT_STORAGE_KEY}_${encodeURIComponent(email)}`;
+    } catch (error) {
+        console.error("Unable to identify AI chat account:", error);
+        return null;
+    }
+}
 const AI_API_URL = "https://nova-backend-7i1l.onrender.com/api/ai-chat";
 
 let isSending = false;
@@ -49,10 +76,16 @@ function saveChatHistory() {
             }))
             .filter(item => item.text.length > 0);
 
-        localStorage.setItem(
-            AI_CHAT_STORAGE_KEY,
-            JSON.stringify(history)
-        );
+       const storageKey = getAIChatStorageKey();
+
+if (!storageKey) {
+    return;
+}
+
+localStorage.setItem(
+    storageKey,
+    JSON.stringify(history)
+);
     } catch (error) {
         console.error("Unable to save chat history:", error);
     }
@@ -129,7 +162,13 @@ function loadChatHistory() {
     try {
         if (!chatMessages) return;
 
-        const saved = localStorage.getItem(AI_CHAT_STORAGE_KEY);
+        const storageKey = getAIChatStorageKey();
+
+if (!storageKey) {
+    return;
+}
+
+const saved = localStorage.getItem(storageKey);
 
         if (!saved) return;
 
