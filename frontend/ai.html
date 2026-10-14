@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="theme-color" content="#ffffff">
     <title>SEASHOP AI</title>
     <link rel="stylesheet" href="ai.css">
@@ -11,7 +11,12 @@
 <body>
 
     <header class="ai-header">
-        <button id="aiBackButton" class="back-button" aria-label="Back">
+        <button
+            type="button"
+            id="aiBackButton"
+            class="back-button"
+            aria-label="Back"
+        >
             <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M19 12H5M12 19l-7-7 7-7"></path>
             </svg>
@@ -29,25 +34,46 @@
             <p>Your AI shopping assistant</p>
 
             <div class="suggestions">
-                <button class="suggestion">Help me find a product</button>
-                <button class="suggestion">Show me popular products</button>
-                <button class="suggestion">I want to know product prices</button>
-                <button class="suggestion">Help me choose a product</button>
+                <button type="button" class="suggestion">Help me find a product</button>
+                <button type="button" class="suggestion">Show me popular products</button>
+                <button type="button" class="suggestion">I want to know product prices</button>
+                <button type="button" class="suggestion">Help me choose a product</button>
             </div>
         </section>
 
-        <section id="chatMessages" class="chat-messages" aria-live="polite"></section>
+        <section
+            id="chatMessages"
+            class="chat-messages"
+            aria-live="polite"
+            aria-label="Chat messages"
+        ></section>
     </main>
 
     <form id="aiChatForm" class="message-form">
-        <input
-            type="text"
+        <button
+            type="button"
+            id="aiEmojiButton"
+            class="emoji-button"
+            aria-label="Choose emoji"
+            aria-haspopup="true"
+        >
+            😊
+        </button>
+
+        <textarea
             id="aiChatInput"
             placeholder="Message SEASHOP AI"
             autocomplete="off"
+            rows="1"
+            aria-label="Message SEASHOP AI"
             required
+        ></textarea>
+
+        <button
+            type="submit"
+            class="send-button"
+            aria-label="Send message"
         >
-        <button type="submit" aria-label="Send message">
             <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M22 2L11 13"></path>
                 <path d="M22 2L15 22l-4-9-9-4z"></path>
