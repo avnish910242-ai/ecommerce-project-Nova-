@@ -417,9 +417,20 @@ chatForm?.addEventListener("submit", async event => {
 
         saveChatHistory();
 
-        if (Array.isArray(data.products)) {
-            addProductCards(data.products);
-        }
+       
+const messageIsShoppingRelated =
+    /\b(product|products|item|items|buy|purchase|shop|shopping|price|cost|stock|available|availability|show|find|search|recommend|suggest|catalog|catalogue|clothes|clothing|shoes|shirt|shirts|electronics|accessories|cart)\b/i.test(message)
+    || /प्रोडक्ट|उत्पाद|खरीद|कीमत|दाम|जूते|कपड़े|दिखाओ|उपलब्ध|प्राइस|प्रोडक्ट्स/i.test(message)
+    || /\b(kharid|kharidna|dikhao|dikha|chahiye|kitne ka|kitne ki|kaun sa|kaunsa|konsi|product batao|products batao)\b/i.test(message);
+
+if (
+    messageIsShoppingRelated &&
+    Array.isArray(data.products) &&
+    data.products.length > 0
+) {
+    addProductCards(data.products);
+}
+
 
     } catch (error) {
         delete loading.dataset.temporary;
