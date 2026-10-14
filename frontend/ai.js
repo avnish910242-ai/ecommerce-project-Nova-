@@ -1,4 +1,10 @@
 
+"use strict";
+
+// ========================================
+// SEASHOP AI ELEMENTS
+// ========================================
+
 const backButton = document.getElementById("aiBackButton");
 const welcomeScreen = document.getElementById("welcomeScreen");
 const chatMessages = document.getElementById("chatMessages");
@@ -11,6 +17,7 @@ const AI_CHAT_STORAGE_KEY = "seashop_ai_chat_history";
 const AI_API_URL = "https://nova-backend-7i1l.onrender.com/api/ai-chat";
 
 let isSending = false;
+let emojiPicker = null;
 
 // ========================================
 // BACK BUTTON
@@ -21,36 +28,38 @@ backButton?.addEventListener("click", () => {
 });
 
 // ========================================
-// CHAT HISTORY - SAVE
+// SAVE CHAT HISTORY LOCALLY
 // ========================================
 
 function saveChatHistory() {
     try {
+        if (!chatMessages) return;
+
         const messages = chatMessages.querySelectorAll(
             ".chat-message.user-message, .chat-message.bot-message"
         );
 
         const history = Array.from(messages)
-            .filter(message => !message.dataset.temporary)
-            .map(message => ({
-                type: message.classList.contains("user-message")
+            .filter(element => !element.dataset.temporary)
+            .map(element => ({
+                type: element.classList.contains("user-message")
                     ? "user-message"
                     : "bot-message",
-                text: message.textContent.trim()
+                text: element.textContent.trim()
             }))
-            .filter(message => message.text.length > 0);
+            .filter(item => item.text.length > 0);
 
         localStorage.setItem(
             AI_CHAT_STORAGE_KEY,
             JSON.stringify(history)
         );
     } catch (error) {
-        console.error("Unable to save SEASHOP AI chat:", error);
+        console.error("Unable to save chat history:", error);
     }
 }
 
 // ========================================
-// FORMAT AI REPLY SAFELY
+// SAFE AI REPLY FORMATTING
 // ========================================
 
 function formatAIReply(text) {
@@ -68,7 +77,21 @@ function formatAIReply(text) {
 }
 
 // ========================================
-// ADD MESSAGE
+// SCROLL CHAT
+// ========================================
+
+function scrollChatToBottom() {
+    const main = document.querySelector(".ai-main");
+
+    if (!main) return;
+
+    requestAnimationFrame(() => {
+        main.scrollTop = main.scrollHeight;
+    });
+}
+
+// ========================================
+// ADD CHAT MESSAGE
 // ========================================
 
 function addMessage(text, type, shouldSave = true) {
@@ -98,7 +121,7 @@ function addMessage(text, type, shouldSave = true) {
 }
 
 // ========================================
-// LOAD CHAT HISTORY
+// LOAD SAVED CHAT
 // ========================================
 
 function loadChatHistory() {
@@ -127,30 +150,14 @@ function loadChatHistory() {
             welcomeScreen.style.display = "none";
         }
 
-        scrollChatToBottom();
     } catch (error) {
-        console.error("Unable to load SEASHOP AI chat:", error);
+        console.error("Unable to load chat history:", error);
     }
-}
-
-// ========================================
-// SCROLL CHAT TO BOTTOM
-// ========================================
-
-function scrollChatToBottom() {
-    const main = document.querySelector(".ai-main");
-
-    if (!main) return;
-
-    requestAnimationFrame(() => {
-        main.scrollTop = main.scrollHeight;
-    });
 }
 
 // ========================================
 // MOBILE KEYBOARD VIEWPORT
 // ========================================
-
 
 function adjustChatViewport() {
     const viewport = window.visualViewport;
@@ -159,24 +166,13 @@ function adjustChatViewport() {
 
     const keyboardHeight = Math.max(
         0,
-        window.innerHeight -
-        viewport.height -
-        viewport.offsetTop
+        window.innerHeight - viewport.height - viewport.offsetTop
     );
 
     document.documentElement.style.setProperty(
         "--ai-keyboard-height",
         `${keyboardHeight}px`
     );
-
-    // Keyboard khulne par chat ka latest message dikhana.
-    requestAnimationFrame(() => {
-        const main = document.querySelector(".ai-main");
-
-        if (main) {
-            main.scrollTop = main.scrollHeight;
-        }
-    });
 }
 
 if (window.visualViewport) {
@@ -192,28 +188,9 @@ if (window.visualViewport) {
 }
 
 window.addEventListener("resize", adjustChatViewport);
-
-adjustChatViewport();
-
-
-if (window.visualViewport) {
-    window.visualViewport.addEventListener(
-        "resize",
-        adjustChatViewport
-    );
-
-    window.visualViewport.addEventListener(
-        "scroll",
-        adjustChatViewport
-    );
-}
-
-window.addEventListener("resize", adjustChatViewport);
-
-adjustChatViewport();
 
 // ========================================
-// TEXTAREA AUTO RESIZE
+// INPUT AUTO RESIZE
 // ========================================
 
 function resizeMessageInput() {
@@ -222,7 +199,7 @@ function resizeMessageInput() {
     chatInput.style.height = "auto";
 
     chatInput.style.height =
-        Math.min(chatInput.scrollHeight, 140) + "px";
+        `${Math.min(chatInput.scrollHeight, 140)}px`;
 }
 
 chatInput?.addEventListener("input", resizeMessageInput);
@@ -237,8 +214,6 @@ const emojiList = [
     "🙏", "😎", "🤔", "😢",
     "👏", "💙", "✨", "🛍️"
 ];
-
-let emojiPicker = null;
 
 function createEmojiPicker() {
     if (emojiPicker) return emojiPicker;
@@ -274,7 +249,11 @@ function insertEmoji(emoji) {
     const end = chatInput.selectionEnd ?? start;
 
     chatInput.setRangeText(emoji, start, end, "end");
-    chatInput.dispatchEvent(new Event("input", { bubbles: true }));
+
+    chatInput.dispatchEvent(
+        new Event("input", { bubbles: true })
+    );
+
     chatInput.focus();
 }
 
@@ -283,6 +262,14 @@ emojiButton?.addEventListener("click", () => {
 
     picker.style.display =
         picker.style.display === "none" ? "grid" : "none";
+});
+
+// Send button tap se input ka focus bachane ki koshish.
+// Browser keyboard ko phir bhi band kar sakta hai.
+sendButton?.addEventListener("pointerdown", event => {
+    if (document.activeElement === chatInput) {
+        event.preventDefault();
+    }
 });
 
 // ========================================
@@ -303,6 +290,20 @@ document.querySelectorAll("[data-ai-suggestion]").forEach(button => {
 });
 
 // ========================================
+// SHOPPING INTENT DETECTION
+// ========================================
+
+function isShoppingMessage(message) {
+    return (
+        /\b(product|products|item|items|buy|purchase|shop|shopping|price|cost|stock|available|availability|show|find|search|recommend|suggest|catalog|catalogue|clothes|clothing|shoes|shirt|shirts|electronics|accessories|cart)\b/i.test(message)
+        ||
+        /प्रोडक्ट|उत्पाद|खरीद|कीमत|दाम|जूते|कपड़े|दिखाओ|उपलब्ध|प्राइस|प्रोडक्ट्स/i.test(message)
+        ||
+        /\b(kharid|kharidna|dikhao|dikha|chahiye|kitne ka|kitne ki|kaun sa|kaunsa|konsi|product batao|products batao)\b/i.test(message)
+    );
+}
+
+// ========================================
 // PRODUCT CARDS
 // ========================================
 
@@ -319,7 +320,6 @@ function addProductCards(products) {
         card.className = "ai-product-card";
 
         const image = document.createElement("img");
-
         image.src = product.image || "svg/seashop.svg";
         image.alt = product.name || "Product";
         image.loading = "lazy";
@@ -336,7 +336,8 @@ function addProductCards(products) {
         name.textContent = product.name || "Product";
 
         const price = document.createElement("p");
-        price.textContent = `₹${Number(product.price || 0).toLocaleString("en-IN")}`;
+        price.textContent =
+            `₹${Number(product.price || 0).toLocaleString("en-IN")}`;
 
         const stock = document.createElement("p");
         stock.textContent = `Stock: ${Number(product.stock || 0)}`;
@@ -373,7 +374,7 @@ function addProductCards(products) {
 }
 
 // ========================================
-// SEND CHAT MESSAGE
+// SEND MESSAGE
 // ========================================
 
 chatForm?.addEventListener("submit", async event => {
@@ -437,7 +438,6 @@ chatForm?.addEventListener("submit", async event => {
             );
         }
 
-        loading.classList.remove("temporary");
         delete loading.dataset.temporary;
 
         loading.innerHTML = formatAIReply(
@@ -446,26 +446,18 @@ chatForm?.addEventListener("submit", async event => {
 
         saveChatHistory();
 
-       
-const messageIsShoppingRelated =
-    /\b(product|products|item|items|buy|purchase|shop|shopping|price|cost|stock|available|availability|show|find|search|recommend|suggest|catalog|catalogue|clothes|clothing|shoes|shirt|shirts|electronics|accessories|cart)\b/i.test(message)
-    || /प्रोडक्ट|उत्पाद|खरीद|कीमत|दाम|जूते|कपड़े|दिखाओ|उपलब्ध|प्राइस|प्रोडक्ट्स/i.test(message)
-    || /\b(kharid|kharidna|dikhao|dikha|chahiye|kitne ka|kitne ki|kaun sa|kaunsa|konsi|product batao|products batao)\b/i.test(message);
-
-if (
-    messageIsShoppingRelated &&
-    Array.isArray(data.products) &&
-    data.products.length > 0
-) {
-    addProductCards(data.products);
-}
-
+        if (
+            isShoppingMessage(message) &&
+            Array.isArray(data.products) &&
+            data.products.length > 0
+        ) {
+            addProductCards(data.products);
+        }
 
     } catch (error) {
         delete loading.dataset.temporary;
 
-        loading.textContent =
-            `Sorry, error: ${error.message}`;
+        loading.textContent = `Sorry, error: ${error.message}`;
 
         saveChatHistory();
 
@@ -478,23 +470,19 @@ if (
             sendButton.disabled = false;
         }
 
-        scrollChatToBottom();
         adjustChatViewport();
+        scrollChatToBottom();
 
-        // Keyboard ko wapas kholne ki koshish.
-        // Mobile browser ise hamesha allow nahi karta.
-        if (chatInput && !isSending) {
-    requestAnimationFrame(() => {
-        chatInput.focus({ preventScroll: true });
-    });
-}
+        // Forcefully keyboard reopen nahi karte.
+        // Isse close-open flicker kam ho sakta hai.
     }
 });
 
 // ========================================
-// RESTORE SAVED CHAT ON PAGE LOAD
+// INITIALIZE CHAT
 // ========================================
 
 loadChatHistory();
 resizeMessageInput();
+adjustChatViewport();
 scrollChatToBottom();
