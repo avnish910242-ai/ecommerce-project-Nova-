@@ -152,7 +152,11 @@ window.aiRequestedProductCount = quantityMatch
                 data.message || "AI abhi available nahi hai."
             );
         }
-loading.textContent = data.reply || "Abhi jawab nahi mila.";
+loading.innerHTML = (data.reply || "Abhi jawab nahi mila.")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/\*\*(.*?)\*\*/g, '<span class="ai-highlight">$1</span>');
 
 const productQuestion =
     /\b(product|products|item|items|price|cost|stock|buy|purchase|hoodie|shirt|shoes|phone|mobile|laptop|show|dikhao|dikhaiye|chahiye|keemat|daam|samaan|kapde)\b/i;
