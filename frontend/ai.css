@@ -1,4 +1,8 @@
 
+/* =========================================
+   SEASHOP AI CHAT — COMPLETE CSS
+   ========================================= */
+
 * {
     box-sizing: border-box;
 }
@@ -18,24 +22,37 @@ html {
 body {
     display: flex;
     flex-direction: column;
+
+    /* Fallbacks for mobile browsers */
+    height: 100%;
+    height: 100dvh;
     min-width: 0;
     min-height: 0;
+
     overflow: hidden;
     background: #f8f7f3;
     color: #171717;
     font-family: Arial, sans-serif;
 }
 
-/* Header */
+/* =========================================
+   HEADER — STAYS AT THE TOP
+   ========================================= */
+
 .ai-header {
     position: relative;
     z-index: 10;
+
     flex: 0 0 62px;
     height: 62px;
+    min-height: 62px;
+
     display: flex;
     align-items: center;
     gap: 10px;
+
     padding: 0 12px;
+
     background: #fff;
     border-bottom: 1px solid #eee;
 }
@@ -44,8 +61,10 @@ body {
     width: 36px;
     height: 42px;
     flex-shrink: 0;
+
     display: grid;
     place-items: center;
+
     padding: 4px;
     border: 0;
     background: transparent;
@@ -55,6 +74,7 @@ body {
 .back-button svg {
     width: 28px;
     height: 28px;
+
     fill: none;
     stroke: #161616;
     stroke-width: 2;
@@ -74,24 +94,35 @@ body {
     font-weight: 600;
 }
 
-/* Scrollable chat area */
+/* =========================================
+   CHAT AREA — ONLY THIS AREA SCROLLS
+   ========================================= */
+
 .ai-main {
     position: relative;
+
     flex: 1 1 0;
     min-width: 0;
     min-height: 0;
     width: 100%;
+
     overflow-x: hidden;
     overflow-y: auto;
+
     padding-bottom: 8px;
+
     overscroll-behavior-y: contain;
-    display: flex;
-    flex-direction: column;
     scrollbar-width: thin;
     -webkit-overflow-scrolling: touch;
+
+    display: flex;
+    flex-direction: column;
 }
 
-/* Welcome screen */
+/* =========================================
+   WELCOME SCREEN
+   ========================================= */
+
 .welcome-screen {
     width: 100%;
     margin: auto;
@@ -120,22 +151,30 @@ body {
     line-height: 1.5;
 }
 
-/* Suggested prompts */
+/* =========================================
+   SUGGESTED PROMPTS
+   ========================================= */
+
 .suggestions {
     display: grid;
     gap: 12px;
+
     width: 100%;
     max-width: 650px;
+
     margin: 0 auto;
 }
 
 .suggestion {
     min-height: 58px;
     padding: 14px;
+
     border: 1px solid #eeeae3;
     border-radius: 18px;
+
     background: #fff;
     color: #202020;
+
     text-align: left;
     font-size: 15px;
     cursor: pointer;
@@ -145,19 +184,26 @@ body {
     background: #eaf2ff;
 }
 
-/* Chat messages */
+/* =========================================
+   CHAT MESSAGES
+   ========================================= */
+
 .chat-messages {
     width: 100%;
+
     display: flex;
     flex-direction: column;
     gap: 10px;
+
     padding: 14px 12px;
 }
 
 .chat-message {
     max-width: 90%;
     padding: 12px 14px;
+
     border-radius: 18px;
+
     line-height: 1.6;
     white-space: pre-wrap;
     overflow-wrap: anywhere;
@@ -174,45 +220,67 @@ body {
     border: 1px solid #eeeae3;
 }
 
-/* Highlighted words */
+/* =========================================
+   HIGHLIGHTED WORDS
+   ========================================= */
+
 .ai-highlight {
     color: #0878f9;
     font-weight: 700;
 }
 
-/* Bottom message composer */
+/* =========================================
+   MESSAGE INPUT — STAYS BELOW CHAT
+   ========================================= */
+
 .message-form {
     position: relative;
     z-index: 20;
+
     flex: 0 0 auto;
     width: 100%;
     min-width: 0;
+
     display: flex;
     align-items: flex-end;
     gap: 8px;
-    padding: 10px 12px;
+
     margin: 0;
-    padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+    padding: 10px 12px;
+
+    padding-bottom: calc(
+        10px + env(safe-area-inset-bottom, 0px)
+    );
+
     background: #f8f7f3;
     border-top: 1px solid #eeeae3;
 }
 
-/* Message input */
+/* =========================================
+   TEXTAREA
+   ========================================= */
+
 .message-form textarea {
     display: block;
+
     flex: 1 1 auto;
     width: 0;
     min-width: 0;
     min-height: 48px;
     max-height: 140px;
+
     resize: none;
     overflow-y: auto;
+
     padding: 14px 16px;
+
     border: 1px solid #e8e5df;
     border-radius: 24px;
     outline: none;
+
     background: #fff;
     color: #171717;
+
     font-family: inherit;
     font-size: 16px;
     line-height: 20px;
@@ -226,14 +294,19 @@ body {
     color: #777;
 }
 
-/* Emoji and send buttons */
+/* =========================================
+   EMOJI AND SEND BUTTONS
+   ========================================= */
+
 .emoji-button,
 .send-button {
     flex: 0 0 48px;
     width: 48px;
     height: 48px;
+
     display: grid;
     place-items: center;
+
     border: none;
     border-radius: 50%;
     cursor: pointer;
@@ -257,6 +330,7 @@ body {
 .send-button svg {
     width: 23px;
     height: 23px;
+
     fill: none;
     stroke: currentColor;
     stroke-width: 2;
@@ -264,21 +338,29 @@ body {
     stroke-linejoin: round;
 }
 
-/* Emoji picker */
+/* =========================================
+   EMOJI PICKER
+   ========================================= */
+
 .ai-emoji-picker {
     position: absolute;
     left: 12px;
     bottom: calc(100% + 6px);
     z-index: 30;
+
     display: grid;
     grid-template-columns: repeat(8, 38px);
     gap: 4px;
+
     max-width: calc(100vw - 24px);
     max-height: 45vh;
     overflow-y: auto;
+
     padding: 8px;
+
     border: 1px solid #e8e5df;
     border-radius: 14px;
+
     background: #fff;
     box-shadow: 0 4px 18px #00000018;
 }
@@ -286,8 +368,10 @@ body {
 .ai-emoji-picker button {
     width: 38px;
     height: 38px;
+
     border: 0;
     border-radius: 8px;
+
     background: transparent;
     font-size: 22px;
     cursor: pointer;
@@ -297,7 +381,24 @@ body {
     background: #eaf2ff;
 }
 
-/* Short screens */
+/* =========================================
+   MOBILE
+   ========================================= */
+
+@media (max-width: 600px) {
+    .chat-message {
+        max-width: 94%;
+    }
+
+    .message-form textarea {
+        font-size: 16px;
+    }
+}
+
+/* =========================================
+   SHORT SCREENS / LANDSCAPE
+   ========================================= */
+
 @media (max-height: 500px) {
     .welcome-screen {
         margin: 0 auto;
@@ -316,16 +417,5 @@ body {
     .message-form {
         padding-top: 6px;
         padding-bottom: 6px;
-    }
-}
-
-/* Mobile layout */
-@media (max-width: 600px) {
-    .chat-message {
-        max-width: 94%;
-    }
-
-    .message-form textarea {
-        font-size: 16px;
     }
 }
