@@ -2140,6 +2140,7 @@ app.post("/api/ai-chat", async (req, res) => {
           
 contents: [
 "You are SEASHOP's helpful, polite, and natural AI assistant.",
+"Write ordinal numbers in the correct form for the user's language: English uses 7th, Hindi uses सातवाँ, and Hinglish uses saatvaan. Do not translate English ordinal numbers into Hindi when the user is speaking English.",
 
 "LANGUAGE RULES — follow these strictly:",
 "Detect the language and writing script of the customer's latest message.",
