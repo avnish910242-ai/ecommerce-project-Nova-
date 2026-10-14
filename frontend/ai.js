@@ -95,8 +95,9 @@ function scrollChatToBottom() {
 // ========================================
 
 function addMessage(text, type, shouldSave = true) {
-    const message = document.createElement("div");
+    if (!chatMessages) return null;
 
+    const message = document.createElement("div");
     message.className = `chat-message ${type}`;
 
     if (type === "bot-message") {
@@ -121,11 +122,13 @@ function addMessage(text, type, shouldSave = true) {
 }
 
 // ========================================
-// LOAD SAVED CHAT
+// LOAD SAVED CHAT HISTORY
 // ========================================
 
 function loadChatHistory() {
     try {
+        if (!chatMessages) return;
+
         const saved = localStorage.getItem(AI_CHAT_STORAGE_KEY);
 
         if (!saved) return;
@@ -133,6 +136,14 @@ function loadChatHistory() {
         const history = JSON.parse(saved);
 
         if (!Array.isArray(history)) return;
+
+        // Remove only existing chat message elements.
+        // Other elements, such as product cards, are preserved.
+        chatMessages
+            .querySelectorAll(".chat-message.user-message, .chat-message.bot-message")
+            .forEach(message => message.remove());
+
+        let loadedCount = 0;
 
         history.forEach(item => {
             if (
@@ -144,12 +155,12 @@ function loadChatHistory() {
             }
 
             addMessage(item.text, item.type, false);
+            loadedCount++;
         });
 
-        if (history.length > 0 && welcomeScreen) {
+        if (loadedCount > 0 && welcomeScreen) {
             welcomeScreen.style.display = "none";
         }
-
     } catch (error) {
         console.error("Unable to load chat history:", error);
     }
@@ -197,7 +208,6 @@ function resizeMessageInput() {
     if (!chatInput) return;
 
     chatInput.style.height = "auto";
-
     chatInput.style.height =
         `${Math.min(chatInput.scrollHeight, 140)}px`;
 }
@@ -264,8 +274,7 @@ emojiButton?.addEventListener("click", () => {
         picker.style.display === "none" ? "grid" : "none";
 });
 
-// Send button tap se input ka focus bachane ki koshish.
-// Browser keyboard ko phir bhi band kar sakta hai.
+// Preserve input focus when tapping the send button.
 sendButton?.addEventListener("pointerdown", event => {
     if (document.activeElement === chatInput) {
         event.preventDefault();
@@ -308,7 +317,7 @@ function isShoppingMessage(message) {
 // ========================================
 
 function addProductCards(products) {
-    if (!Array.isArray(products) || products.length === 0) {
+    if (!chatMessages || !Array.isArray(products) || products.length === 0) {
         return;
     }
 
@@ -405,7 +414,9 @@ chatForm?.addEventListener("submit", async event => {
         false
     );
 
-    loading.dataset.temporary = "true";
+    if (loading) {
+        loading.dataset.temporary = "true";
+    }
 
     try {
         const response = await fetch(AI_API_URL, {
@@ -438,11 +449,13 @@ chatForm?.addEventListener("submit", async event => {
             );
         }
 
-        delete loading.dataset.temporary;
+        if (loading) {
+            delete loading.dataset.temporary;
 
-        loading.innerHTML = formatAIReply(
-            data.reply || "Sorry, mujhe abhi jawab nahi mila."
-        );
+            loading.textContent =
+                data.reply || "Sorry, mujhe abhi jawab nahi mila.";
+            loading.innerHTML = formatAIReply(loading.textContent);
+        }
 
         saveChatHistory();
 
@@ -453,16 +466,14 @@ chatForm?.addEventListener("submit", async event => {
         ) {
             addProductCards(data.products);
         }
-
     } catch (error) {
-        delete loading.dataset.temporary;
-
-        loading.textContent = `Sorry, error: ${error.message}`;
+        if (loading) {
+            delete loading.dataset.temporary;
+            loading.textContent = `Sorry, error: ${error.message}`;
+        }
 
         saveChatHistory();
-
         console.error("SEASHOP AI error:", error);
-
     } finally {
         isSending = false;
 
@@ -472,9 +483,6 @@ chatForm?.addEventListener("submit", async event => {
 
         adjustChatViewport();
         scrollChatToBottom();
-
-        // Forcefully keyboard reopen nahi karte.
-        // Isse close-open flicker kam ho sakta hai.
     }
 });
 
