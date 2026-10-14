@@ -146,7 +146,14 @@ chatForm.addEventListener("submit", async event => {
         loading.textContent = data.reply || "Abhi jawab nahi mila.";
 
         // Show product cards returned by the backend.
+       if (Array.isArray(data.products) && data.products.length > 0) {
+    const productQuestion =
+        /\b(product|products|price|cost|stock|buy|purchase|hoodie|shirt|shoes|phone|mobile|laptop|show|dikhao|dikhaiye|chahiye|keemat|daam|samaan|kapde)\b/i;
+
+    if (productQuestion.test(message)) {
         addProductCards(data.products);
+    }
+}
 
     } catch (error) {
         loading.textContent =
