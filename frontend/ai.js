@@ -4,20 +4,48 @@ const welcomeScreen = document.getElementById("welcomeScreen");
 const chatMessages = document.getElementById("chatMessages");
 const chatForm = document.getElementById("aiChatForm");
 const chatInput = document.getElementById("aiChatInput");
+const emojiButton = document.getElementById("aiEmojiButton");
+const sendButton = chatForm.querySelector('[type="submit"]');
 
 let isSending = false;
 
-backButton.addEventListener("click", () => {
+backButton?.addEventListener("click", () => {
     window.location.href = "index.html";
 });
 
+/* Adjust chat area when the mobile keyboard opens */
+function adjustChatViewport() {
+    const main = document.querySelector(".ai-main");
+    const header = document.querySelector(".ai-header");
+    const composer = document.querySelector(".message-form");
+    const viewport = window.visualViewport;
+
+    if (!main || !header || !composer || !viewport) return;
+
+    const keyboardHeight = Math.max(
+        0,
+        window.innerHeight - viewport.height - viewport.offsetTop
+    );
+
+    document.documentElement.style.setProperty(
+        "--ai-keyboard-height",
+        `${keyboardHeight}px`
+    );
+}
+
+if (window.visualViewport) {
+    window.visualViewport.addEventListener("resize", adjustChatViewport);
+    window.visualViewport.addEventListener("scroll", adjustChatViewport);
+}
+
+window.addEventListener("resize", adjustChatViewport);
+adjustChatViewport();
+
+/* Keep newest messages visible */
 function scrollChatToBottom() {
     requestAnimationFrame(() => {
         const main = document.querySelector(".ai-main");
-
-        if (main) {
-            main.scrollTop = main.scrollHeight;
-        }
+        if (main) main.scrollTop = main.scrollHeight;
     });
 }
 
@@ -30,10 +58,10 @@ function addMessage(text, type) {
     welcomeScreen.style.display = "none";
 
     scrollChatToBottom();
-
     return message;
 }
 
+/* Highlight AI words wrapped in **double asterisks** */
 function formatAIReply(text) {
     const safeText = String(text || "Abhi jawab nahi mila.")
         .replace(/&/g, "&amp;")
@@ -46,21 +74,28 @@ function formatAIReply(text) {
     );
 }
 
-/* Automatically adjust textarea height */
+/* Automatically resize multiline input */
 function resizeMessageInput() {
     if (chatInput.tagName !== "TEXTAREA") return;
 
     chatInput.style.height = "auto";
 
     const maxHeight = 140;
-    chatInput.style.height =
-        Math.min(chatInput.scrollHeight, maxHeight) + "px";
+    const height = Math.min(chatInput.scrollHeight, maxHeight);
 
+    chatInput.style.height = `${height}px`;
     chatInput.style.overflowY =
         chatInput.scrollHeight > maxHeight ? "auto" : "hidden";
 }
 
 chatInput.addEventListener("input", resizeMessageInput);
+
+/* Prevent the send-button tap from deliberately moving focus */
+sendButton?.addEventListener("pointerdown", event => {
+    if (document.activeElement === chatInput) {
+        event.preventDefault();
+    }
+});
 
 /* Insert emoji at the cursor */
 function insertEmoji(emoji) {
@@ -73,8 +108,6 @@ function insertEmoji(emoji) {
 }
 
 /* Emoji picker */
-const emojiButton = document.getElementById("aiEmojiButton");
-
 if (emojiButton) {
     emojiButton.addEventListener("click", () => {
         let picker = document.getElementById("aiEmojiPicker");
@@ -88,21 +121,22 @@ if (emojiButton) {
         picker.id = "aiEmojiPicker";
         picker.className = "ai-emoji-picker";
 
-        ["😀", "😂", "😊", "😍", "👍", "❤️", "🙏", "🎉",
-         "😎", "🤔", "😢", "🔥", "✨", "💙", "🛍️", "✅"]
-            .forEach(emoji => {
-                const button = document.createElement("button");
-                button.type = "button";
-                button.textContent = emoji;
-                button.setAttribute("aria-label", emoji);
+        [
+            "😀", "😂", "😊", "😍", "👍", "❤️", "🙏", "🎉",
+            "😎", "🤔", "😢", "🔥", "✨", "💙", "🛍️", "✅"
+        ].forEach(emoji => {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.textContent = emoji;
+            button.setAttribute("aria-label", emoji);
 
-                button.addEventListener("click", () => {
-                    insertEmoji(emoji);
-                    picker.remove();
-                });
-
-                picker.appendChild(button);
+            button.addEventListener("click", () => {
+                insertEmoji(emoji);
+                picker.remove();
             });
+
+            picker.appendChild(button);
+        });
 
         chatForm.appendChild(picker);
     });
@@ -117,7 +151,7 @@ document.querySelectorAll(".suggestion").forEach(button => {
     });
 });
 
-/* Submit chat message */
+/* Send a message */
 chatForm.addEventListener("submit", async event => {
     event.preventDefault();
 
@@ -147,6 +181,8 @@ chatForm.addEventListener("submit", async event => {
 
     isSending = true;
 
+    if (sendButton) sendButton.disabled = true;
+
     try {
         const response = await fetch(
             "https://nova-backend-7i1l.onrender.com/api/ai-chat",
@@ -160,7 +196,6 @@ chatForm.addEventListener("submit", async event => {
         );
 
         const rawResponse = await response.text();
-
         let data;
 
         try {
@@ -189,28 +224,27 @@ chatForm.addEventListener("submit", async event => {
             window.aiRequestedProductCount > 0
         ) {
             addProductCards(
-                data.products.slice(
-                    0,
-                    window.aiRequestedProductCount
-                )
+                data.products.slice(0, window.aiRequestedProductCount)
             );
         }
-
     } catch (error) {
         loading.textContent =
-            error.message ||
-            "Connection nahi ho paya. Dobara try karein.";
+            error.message || "Connection nahi ho paya. Dobara try karein.";
     } finally {
         isSending = false;
 
+        if (sendButton) sendButton.disabled = false;
+
         scrollChatToBottom();
+        adjustChatViewport();
 
         /*
-         * Keep focus on the input.
-         * Mobile browsers may still close the keyboard depending
-         * on their keyboard and focus behavior.
+         * Refocus only if the input still owns focus.
+         * Mobile browsers may close the keyboard after async work.
          */
-        chatInput.focus({ preventScroll: true });
+        if (document.activeElement === chatInput) {
+            chatInput.focus({ preventScroll: true });
+        }
     }
 });
 
