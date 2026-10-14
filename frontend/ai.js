@@ -638,6 +638,23 @@ chatForm?.addEventListener("submit", async event => {
     }
 });
 
+/* ========================================
+   SUGGESTION BUTTONS — DIRECT CHAT
+======================================== */
+
+document.querySelectorAll(".suggestion, [data-ai-suggestion]").forEach(button => {
+    button.addEventListener("click", () => {
+        if (!chatInput || !chatForm || isSending) return;
+
+        chatInput.value =
+            button.dataset.aiSuggestion ||
+            button.textContent.trim();
+
+        resizeMessageInput();
+        chatForm.requestSubmit();
+    });
+});
+
 // ========================================
 // INITIALIZE CHAT
 // ========================================
