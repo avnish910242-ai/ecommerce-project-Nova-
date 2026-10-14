@@ -5,7 +5,8 @@ function addProductCards(products) {
     const section = document.createElement("div");
     section.className = "ai-product-results";
 
-    products.forEach(product => {
+    products.forEach((product, index) => {
+    if (index >= window.aiRequestedProductCount) return;
         if (!product.image) return;
 
         const card = document.createElement("article");
@@ -102,6 +103,15 @@ chatForm.addEventListener("submit", async event => {
     event.preventDefault();
 
     const message = chatInput.value.trim();
+   const quantityMatch = message.match(
+    /\b(\d+)\s*(?:products?|items?)\b/i
+);
+
+window.aiRequestedProductCount = quantityMatch
+    ? Math.min(Number(quantityMatch[1]), 30)
+    : (/\b(product|products|item|items|dikhao|dikhaiye|show)\b/i.test(message)
+        ? 1
+        : 0);
     if (!message) return;
 
     addMessage(message, "user-message");
@@ -142,17 +152,21 @@ chatForm.addEventListener("submit", async event => {
                 data.message || "AI abhi available nahi hai."
             );
         }
+loading.textContent = data.reply || "Abhi jawab nahi mila.";
 
-        loading.textContent = data.reply || "Abhi jawab nahi mila.";
+const productQuestion =
+    /\b(product|products|item|items|price|cost|stock|buy|purchase|hoodie|shirt|shoes|phone|mobile|laptop|show|dikhao|dikhaiye|chahiye|keemat|daam|samaan|kapde)\b/i;
 
-        // Show product cards returned by the backend.
-       if (Array.isArray(data.products) && data.products.length > 0) {
-    const productQuestion =
-        /\b(product|products|price|cost|stock|buy|purchase|hoodie|shirt|shoes|phone|mobile|laptop|show|dikhao|dikhaiye|chahiye|keemat|daam|samaan|kapde)\b/i;
+if (
+    productQuestion.test(message) &&
+    Array.isArray(data.products) &&
+    data.products.length > 0 &&
+    window.aiRequestedProductCount > 0
+) {
+    addProductCards(
+        data.products.slice(0, window.aiRequestedProductCount)
+    );
 
-    if (productQuestion.test(message)) {
-        addProductCards(data.products);
-    }
 }
 
     } catch (error) {
