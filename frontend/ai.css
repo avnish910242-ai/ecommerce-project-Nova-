@@ -441,3 +441,8 @@ body {
         padding-bottom: 6px;
     }
 }
+@media (max-width: 600px) {
+    body {
+        height: var(--ai-viewport-height, 100dvh);
+    }
+}

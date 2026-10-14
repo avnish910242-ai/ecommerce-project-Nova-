@@ -170,6 +170,7 @@ function loadChatHistory() {
 // MOBILE KEYBOARD VIEWPORT
 // ========================================
 
+
 function adjustChatViewport() {
     const viewport = window.visualViewport;
 
@@ -177,14 +178,38 @@ function adjustChatViewport() {
 
     const keyboardHeight = Math.max(
         0,
-        window.innerHeight - viewport.height - viewport.offsetTop
+        window.innerHeight -
+        viewport.height -
+        viewport.offsetTop
     );
 
     document.documentElement.style.setProperty(
         "--ai-keyboard-height",
         `${keyboardHeight}px`
     );
+
+    document.documentElement.style.setProperty(
+        "--ai-viewport-height",
+        `${viewport.height}px`
+    );
 }
+
+if (window.visualViewport) {
+    window.visualViewport.addEventListener(
+        "resize",
+        adjustChatViewport
+    );
+
+    window.visualViewport.addEventListener(
+        "scroll",
+        adjustChatViewport
+    );
+}
+
+window.addEventListener("resize", adjustChatViewport);
+
+adjustChatViewport();
+
 
 if (window.visualViewport) {
     window.visualViewport.addEventListener(
