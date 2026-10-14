@@ -5,22 +5,156 @@ const chatMessages = document.getElementById("chatMessages");
 const chatForm = document.getElementById("aiChatForm");
 const chatInput = document.getElementById("aiChatInput");
 const emojiButton = document.getElementById("aiEmojiButton");
-const sendButton = chatForm.querySelector('[type="submit"]');
+const sendButton = chatForm?.querySelector('[type="submit"]');
+
+const AI_CHAT_STORAGE_KEY = "seashop_ai_chat_history";
+const AI_API_URL = "https://nova-backend-7i1l.onrender.com/api/ai-chat";
 
 let isSending = false;
+
+// ========================================
+// BACK BUTTON
+// ========================================
 
 backButton?.addEventListener("click", () => {
     window.location.href = "index.html";
 });
 
-/* Adjust chat area when the mobile keyboard opens */
-function adjustChatViewport() {
+// ========================================
+// CHAT HISTORY - SAVE
+// ========================================
+
+function saveChatHistory() {
+    try {
+        const messages = chatMessages.querySelectorAll(
+            ".chat-message.user-message, .chat-message.bot-message"
+        );
+
+        const history = Array.from(messages)
+            .filter(message => !message.dataset.temporary)
+            .map(message => ({
+                type: message.classList.contains("user-message")
+                    ? "user-message"
+                    : "bot-message",
+                text: message.textContent.trim()
+            }))
+            .filter(message => message.text.length > 0);
+
+        localStorage.setItem(
+            AI_CHAT_STORAGE_KEY,
+            JSON.stringify(history)
+        );
+    } catch (error) {
+        console.error("Unable to save SEASHOP AI chat:", error);
+    }
+}
+
+// ========================================
+// FORMAT AI REPLY SAFELY
+// ========================================
+
+function formatAIReply(text) {
+    const safeText = String(text ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+
+    return safeText.replace(
+        /\*\*(.+?)\*\*/gs,
+        '<span class="ai-highlight">$1</span>'
+    );
+}
+
+// ========================================
+// ADD MESSAGE
+// ========================================
+
+function addMessage(text, type, shouldSave = true) {
+    const message = document.createElement("div");
+
+    message.className = `chat-message ${type}`;
+
+    if (type === "bot-message") {
+        message.innerHTML = formatAIReply(text);
+    } else {
+        message.textContent = String(text ?? "");
+    }
+
+    chatMessages.appendChild(message);
+
+    if (welcomeScreen) {
+        welcomeScreen.style.display = "none";
+    }
+
+    if (shouldSave) {
+        saveChatHistory();
+    }
+
+    scrollChatToBottom();
+
+    return message;
+}
+
+// ========================================
+// LOAD CHAT HISTORY
+// ========================================
+
+function loadChatHistory() {
+    try {
+        const saved = localStorage.getItem(AI_CHAT_STORAGE_KEY);
+
+        if (!saved) return;
+
+        const history = JSON.parse(saved);
+
+        if (!Array.isArray(history)) return;
+
+        history.forEach(item => {
+            if (
+                !item ||
+                typeof item.text !== "string" ||
+                !["user-message", "bot-message"].includes(item.type)
+            ) {
+                return;
+            }
+
+            addMessage(item.text, item.type, false);
+        });
+
+        if (history.length > 0 && welcomeScreen) {
+            welcomeScreen.style.display = "none";
+        }
+
+        scrollChatToBottom();
+    } catch (error) {
+        console.error("Unable to load SEASHOP AI chat:", error);
+    }
+}
+
+// ========================================
+// SCROLL CHAT TO BOTTOM
+// ========================================
+
+function scrollChatToBottom() {
     const main = document.querySelector(".ai-main");
-    const header = document.querySelector(".ai-header");
-    const composer = document.querySelector(".message-form");
+
+    if (!main) return;
+
+    requestAnimationFrame(() => {
+        main.scrollTop = main.scrollHeight;
+    });
+}
+
+// ========================================
+// MOBILE KEYBOARD VIEWPORT
+// ========================================
+
+function adjustChatViewport() {
     const viewport = window.visualViewport;
 
-    if (!main || !header || !composer || !viewport) return;
+    if (!viewport) return;
 
     const keyboardHeight = Math.max(
         0,
@@ -34,241 +168,136 @@ function adjustChatViewport() {
 }
 
 if (window.visualViewport) {
-    window.visualViewport.addEventListener("resize", adjustChatViewport);
-    window.visualViewport.addEventListener("scroll", adjustChatViewport);
-}
+    window.visualViewport.addEventListener(
+        "resize",
+        adjustChatViewport
+    );
 
-window.addEventListener("resize", adjustChatViewport);
-adjustChatViewport();
-
-/* Keep newest messages visible */
-function scrollChatToBottom() {
-    requestAnimationFrame(() => {
-        const main = document.querySelector(".ai-main");
-        if (main) main.scrollTop = main.scrollHeight;
-    });
-}
-
-function addMessage(text, type) {
-    const message = document.createElement("div");
-    message.className = `chat-message ${type}`;
-    message.textContent = text;
-
-    chatMessages.appendChild(message);
-    welcomeScreen.style.display = "none";
-
-    scrollChatToBottom();
-    return message;
-}
-
-/* Highlight AI words wrapped in **double asterisks** */
-function formatAIReply(text) {
-    const safeText = String(text || "Abhi jawab nahi mila.")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;");
-
-    return safeText.replace(
-        /\*\*(.+?)\*\*/gs,
-        '<span class="ai-highlight">$1</span>'
+    window.visualViewport.addEventListener(
+        "scroll",
+        adjustChatViewport
     );
 }
 
-/* Automatically resize multiline input */
+window.addEventListener("resize", adjustChatViewport);
+
+adjustChatViewport();
+
+// ========================================
+// TEXTAREA AUTO RESIZE
+// ========================================
+
 function resizeMessageInput() {
-    if (chatInput.tagName !== "TEXTAREA") return;
+    if (!chatInput) return;
 
     chatInput.style.height = "auto";
 
-    const maxHeight = 140;
-    const height = Math.min(chatInput.scrollHeight, maxHeight);
-
-    chatInput.style.height = `${height}px`;
-    chatInput.style.overflowY =
-        chatInput.scrollHeight > maxHeight ? "auto" : "hidden";
+    chatInput.style.height =
+        Math.min(chatInput.scrollHeight, 140) + "px";
 }
 
-chatInput.addEventListener("input", resizeMessageInput);
+chatInput?.addEventListener("input", resizeMessageInput);
 
-/* Prevent the send-button tap from deliberately moving focus */
-sendButton?.addEventListener("pointerdown", event => {
-    if (document.activeElement === chatInput) {
-        event.preventDefault();
-    }
-});
+// ========================================
+// EMOJI PICKER
+// ========================================
 
-/* Insert emoji at the cursor */
+const emojiList = [
+    "😀", "😂", "😊", "😍",
+    "❤️", "👍", "🔥", "🎉",
+    "🙏", "😎", "🤔", "😢",
+    "👏", "💙", "✨", "🛍️"
+];
+
+let emojiPicker = null;
+
+function createEmojiPicker() {
+    if (emojiPicker) return emojiPicker;
+
+    emojiPicker = document.createElement("div");
+    emojiPicker.className = "emoji-picker";
+    emojiPicker.style.display = "none";
+
+    emojiList.forEach(emoji => {
+        const button = document.createElement("button");
+
+        button.type = "button";
+        button.textContent = emoji;
+        button.setAttribute("aria-label", `Insert ${emoji}`);
+
+        button.addEventListener("click", () => {
+            insertEmoji(emoji);
+            emojiPicker.style.display = "none";
+        });
+
+        emojiPicker.appendChild(button);
+    });
+
+    chatForm?.appendChild(emojiPicker);
+
+    return emojiPicker;
+}
+
 function insertEmoji(emoji) {
+    if (!chatInput) return;
+
     const start = chatInput.selectionStart ?? chatInput.value.length;
     const end = chatInput.selectionEnd ?? start;
 
     chatInput.setRangeText(emoji, start, end, "end");
-    chatInput.focus({ preventScroll: true });
-    resizeMessageInput();
+    chatInput.dispatchEvent(new Event("input", { bubbles: true }));
+    chatInput.focus();
 }
 
-/* Emoji picker */
-if (emojiButton) {
-    emojiButton.addEventListener("click", () => {
-        let picker = document.getElementById("aiEmojiPicker");
+emojiButton?.addEventListener("click", () => {
+    const picker = createEmojiPicker();
 
-        if (picker) {
-            picker.remove();
-            return;
-        }
+    picker.style.display =
+        picker.style.display === "none" ? "grid" : "none";
+});
 
-        picker = document.createElement("div");
-        picker.id = "aiEmojiPicker";
-        picker.className = "ai-emoji-picker";
+// ========================================
+// SUGGESTION BUTTONS
+// ========================================
 
-        [
-            "😀", "😂", "😊", "😍", "👍", "❤️", "🙏", "🎉",
-            "😎", "🤔", "😢", "🔥", "✨", "💙", "🛍️", "✅"
-        ].forEach(emoji => {
-            const button = document.createElement("button");
-            button.type = "button";
-            button.textContent = emoji;
-            button.setAttribute("aria-label", emoji);
-
-            button.addEventListener("click", () => {
-                insertEmoji(emoji);
-                picker.remove();
-            });
-
-            picker.appendChild(button);
-        });
-
-        chatForm.appendChild(picker);
-    });
-}
-
-/* Suggested prompts */
-document.querySelectorAll(".suggestion").forEach(button => {
+document.querySelectorAll("[data-ai-suggestion]").forEach(button => {
     button.addEventListener("click", () => {
-        chatInput.value = button.textContent.trim();
+        if (!chatInput) return;
+
+        chatInput.value =
+            button.dataset.aiSuggestion ||
+            button.textContent.trim();
+
         resizeMessageInput();
-        chatForm.requestSubmit();
+        chatInput.focus();
     });
 });
 
-/* Send a message */
-chatForm.addEventListener("submit", async event => {
-    event.preventDefault();
+// ========================================
+// PRODUCT CARDS
+// ========================================
 
-    const message = chatInput.value.trim();
-
-    if (!message || isSending) return;
-
-    const quantityMatch = message.match(
-        /\b(\d+)\s*(?:products?|items?)\b/i
-    );
-
-    window.aiRequestedProductCount = quantityMatch
-        ? Math.min(Number(quantityMatch[1]), 30)
-        : (/\b(product|products|item|items|dikhao|dikhaiye|show)\b/i.test(message)
-            ? 1
-            : 0);
-
-    addMessage(message, "user-message");
-
-    chatInput.value = "";
-    resizeMessageInput();
-
-    const loading = addMessage(
-        "SEASHOP AI is thinking...",
-        "bot-message"
-    );
-
-    isSending = true;
-
-    if (sendButton) sendButton.disabled = true;
-
-    try {
-        const response = await fetch(
-            "https://nova-backend-7i1l.onrender.com/api/ai-chat",
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ message })
-            }
-        );
-
-        const rawResponse = await response.text();
-        let data;
-
-        try {
-            data = JSON.parse(rawResponse);
-        } catch {
-            throw new Error(
-                "Backend se valid JSON nahi mila. Server ya API route check karein."
-            );
-        }
-
-        if (!response.ok) {
-            throw new Error(
-                data.message || "AI abhi available nahi hai."
-            );
-        }
-
-        loading.innerHTML = formatAIReply(data.reply);
-
-        const productQuestion =
-            /\b(product|products|item|items|price|cost|stock|buy|purchase|hoodie|shirt|shoes|phone|mobile|laptop|show|dikhao|dikhaiye|chahiye|keemat|daam|samaan|kapde)\b/i;
-
-        if (
-            productQuestion.test(message) &&
-            Array.isArray(data.products) &&
-            data.products.length > 0 &&
-            window.aiRequestedProductCount > 0
-        ) {
-            addProductCards(
-                data.products.slice(0, window.aiRequestedProductCount)
-            );
-        }
-    } catch (error) {
-        loading.textContent =
-            error.message || "Connection nahi ho paya. Dobara try karein.";
-    } finally {
-        isSending = false;
-
-        if (sendButton) sendButton.disabled = false;
-
-        scrollChatToBottom();
-        adjustChatViewport();
-
-        /*
-         * Refocus only if the input still owns focus.
-         * Mobile browsers may close the keyboard after async work.
-         */
-        if (document.activeElement === chatInput) {
-            chatInput.focus({ preventScroll: true });
-        }
-    }
-});
-
-/* Product cards */
 function addProductCards(products) {
-    if (!Array.isArray(products) || products.length === 0) return;
+    if (!Array.isArray(products) || products.length === 0) {
+        return;
+    }
 
     const section = document.createElement("div");
     section.className = "ai-product-results";
 
-    products.forEach((product, index) => {
-        if (index >= window.aiRequestedProductCount) return;
-        if (!product.image) return;
-
+    products.forEach(product => {
         const card = document.createElement("article");
         card.className = "ai-product-card";
 
         const image = document.createElement("img");
-        image.src = product.image;
-        image.alt = product.name || "SEASHOP product";
+
+        image.src = product.image || "svg/seashop.svg";
+        image.alt = product.name || "Product";
         image.loading = "lazy";
 
         image.onerror = () => {
-            image.style.display = "none";
+            image.onerror = null;
+            image.src = "svg/seashop.svg";
         };
 
         const details = document.createElement("div");
@@ -278,26 +307,21 @@ function addProductCards(products) {
         name.textContent = product.name || "Product";
 
         const price = document.createElement("p");
-        price.textContent = product.price != null
-            ? `₹${product.price}`
-            : "Price unavailable";
+        price.textContent = `₹${Number(product.price || 0).toLocaleString("en-IN")}`;
 
         const stock = document.createElement("p");
-        stock.textContent = product.stock != null
-            ? `Stock: ${product.stock}`
-            : "Stock information unavailable";
+        stock.textContent = `Stock: ${Number(product.stock || 0)}`;
 
         const description = document.createElement("p");
         description.textContent = product.description || "";
 
-        const button = document.createElement("button");
-        button.type = "button";
-        button.className = "ai-view-product";
-        button.textContent = "View Product";
+        const viewButton = document.createElement("button");
+        viewButton.type = "button";
+        viewButton.textContent = "View Product";
 
-        button.addEventListener("click", () => {
-            if (!product.id) {
-                alert("Product ID available nahi hai.");
+        viewButton.addEventListener("click", () => {
+            if (product.id == null) {
+                window.location.href = "index.html";
                 return;
             }
 
@@ -305,13 +329,128 @@ function addProductCards(products) {
                 `index.html?productId=${encodeURIComponent(product.id)}`;
         });
 
-        details.append(name, price, stock, description, button);
+        details.append(name, price, stock, description, viewButton);
         card.append(image, details);
         section.appendChild(card);
     });
 
-    if (section.children.length > 0) {
-        chatMessages.appendChild(section);
-        scrollChatToBottom();
+    chatMessages.appendChild(section);
+
+    if (welcomeScreen) {
+        welcomeScreen.style.display = "none";
     }
+
+    scrollChatToBottom();
 }
+
+// ========================================
+// SEND CHAT MESSAGE
+// ========================================
+
+chatForm?.addEventListener("submit", async event => {
+    event.preventDefault();
+
+    const message = chatInput?.value.trim();
+
+    if (!message || isSending) return;
+
+    isSending = true;
+
+    if (sendButton) {
+        sendButton.disabled = true;
+    }
+
+    if (emojiPicker) {
+        emojiPicker.style.display = "none";
+    }
+
+    addMessage(message, "user-message");
+
+    chatInput.value = "";
+    resizeMessageInput();
+
+    const loading = addMessage(
+        "SEASHOP AI is thinking...",
+        "bot-message",
+        false
+    );
+
+    loading.dataset.temporary = "true";
+
+    try {
+        const response = await fetch(AI_API_URL, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                message,
+                requestedProductCount:
+                    Number(window.aiRequestedProductCount) || 0
+            })
+        });
+
+        const responseText = await response.text();
+
+        let data;
+
+        try {
+            data = JSON.parse(responseText);
+        } catch {
+            throw new Error(
+                "Server se valid response nahi mila. Thodi der baad try karo."
+            );
+        }
+
+        if (!response.ok) {
+            throw new Error(
+                data.message || data.error || "Request failed."
+            );
+        }
+
+        loading.classList.remove("temporary");
+        delete loading.dataset.temporary;
+
+        loading.innerHTML = formatAIReply(
+            data.reply || "Sorry, mujhe abhi jawab nahi mila."
+        );
+
+        saveChatHistory();
+
+        if (Array.isArray(data.products)) {
+            addProductCards(data.products);
+        }
+
+    } catch (error) {
+        delete loading.dataset.temporary;
+
+        loading.textContent =
+            `Sorry, error: ${error.message}`;
+
+        saveChatHistory();
+
+        console.error("SEASHOP AI error:", error);
+
+    } finally {
+        isSending = false;
+
+        if (sendButton) {
+            sendButton.disabled = false;
+        }
+
+        scrollChatToBottom();
+        adjustChatViewport();
+
+        // Keyboard ko wapas kholne ki koshish.
+        // Mobile browser ise hamesha allow nahi karta.
+        chatInput?.focus({ preventScroll: true });
+    }
+});
+
+// ========================================
+// RESTORE SAVED CHAT ON PAGE LOAD
+// ========================================
+
+loadChatHistory();
+resizeMessageInput();
+scrollChatToBottom();
