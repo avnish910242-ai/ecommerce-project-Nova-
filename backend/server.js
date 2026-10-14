@@ -2145,11 +2145,29 @@ const history = Array.isArray(req.body?.history)
             });
         }
 
-        // Actual products from SEASHOP database
-        const products = await Product.find()
-            .select("_id name category price stock description image")
-            .limit(30)
-            .lean();
+        const allProducts = await Product.find()
+    .select("_id name category price stock description image")
+    .limit(100)
+    .lean();
+
+const searchText = message.toLowerCase();
+
+const searchWords = searchText
+    .replace(/[^a-z0-9\s]/g, " ")
+    .split(/\s+/)
+    .filter(word => word.length > 2);
+
+const matchingProducts = allProducts.filter(product => {
+    const productText = [
+        product.name,
+        product.category,
+        product.description
+    ].join(" ").toLowerCase();
+
+    return searchWords.some(word => productText.includes(word));
+});
+
+const products = matchingProducts.slice(0, 5);
 
         const response = await geminiAI.models.generateContent({
             model: "gemini-3.5-flash-lite",
@@ -2204,17 +2222,17 @@ message
 
         // Return database products to frontend for real product cards
         return res.json({
-            reply: response.text || "Sorry, abhi jawab nahi mil paya.",
-            products: products.map(product => ({
-                id: String(product._id),
-                name: product.name,
-                category: product.category,
-                price: product.price,
-                stock: product.stock,
-                description: product.description,
-                image: product.image
-            }))
-        });
+    reply: response.text || "Sorry, abhi jawab nahi mil paya.",
+    products: products.map(product => ({
+        id: String(product._id),
+        name: product.name,
+        category: product.category,
+        price: product.price,
+        stock: product.stock,
+        description: product.description,
+        image: product.image
+    }))
+});
 
     } catch (error) {
         console.error("SEASHOP AI error:", error);
